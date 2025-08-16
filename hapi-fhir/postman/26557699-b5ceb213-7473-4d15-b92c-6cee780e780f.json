@@ -383,7 +383,7 @@
 			"response": []
 		},
 		{
-			"name": "HCAHPS - Validate Questionnaire Copy",
+			"name": "PIE-15 - Validate Questionnaire Copy",
 			"id": "26557699-d3793c54-6372-49c1-b34e-57e2cc1f2438",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
