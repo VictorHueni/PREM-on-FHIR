@@ -107,7 +107,7 @@
 			"response": []
 		},
 		{
-			"name": "Create Questionnaire GAD-7",
+			"name": "GAD-7 - Create Questionnaire",
 			"event": [
 				{
 					"listen": "test",
