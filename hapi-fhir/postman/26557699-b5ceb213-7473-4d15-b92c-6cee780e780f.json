@@ -162,7 +162,7 @@
 			"response": []
 		},
 		{
-			"name": "Validate QR",
+			"name": "GAD-7 -Validate QR",
 			"id": "26557699-b4d591cc-e033-49be-b53c-7d93b4fdb204",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
