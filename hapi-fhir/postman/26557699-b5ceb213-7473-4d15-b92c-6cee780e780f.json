@@ -107,7 +107,7 @@
 			"response": []
 		},
 		{
-			"name": "Create Sample Questionnaire",
+			"name": "Create Questionnaire GAD-7",
 			"event": [
 				{
 					"listen": "test",
@@ -162,7 +162,7 @@
 			"response": []
 		},
 		{
-			"name": "Validate QR",
+			"name": "Validate QR GAD-7",
 			"id": "26557699-b4d591cc-e033-49be-b53c-7d93b4fdb204",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
