@@ -674,7 +674,22 @@
 			},
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/fhir+json"
+					}
+				],
+				"url": {
+					"raw": "{{basePath}}/fhir/metadata",
+					"host": [
+						"{{basePath}}"
+					],
+					"path": [
+						"fhir",
+						"metadata"
+					]
+				}
 			},
 			"response": []
 		}
