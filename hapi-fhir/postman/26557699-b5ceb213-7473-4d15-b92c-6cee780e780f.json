@@ -625,6 +625,18 @@
 				"description": "Generated from cURL: curl -sS 'http://localhost:8080/fhir/QuestionnaireResponse?_count=20&_sort=-_lastUpdated' \\\r\n  -H 'Accept: application/fhir+json' | jq '.total, .entry[]?.resource.id'\r\n"
 			},
 			"response": []
+		},
+		{
+			"name": "New Request",
+			"id": "26557699-51f9b4c1-0109-4d9e-9649-4d10cd07b142",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	],
 	"event": [
