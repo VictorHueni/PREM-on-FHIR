@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:16
+    container_name: pof-db
+    restart: always
+    environment:
+      POSTGRES_DB: prem_on_fhir
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d prem_on_fhir"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: pof-pgadmin
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    volumes:
+      - ./volumes/pgadmin:/var/lib/pgadmin   
+      - ./servers.json:/pgadmin4/servers.json:ro
+
+  hapi-fhir-server:
+    image: hapiproject/hapi:v8.2.0-2-tomcat
+    container_name: pof-hapi-fhir-server
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./hapi.application.yaml:/app/config/application.yaml:ro
+      
+    environment:
+      # Tell Spring to load extra config from /app/config/
+      SPRING_CONFIG_ADDITIONAL_LOCATION: file:/app/config/
+
+      # Belt & suspenders: set the datasource explicitly via env vars
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/prem_on_fhir
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
