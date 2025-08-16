@@ -67,7 +67,7 @@
 			"response": []
 		},
 		{
-			"name": "Validate Questionnaire GAD-7",
+			"name": "GAD-7 - Validate Questionnaire",
 			"id": "26557699-b596902d-7ea1-456c-862d-30ea4d87a815",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
