@@ -303,7 +303,7 @@
 			"response": []
 		},
 		{
-			"name": "NREQ - Validate Questionnaire Copy",
+			"name": "NREQ - Validate Questionnaire",
 			"id": "26557699-680cb256-ede3-4beb-9bcc-11ce135e1869",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
