@@ -637,6 +637,18 @@
 				"header": []
 			},
 			"response": []
+		},
+		{
+			"name": "Metadata Copy",
+			"id": "26557699-1961b754-d423-4647-80f3-a1427e95aa82",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	],
 	"event": [
