@@ -627,7 +627,7 @@
 			"response": []
 		},
 		{
-			"name": "New Request",
+			"name": "Metadata",
 			"id": "26557699-51f9b4c1-0109-4d9e-9649-4d10cd07b142",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
