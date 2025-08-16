@@ -343,7 +343,7 @@
 			"response": []
 		},
 		{
-			"name": "NREQ - Validate Questionnaire Copy",
+			"name": "HCAHPS - Validate Questionnaire",
 			"id": "26557699-617f4966-9ece-415f-9244-009008fd22e9",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
