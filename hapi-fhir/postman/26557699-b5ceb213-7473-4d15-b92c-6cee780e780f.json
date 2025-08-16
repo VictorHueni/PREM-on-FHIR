@@ -202,7 +202,7 @@
 			"response": []
 		},
 		{
-			"name": "Create Sample Response",
+			"name": "GAD-7 - Create QR",
 			"event": [
 				{
 					"listen": "test",
