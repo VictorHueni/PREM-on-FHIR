@@ -9,7 +9,7 @@
 			"name": "NREQ",
 			"item": [
 				{
-					"name": "NREQ - Create CodeSystem NREQ-Lickert-3",
+					"name": "Create CodeSystem NREQ-Lickert-3",
 					"id": "26557699-182b17d9-d043-4a2f-b41a-060ddbf7c6e7",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -45,7 +45,7 @@
 					"response": []
 				},
 				{
-					"name": "NREQ - Create ValueSet NREQ-Lickert-3",
+					"name": "Create ValueSet NREQ-Lickert-3",
 					"id": "26557699-ce28fe76-74fd-40a0-a716-e80a910b6264",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
