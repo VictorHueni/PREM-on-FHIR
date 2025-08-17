@@ -163,7 +163,7 @@
 					"response": []
 				},
 				{
-					"name": "Validate Questionnaire Copy",
+					"name": "Create Questionnaire",
 					"id": "26557699-1d28ba35-b67a-4c87-a2a3-264d6e36b004",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
