@@ -1,0 +1,32 @@
+{
+  "name": "keep_neuro",
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "conditional_transition": [
+        {
+          "transition": "Keep",
+          "condition": {
+            "condition_type": "Or",
+            "conditions": [
+              { "condition_type": "Active Condition",
+                "codes": [{ "system": "SNOMED-CT", "code": 230690007, "display": "Stroke" }] },
+              { "condition_type": "Active Condition",
+                "codes": [{ "system": "SNOMED-CT", "code": 127295002, "display": "Traumatic brain injury" }] },
+              { "condition_type": "Active Condition",
+                "codes": [{ "system": "SNOMED-CT", "code": 262521009, "display": "Traumatic injury of spinal cord and/or vertebral column" }] },
+              { "condition_type": "Active Condition",
+                "codes": [{ "system": "SNOMED-CT", "code": 275272006, "display": "Brain damage - traumatic" }] },
+              { "condition_type": "Active Condition",
+                "codes": [{ "system": "SNOMED-CT", "code": 26929004, "display": "Alzheimer's disease" }] }
+            ]
+          }
+        },
+        { "transition": "Terminal" }
+      ]
+    },
+    "Keep": { "type": "Terminal" },
+    "Terminal": { "type": "Terminal" }
+  },
+  "gmf_version": 2
+}
