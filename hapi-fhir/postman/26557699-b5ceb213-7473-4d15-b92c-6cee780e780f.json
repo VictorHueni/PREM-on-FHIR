@@ -67,6 +67,33 @@
 			"response": []
 		},
 		{
+			"name": "http://localhost:8080/fhir/CodeSystem",
+			"id": "26557699-182b17d9-d043-4a2f-b41a-060ddbf7c6e7",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/fhir/CodeSystem",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fhir",
+						"CodeSystem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "GAD-7 - Validate Questionnaire",
 			"id": "26557699-b596902d-7ea1-456c-862d-30ea4d87a815",
 			"protocolProfileBehavior": {
