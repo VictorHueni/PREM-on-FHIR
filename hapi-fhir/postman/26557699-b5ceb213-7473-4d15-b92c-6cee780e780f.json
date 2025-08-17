@@ -437,7 +437,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/fhir/CodeSystem/$validate",
+					"raw": "http://localhost:8080/fhir/CodeSystem",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -445,8 +445,7 @@
 					"port": "8080",
 					"path": [
 						"fhir",
-						"CodeSystem",
-						"$validate"
+						"CodeSystem"
 					]
 				},
 				"description": "Generated from cURL: curl --location 'http://localhost:8080/fhir/CodeSystem' \\\r\n--header 'Content-Type: application/json' \\\r\n--data '{\r\n  \"resourceType\": \"CodeSystem\",\r\n  \"url\": \"http://example.org/fhir/CodeSystem/nreq\",\r\n  \"version\": \"1.0\",\r\n  \"name\": \"NreqQuestions\",\r\n  \"title\": \"Neurorehabilitation Experience Questionnaire (NREQ) Items\",\r\n  \"status\": \"active\",\r\n  \"content\": \"complete\",\r\n  \"caseSensitive\": false,\r\n  \"publisher\": \"University of Surrey / Surrey Community Health\",\r\n  \"language\": \"en-GB\",\r\n  \"text\": {\r\n    \"status\": \"generated\",\r\n    \"div\": \"<div xmlns=\\\"http://www.w3.org/1999/xhtml\\\"><p>NREQ item codes (Q01–Q17)</p></div>\"\r\n  },\r\n  \"concept\": [\r\n    { \"code\": \"NREQ-Q01\", \"display\": \"When I arrived I was given information about the unit and what would happen during my stay\" },\r\n    { \"code\": \"NREQ-Q02\", \"display\": \"The facilities on the unit were good (e.g., washing facilities, toilets)\" },\r\n    { \"code\": \"NREQ-Q03\", \"display\": \"There was somewhere secure to keep my belongings\" },\r\n    { \"code\": \"NREQ-Q04\", \"display\": \"I was able to discuss personal matters in private\" },\r\n    { \"code\": \"NREQ-Q05\", \"display\": \"There were enough things to do in my free time (e.g., watch TV, join a group)\" },\r\n    { \"code\": \"NREQ-Q06\", \"display\": \"There was a friendly atmosphere on the unit\" },\r\n    { \"code\": \"NREQ-Q07\", \"display\": \"I felt the staff really cared about me\" },\r\n    { \"code\": \"NREQ-Q08\", \"display\": \"The staff worked well as a team\" },\r\n    { \"code\": \"NREQ-Q09\", \"display\": \"I felt able to talk to the staff about any problems I had\" },\r\n    { \"code\": \"NREQ-Q10\", \"display\": \"I was asked what I wanted to achieve during my stay\" },\r\n    { \"code\": \"NREQ-Q11\", \"display\": \"I felt as though the staff and I were partners in the whole process of care\" },\r\n    { \"code\": \"NREQ-Q12\", \"display\": \"The staff kept me informed every step of the way\" },\r\n    { \"code\": \"NREQ-Q13\", \"display\": \"My family or carer was involved in discussions about my treatment if I wanted them to be\" },\r\n    { \"code\": \"NREQ-Q14\", \"display\": \"I am happy with the amount of therapy or treatment I received for...\" },\r\n    { \"code\": \"NREQ-Q15\", \"display\": \"I received enough emotional support\" },\r\n    { \"code\": \"NREQ-Q16\", \"display\": \"I am feeling well supported and prepared for my discharge\" },\r\n    { \"code\": \"NREQ-Q17\", \"display\": \"I am satisfied with the progress I have made during my stay\" }\r\n  ]\r\n}'\r\n"
