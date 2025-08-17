@@ -67,43 +67,6 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:8080/fhir/CodeSystem",
-			"id": "26557699-182b17d9-d043-4a2f-b41a-060ddbf7c6e7",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"resourceType\": \"CodeSystem\",\r\n  \"url\": \"http://example.org/fhir/CodeSystem/nreq-likert-3\",\r\n  \"version\": \"1.0\",\r\n  \"name\": \"NreqLikert3\",\r\n  \"status\": \"active\",\r\n  \"caseSensitive\": false,\r\n  \"content\": \"complete\",\r\n  \"text\": {\r\n    \"status\": \"generated\",\r\n    \"div\": \"<div xmlns=\\\"http://www.w3.org/1999/xhtml\\\"><p>NreqLikert3 – 3-point Likert with ordinal scoring</p></div>\"\r\n  },\r\n  \"property\": [\r\n    { \"code\": \"ordinalValue\", \"description\": \"0–100 score\", \"type\": \"decimal\" }\r\n  ],\r\n  \"concept\": [\r\n    {\r\n      \"code\": \"agree\",\r\n      \"display\": \"Mostly agree\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 100 } ]\r\n    },\r\n    {\r\n      \"code\": \"neutral\",\r\n      \"display\": \"Not sure\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 50 } ]\r\n    },\r\n    {\r\n      \"code\": \"disagree\",\r\n      \"display\": \"Mostly disagree\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 0 } ]\r\n    }\r\n  ]\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/fhir/CodeSystem/$validate",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"fhir",
-						"CodeSystem",
-						"$validate"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "GAD-7 - Validate Questionnaire",
 			"id": "26557699-b596902d-7ea1-456c-862d-30ea4d87a815",
 			"protocolProfileBehavior": {
@@ -336,6 +299,43 @@
 					]
 				},
 				"description": "Generated from cURL: curl -sS -X POST http://localhost:8080/fhir/Questionnaire \\\n  -H \"Content-Type: application/fhir+json\" -d '{\n    \"resourceType\":\"Questionnaire\",\n    \"url\":\"urn:uuid:prem-v1\",\n    \"status\":\"active\",\n    \"title\":\"PREM v1\",\n    \"item\":[\n      {\"linkId\":\"q1\",\"text\":\"Respectful treatment?\",\"type\":\"boolean\"},\n      {\"linkId\":\"q2\",\"text\":\"Rate cleanliness\",\"type\":\"choice\",\n       \"answerOption\":[\n        {\"valueCoding\":{\"code\":\"1\",\"display\":\"Very poor\"}},\n        {\"valueCoding\":{\"code\":\"2\",\"display\":\"Poor\"}},\n        {\"valueCoding\":{\"code\":\"3\",\"display\":\"OK\"}},\n        {\"valueCoding\":{\"code\":\"4\",\"display\":\"Good\"}},\n        {\"valueCoding\":{\"code\":\"5\",\"display\":\"Excellent\"}}\n       ]},\n      {\"linkId\":\"q3\",\"text\":\"What could we improve?\",\"type\":\"text\"}\n    ]\n  }'\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Create CodeSystem NREQ-Lickert-3",
+			"id": "26557699-182b17d9-d043-4a2f-b41a-060ddbf7c6e7",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"resourceType\": \"CodeSystem\",\r\n  \"url\": \"http://example.org/fhir/CodeSystem/nreq-likert-3\",\r\n  \"version\": \"1.0\",\r\n  \"name\": \"NreqLikert3\",\r\n  \"status\": \"active\",\r\n  \"caseSensitive\": false,\r\n  \"content\": \"complete\",\r\n  \"text\": {\r\n    \"status\": \"generated\",\r\n    \"div\": \"<div xmlns=\\\"http://www.w3.org/1999/xhtml\\\"><p>NreqLikert3 – 3-point Likert with ordinal scoring</p></div>\"\r\n  },\r\n  \"property\": [\r\n    { \"code\": \"ordinalValue\", \"description\": \"0–100 score\", \"type\": \"decimal\" }\r\n  ],\r\n  \"concept\": [\r\n    {\r\n      \"code\": \"agree\",\r\n      \"display\": \"Mostly agree\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 100 } ]\r\n    },\r\n    {\r\n      \"code\": \"neutral\",\r\n      \"display\": \"Not sure\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 50 } ]\r\n    },\r\n    {\r\n      \"code\": \"disagree\",\r\n      \"display\": \"Mostly disagree\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 0 } ]\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/fhir/CodeSystem/$validate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fhir",
+						"CodeSystem",
+						"$validate"
+					]
+				}
 			},
 			"response": []
 		},
