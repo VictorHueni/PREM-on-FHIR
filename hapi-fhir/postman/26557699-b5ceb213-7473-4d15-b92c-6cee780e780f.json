@@ -84,7 +84,7 @@
 					"response": []
 				},
 				{
-					"name": "NREQ - Create CodeSystem NREQ Items",
+					"name": "Create CodeSystem NREQ Items",
 					"id": "26557699-bfb038ad-7328-4375-8383-249a76bf0ae9",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
