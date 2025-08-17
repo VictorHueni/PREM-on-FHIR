@@ -6,6 +6,11 @@
 	},
 	"item": [
 		{
+			"name": "New Folder",
+			"item": [],
+			"id": "26557699-6227bcca-35da-414a-b35e-717122fdec67"
+		},
+		{
 			"name": "Create CodeSystem PaRIS PREM Domain",
 			"id": "26557699-36e646aa-d354-4662-9994-680b77f4870e",
 			"protocolProfileBehavior": {
