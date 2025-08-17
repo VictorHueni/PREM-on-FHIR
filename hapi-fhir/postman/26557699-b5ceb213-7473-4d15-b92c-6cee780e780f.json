@@ -78,8 +78,17 @@
 				},
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"resourceType\": \"CodeSystem\",\r\n  \"url\": \"http://example.org/fhir/CodeSystem/nreq-likert-3\",\r\n  \"version\": \"1.0\",\r\n  \"name\": \"NreqLikert3\",\r\n  \"status\": \"active\",\r\n  \"content\": \"complete\",\r\n  \"caseSensitive\": false,\r\n  \"concept\": [\r\n    {\r\n      \"code\": \"agree\",\r\n      \"display\": \"Mostly agree\",\r\n      \"extension\": [\r\n        { \"url\": \"http://example.org/fhir/StructureDefinition/ordinalValue\", \"valueDecimal\": 100 }\r\n      ]\r\n    },\r\n    {\r\n      \"code\": \"neutral\",\r\n      \"display\": \"Not sure\",\r\n      \"extension\": [\r\n        { \"url\": \"http://example.org/fhir/StructureDefinition/ordinalValue\", \"valueDecimal\": 50 }\r\n      ]\r\n    },\r\n    {\r\n      \"code\": \"disagree\",\r\n      \"display\": \"Mostly disagree\",\r\n      \"extension\": [\r\n        { \"url\": \"http://example.org/fhir/StructureDefinition/ordinalValue\", \"valueDecimal\": 0 }\r\n      ]\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/fhir/CodeSystem",
+					"raw": "http://localhost:8080/fhir/CodeSystem/$validate",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -87,7 +96,8 @@
 					"port": "8080",
 					"path": [
 						"fhir",
-						"CodeSystem"
+						"CodeSystem",
+						"$validate"
 					]
 				}
 			},
