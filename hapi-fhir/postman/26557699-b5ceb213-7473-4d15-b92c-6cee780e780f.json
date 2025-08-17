@@ -339,6 +339,42 @@
 			"response": []
 		},
 		{
+			"name": "Create CodeSystem NREQ-Lickert-3 Copy",
+			"id": "26557699-36e646aa-d354-4662-9994-680b77f4870e",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"resourceType\": \"CodeSystem\",\r\n  \"url\": \"http://example.org/fhir/CodeSystem/nreq-likert-3\",\r\n  \"version\": \"1.0\",\r\n  \"name\": \"NreqLikert3\",\r\n  \"status\": \"active\",\r\n  \"caseSensitive\": false,\r\n  \"content\": \"complete\",\r\n  \"text\": {\r\n    \"status\": \"generated\",\r\n    \"div\": \"<div xmlns=\\\"http://www.w3.org/1999/xhtml\\\"><p>Nreq Likert 3 – 3-point Likert with ordinal scoring</p></div>\"\r\n  },\r\n  \"property\": [\r\n    { \"code\": \"ordinalValue\", \"description\": \"0–100 score\", \"type\": \"decimal\" }\r\n  ],\r\n  \"concept\": [\r\n    {\r\n      \"code\": \"agree\",\r\n      \"display\": \"Mostly agree\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 100 } ]\r\n    },\r\n    {\r\n      \"code\": \"neutral\",\r\n      \"display\": \"Not sure\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 50 } ]\r\n    },\r\n    {\r\n      \"code\": \"disagree\",\r\n      \"display\": \"Mostly disagree\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 0 } ]\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/fhir/CodeSystem",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fhir",
+						"CodeSystem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create ValueSet NREQ-Lickert-3",
 			"id": "26557699-ce28fe76-74fd-40a0-a716-e80a910b6264",
 			"protocolProfileBehavior": {
