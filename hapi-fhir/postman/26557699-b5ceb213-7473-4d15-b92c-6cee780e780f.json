@@ -6,6 +6,42 @@
 	},
 	"item": [
 		{
+			"name": "Create CodeSystem PaRIS PREM Domain",
+			"id": "26557699-36e646aa-d354-4662-9994-680b77f4870e",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"resourceType\": \"CodeSystem\",\r\n  \"url\": \"http://example.org/fhir/CodeSystem/prem-paris-domain\",\r\n  \"version\": \"1.0\",\r\n  \"name\": \"PremParisDomain\",\r\n  \"title\": \"PaRIS PREM Domains (Experience of Care)\",\r\n  \"status\": \"active\",\r\n  \"content\": \"complete\",\r\n  \"caseSensitive\": false,\r\n  \"text\": {\r\n    \"status\": \"generated\",\r\n    \"div\": \"<div xmlns=\\\"http://www.w3.org/1999/xhtml\\\"><p>PaRIS PREM experience-of-care domains</p></div>\"\r\n  },\r\n  \"concept\": [\r\n    { \"code\": \"access\", \"display\": \"Access\", \"definition\": \"Getting care when needed, affordability, convenience.\" },\r\n    { \"code\": \"comprehensiveness\", \"display\": \"Comprehensiveness\", \"definition\": \"Breadth of services addressing a person’s range of needs.\" },\r\n    { \"code\": \"continuity\", \"display\": \"Continuity\", \"definition\": \"Ongoing relationships and information continuity over time.\" },\r\n    { \"code\": \"coordination\", \"display\": \"Coordination\", \"definition\": \"How well services and providers work together across settings.\" },\r\n    { \"code\": \"patient-safety\", \"display\": \"Patient Safety\", \"definition\": \"Perceived safety of care processes and environment.\" },\r\n    { \"code\": \"person-centredness\", \"display\": \"Person-centredness\", \"definition\": \"Respect, involvement in decisions, responsiveness to preferences.\" },\r\n    { \"code\": \"self-management-support\", \"display\": \"Self-management Support\", \"definition\": \"Support to manage conditions, set goals, build capability.\" },\r\n    { \"code\": \"trust\", \"display\": \"Trust\", \"definition\": \"Confidence in professionals and the organisation.\" },\r\n    { \"code\": \"overall-perceived-quality\", \"display\": \"Overall Perceived Quality of Care\", \"definition\": \"Global judgement of care quality.\" }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/fhir/CodeSystem",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fhir",
+						"CodeSystem"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Create a Patient",
 			"event": [
 				{
@@ -317,42 +353,6 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n  \"resourceType\": \"CodeSystem\",\r\n  \"url\": \"http://example.org/fhir/CodeSystem/nreq-likert-3\",\r\n  \"version\": \"1.0\",\r\n  \"name\": \"NreqLikert3\",\r\n  \"status\": \"active\",\r\n  \"caseSensitive\": false,\r\n  \"content\": \"complete\",\r\n  \"text\": {\r\n    \"status\": \"generated\",\r\n    \"div\": \"<div xmlns=\\\"http://www.w3.org/1999/xhtml\\\"><p>Nreq Likert 3 – 3-point Likert with ordinal scoring</p></div>\"\r\n  },\r\n  \"property\": [\r\n    { \"code\": \"ordinalValue\", \"description\": \"0–100 score\", \"type\": \"decimal\" }\r\n  ],\r\n  \"concept\": [\r\n    {\r\n      \"code\": \"agree\",\r\n      \"display\": \"Mostly agree\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 100 } ]\r\n    },\r\n    {\r\n      \"code\": \"neutral\",\r\n      \"display\": \"Not sure\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 50 } ]\r\n    },\r\n    {\r\n      \"code\": \"disagree\",\r\n      \"display\": \"Mostly disagree\",\r\n      \"property\": [ { \"code\": \"ordinalValue\", \"valueDecimal\": 0 } ]\r\n    }\r\n  ]\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:8080/fhir/CodeSystem",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"fhir",
-						"CodeSystem"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create CodeSystem PaRIS PREM Domain",
-			"id": "26557699-36e646aa-d354-4662-9994-680b77f4870e",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"resourceType\": \"CodeSystem\",\r\n  \"url\": \"http://example.org/fhir/CodeSystem/prem-paris-domain\",\r\n  \"version\": \"1.0\",\r\n  \"name\": \"PremParisDomain\",\r\n  \"title\": \"PaRIS PREM Domains (Experience of Care)\",\r\n  \"status\": \"active\",\r\n  \"content\": \"complete\",\r\n  \"caseSensitive\": false,\r\n  \"text\": {\r\n    \"status\": \"generated\",\r\n    \"div\": \"<div xmlns=\\\"http://www.w3.org/1999/xhtml\\\"><p>PaRIS PREM experience-of-care domains</p></div>\"\r\n  },\r\n  \"concept\": [\r\n    { \"code\": \"access\", \"display\": \"Access\", \"definition\": \"Getting care when needed, affordability, convenience.\" },\r\n    { \"code\": \"comprehensiveness\", \"display\": \"Comprehensiveness\", \"definition\": \"Breadth of services addressing a person’s range of needs.\" },\r\n    { \"code\": \"continuity\", \"display\": \"Continuity\", \"definition\": \"Ongoing relationships and information continuity over time.\" },\r\n    { \"code\": \"coordination\", \"display\": \"Coordination\", \"definition\": \"How well services and providers work together across settings.\" },\r\n    { \"code\": \"patient-safety\", \"display\": \"Patient Safety\", \"definition\": \"Perceived safety of care processes and environment.\" },\r\n    { \"code\": \"person-centredness\", \"display\": \"Person-centredness\", \"definition\": \"Respect, involvement in decisions, responsiveness to preferences.\" },\r\n    { \"code\": \"self-management-support\", \"display\": \"Self-management Support\", \"definition\": \"Support to manage conditions, set goals, build capability.\" },\r\n    { \"code\": \"trust\", \"display\": \"Trust\", \"definition\": \"Confidence in professionals and the organisation.\" },\r\n    { \"code\": \"overall-perceived-quality\", \"display\": \"Overall Perceived Quality of Care\", \"definition\": \"Global judgement of care quality.\" }\r\n  ]\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
