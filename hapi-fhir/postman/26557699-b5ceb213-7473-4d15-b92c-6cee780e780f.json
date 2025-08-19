@@ -207,7 +207,20 @@
 		},
 		{
 			"name": "QuestionnaireResponse",
-			"item": [],
+			"item": [
+				{
+					"name": "New Request",
+					"id": "26557699-121ff2af-f373-45e7-979d-00cdf4e3fc71",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			],
 			"id": "26557699-12a7ca26-577a-4714-9b85-a585003420fe"
 		},
 		{
