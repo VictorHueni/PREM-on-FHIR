@@ -209,6 +209,44 @@
 			"name": "QuestionnaireResponse",
 			"item": [
 				{
+					"name": "BASE/Bundle/$validate?mode=create",
+					"id": "26557699-5a57f9e8-2b89-49cc-af11-f9e7eca28eb6",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/fhir+json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/fhir+json"
+							}
+						],
+						"url": {
+							"raw": "BASE/Bundle/$validate?mode=create",
+							"host": [
+								"BASE"
+							],
+							"path": [
+								"Bundle",
+								"$validate"
+							],
+							"query": [
+								{
+									"key": "mode",
+									"value": "create"
+								}
+							]
+						},
+						"description": "Generated from cURL: curl -sS -X POST \"$BASE/Bundle/\\$validate?mode=create\" \\\r\n  -H \"Content-Type: application/fhir+json\" \\\r\n  -H \"Accept: application/fhir+json\""
+					},
+					"response": []
+				},
+				{
 					"name": "New Request",
 					"id": "26557699-121ff2af-f373-45e7-979d-00cdf4e3fc71",
 					"protocolProfileBehavior": {
