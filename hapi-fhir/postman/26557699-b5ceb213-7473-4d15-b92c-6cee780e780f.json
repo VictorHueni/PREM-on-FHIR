@@ -227,9 +227,9 @@
 							}
 						],
 						"url": {
-							"raw": "BASE/Bundle/$validate?mode=create",
+							"raw": "{{basePath}}/Bundle/$validate?mode=create",
 							"host": [
-								"BASE"
+								"{{basePath}}"
 							],
 							"path": [
 								"Bundle",
