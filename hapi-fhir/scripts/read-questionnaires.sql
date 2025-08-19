@@ -1,3 +1,72 @@
+-- Select Questionnaire header
+WITH enc AS (
+  SELECT e.res_id,
+         COALESCE(fi.forced_id, e.res_id::text) AS enc_id
+  FROM   hfj_resource e
+  LEFT JOIN hfj_forced_id fi ON fi.resource_pid = e.res_id
+  WHERE  e.res_type = 'Encounter' AND e.res_deleted_at IS NULL
+),
+enc_patient AS (
+  -- Encounter.subject -> Patient
+  SELECT l.src_resource_id AS enc_res_id, l.target_resource_id AS pat_res_id
+  FROM   hfj_res_link l
+  JOIN   hfj_resource r ON r.res_id = l.src_resource_id
+  WHERE  r.res_type = 'Encounter'
+    AND  l.target_resource_type = 'Patient'
+    AND  l.src_path IN ('Encounter.subject','Encounter.patient')
+),
+pat AS (
+  SELECT p.res_id,
+         COALESCE(fp.forced_id, p.res_id::text) AS pat_id
+  FROM   hfj_resource p
+  LEFT JOIN hfj_forced_id fp ON fp.resource_pid = p.res_id
+  WHERE  p.res_type = 'Patient' AND p.res_deleted_at IS NULL
+),
+enc_prac_one AS (
+  -- choose one practitioner per encounter (deterministic)
+  SELECT DISTINCT ON (l.src_resource_id)
+         l.src_resource_id AS enc_res_id,
+         l.target_resource_id AS prac_res_id
+  FROM   hfj_res_link l
+  JOIN   hfj_resource r ON r.res_id = l.src_resource_id
+  WHERE  r.res_type = 'Encounter'
+    AND  l.target_resource_type = 'Practitioner'
+    AND  l.src_path = 'Encounter.participant.individual'
+  ORDER BY l.src_resource_id, l.target_resource_id
+),
+prac AS (
+  SELECT pr.res_id,
+         COALESCE(fpr.forced_id, pr.res_id::text) AS prac_id
+  FROM   hfj_resource pr
+  LEFT JOIN hfj_forced_id fpr ON fpr.resource_pid = pr.res_id
+  WHERE  pr.res_type = 'Practitioner' AND pr.res_deleted_at IS NULL
+),
+enc_date AS (
+  SELECT d.res_id AS enc_res_id,
+         d.sp_value_high AS period_end,
+         d.sp_value_low  AS period_start
+  FROM   hfj_spidx_date d
+  JOIN   hfj_resource r ON r.res_id = d.res_id
+  WHERE  r.res_type = 'Encounter' AND d.sp_name = 'date'
+)
+SELECT
+  'Patient/'   || pat.pat_id AS patientId,
+  'Encounter/' || enc.enc_id AS encounterId,
+  CASE WHEN prac.prac_id IS NOT NULL
+       THEN 'Practitioner/' || prac.prac_id
+       ELSE NULL END        AS practitionerId,
+  COALESCE(enc_date.period_end, enc_date.period_start, NOW()) AS authored,
+  'Patient/' || pat.pat_id  AS src
+FROM enc
+JOIN enc_patient ON enc.res_id = enc_patient.enc_res_id
+JOIN pat         ON pat.res_id = enc_patient.pat_res_id
+LEFT JOIN enc_prac_one ep ON enc.res_id = ep.enc_res_id
+LEFT JOIN prac          ON prac.res_id = ep.prac_res_id
+LEFT JOIN enc_date      ON enc.res_id = enc_date.enc_res_id
+ORDER BY patientId, encounterId;
+
+
+
 -- Dimension: NREQ Likert scale codes
 -- Dimension: Likert scale codes
 WITH cs AS (
@@ -80,3 +149,46 @@ GROUP BY
   link_id, questionnaire_text, item_type, answer_valueset, vs.codesystem_url
 ORDER BY
   (regexp_replace(link_id, '\D','','g'))::int
+
+
+
+-- FACT : Get QuestionnaireResponse Fact
+WITH qr AS (
+  SELECT
+    r.res_id,
+    r.fhir_id,
+    rv.res_text_vc::jsonb AS res
+  FROM hfj_resource r
+  JOIN hfj_res_ver rv ON rv.res_id = r.res_id
+  WHERE r.res_type = 'QuestionnaireResponse'
+    AND r.res_deleted_at IS NULL
+),
+cs AS (
+  SELECT
+    c->>'code' AS code,
+    c->>'display' AS display,
+    (p->>'valueDecimal')::numeric AS ordinal_value
+  FROM hfj_resource r
+  JOIN hfj_res_ver rv ON rv.res_id = r.res_id
+  CROSS JOIN LATERAL jsonb_array_elements(rv.res_text_vc::jsonb->'concept') AS c
+  CROSS JOIN LATERAL jsonb_array_elements(c->'property') AS p
+  WHERE r.res_type = 'CodeSystem'
+    AND rv.res_text_vc::jsonb->>'url' = 'http://example.org/fhir/CodeSystem/nreq-likert-3'
+    AND p->>'code' = 'ordinalValue'
+)
+SELECT
+  r.fhir_id                     AS response_id,       -- Fact PK
+  res->>'authored'              AS authored_date,     -- Time dimension
+  res#>>'{subject,reference}'   AS patient_ref,       -- Patient key
+  res#>>'{encounter,reference}' AS encounter_ref,     -- Encounter key
+  res#>>'{author,reference}'    AS clinician_ref,     -- Practitioner key
+  res->>'questionnaire'         AS questionnaire_ref, -- Questionnaire key
+  item->>'linkId'               AS question_id,       -- Question key
+  vc->>'code'                   AS answer_code,       -- Fact measure (code)
+  cs.display                    AS answer_display,    -- Human-readable label
+  cs.ordinal_value              AS ordinal_value      -- Numeric measure
+FROM qr r
+CROSS JOIN LATERAL jsonb_array_elements(res->'item') AS item
+CROSS JOIN LATERAL jsonb_array_elements(item->'answer') AS a
+CROSS JOIN LATERAL (SELECT a->'valueCoding') AS vc(vc)
+LEFT JOIN cs ON cs.code = vc->>'code';

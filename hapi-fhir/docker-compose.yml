@@ -35,7 +35,7 @@ services:
 
   hapi-fhir-server:
     image: hapiproject/hapi:v8.2.0-2-tomcat
-    container_name: pof-hapi-fhir-server
+    container_name: pof-hapi-fhir-server     
     restart: always
     depends_on:
       db:
@@ -46,6 +46,8 @@ services:
       - ./hapi.application.yaml:/app/config/application.yaml:ro
       
     environment:
+      JAVA_TOOL_OPTIONS: "-Xms2g -Xmx4g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+      
       # Tell Spring to load extra config from /app/config/
       SPRING_CONFIG_ADDITIONAL_LOCATION: file:/app/config/
 
