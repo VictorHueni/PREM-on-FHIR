@@ -1,0 +1,104 @@
+
+name: prem-on-fhir
+
+services:
+  # ---- Core: HAPI + source Postgres + pgAdmin ----
+  db:
+    image: postgres:16
+    container_name: pof-db
+    restart: always
+    profiles: ["core","all"]
+    environment:
+      POSTGRES_DB: prem_on_fhir
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports: ["5432:5432"]
+    volumes: [ "pof-pgdata:/var/lib/postgresql/data" ]
+    shm_size: "1g"
+    mem_limit: "5g"
+    mem_reservation: "3g"
+    cpus: "3.0"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d prem_on_fhir"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  hapi-fhir-server:
+    image: hapiproject/hapi:v8.2.0-2-tomcat
+    container_name: pof-hapi-fhir-server
+    restart: always
+    profiles: ["core","all"]
+    depends_on:
+      db: { condition: service_healthy }
+    ports: ["8080:8080"]
+    volumes:
+      - ./hapi-fhir/hapi.application.yaml:/app/config/application.yaml:ro
+    mem_limit: "6g"
+    mem_reservation: "4g"
+    cpus: "3.0"
+    ulimits:
+      nofile: 65536
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xms4g -Xmx6g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled -XX:+AlwaysPreTouch"
+      SPRING_CONFIG_ADDITIONAL_LOCATION: file:/app/config/
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/prem_on_fhir
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
+      SERVER_TOMCAT_MAX_SWALLOW_SIZE: -1
+      SERVER_TOMCAT_MAX_HTTP_FORM_POST_SIZE: -1
+
+  # ---- Analytics Postgres ----
+  analytics-db:
+    build:
+      context: ./analytics-db
+    image: analytics-postgres:16
+    container_name: pof-analytics-db
+    restart: always
+    profiles: ["analytics","all"]
+    environment:
+      POSTGRES_DB: analytics
+      POSTGRES_USER: analytics_admin
+      POSTGRES_PASSWORD: analytics_admin
+    # no host port needed; expose only if you want host access:
+    ports: ["5442:5432"]   # optional; remove if using only internal network
+    command: ["postgres","-c","config_file=/etc/postgresql/postgresql.analytics.conf"]
+    volumes:
+      - analytics-pgdata:/var/lib/postgresql/data
+    shm_size: "512m"
+    mem_limit: "3g"
+    mem_reservation: "1g"
+    cpus: "2.0"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U analytics_admin -d analytics"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: pof-pgadmin
+    restart: always
+    profiles: ["all"] 
+    depends_on:
+      db: { condition: service_healthy }
+      analytics-db: { condition: service_healthy }
+    ports: ["5050:80"]
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    volumes:
+      - pof-pgadmin:/var/lib/pgadmin
+      - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+    mem_limit: "768m"
+    cpus: "0.5"
+
+  # ---- ELT/BI (add when ready) ----
+  # airbyte, dbt-runner, metabase, etc. can go here under "etl" or "bi" profiles.
+
+volumes:
+  pof-pgdata:
+  pof-pgadmin:
+  analytics-pgdata:
