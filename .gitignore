@@ -1,3 +1,5 @@
 volumes/
 output/
 node_modules/
+.env
+/.venv

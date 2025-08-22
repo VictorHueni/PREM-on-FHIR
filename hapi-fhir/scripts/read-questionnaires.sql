@@ -152,7 +152,10 @@ ORDER BY
 
 
 
--- FACT : Get QuestionnaireResponse Fact
+
+
+-- FACT: QuestionnaireResponse Answers (generic for coding + string)
+
 WITH qr AS (
   SELECT
     r.res_id,
@@ -162,33 +165,99 @@ WITH qr AS (
   JOIN hfj_res_ver rv ON rv.res_id = r.res_id
   WHERE r.res_type = 'QuestionnaireResponse'
     AND r.res_deleted_at IS NULL
+    AND rv.res_ver = r.res_ver
+    -- Optional: restrict to one questionnaire (e.g., PPNQ)
+    -- AND rv.res_text_vc::jsonb->>'questionnaire' = 'http://example.org/fhir/Questionnaire/NeuroRehabPREM'
 ),
+
+-- CodeSystem lookup (system + code -> display, ordinal_value)
 cs AS (
   SELECT
-    c->>'code' AS code,
-    c->>'display' AS display,
-    (p->>'valueDecimal')::numeric AS ordinal_value
+    rv.res_text_vc::jsonb->>'url'  AS system,
+    c->>'code'                     AS code,
+    c->>'display'                  AS display,
+    COALESCE(prop.ord, ext.ord)    AS ordinal_value
   FROM hfj_resource r
   JOIN hfj_res_ver rv ON rv.res_id = r.res_id
   CROSS JOIN LATERAL jsonb_array_elements(rv.res_text_vc::jsonb->'concept') AS c
-  CROSS JOIN LATERAL jsonb_array_elements(c->'property') AS p
+  -- property-based ordinal (concept.property[] with code="ordinalValue")
+  LEFT JOIN LATERAL (
+    SELECT (p->>'valueDecimal')::numeric AS ord
+    FROM jsonb_array_elements(COALESCE(c->'property','[]'::jsonb)) AS p
+    WHERE p->>'code' = 'ordinalValue'
+    LIMIT 1
+  ) prop ON TRUE
+  -- extension-based ordinal (concept.extension[] with url=".../ordinalValue")
+  LEFT JOIN LATERAL (
+    SELECT (e->>'valueDecimal')::numeric AS ord
+    FROM jsonb_array_elements(COALESCE(c->'extension','[]'::jsonb)) AS e
+    WHERE e->>'url' = 'http://hl7.org/fhir/StructureDefinition/ordinalValue'
+    LIMIT 1
+  ) ext ON TRUE
   WHERE r.res_type = 'CodeSystem'
-    AND rv.res_text_vc::jsonb->>'url' = 'http://example.org/fhir/CodeSystem/nreq-likert-3'
-    AND p->>'code' = 'ordinalValue'
+    AND rv.res_ver = r.res_ver
+),
+
+-- Unnest QR items and answers (long grain: one row per answer occurrence)
+qa AS (
+  SELECT
+    r.fhir_id                                  AS response_id,
+    (res->>'authored')::timestamptz            AS authored_ts,
+    res#>>'{subject,reference}'                AS patient_ref,
+    res#>>'{encounter,reference}'              AS encounter_ref,
+    res#>>'{author,reference}'                 AS clinician_ref,
+    res->>'questionnaire'                      AS questionnaire_ref,
+    item->>'linkId'                            AS question_id,
+    a                                          AS answer_json
+  FROM qr r
+  CROSS JOIN LATERAL jsonb_array_elements(res->'item')          AS item
+  CROSS JOIN LATERAL jsonb_array_elements(item->'answer')       AS a
 )
+
 SELECT
-  r.fhir_id                     AS response_id,       -- Fact PK
-  res->>'authored'              AS authored_date,     -- Time dimension
-  res#>>'{subject,reference}'   AS patient_ref,       -- Patient key
-  res#>>'{encounter,reference}' AS encounter_ref,     -- Encounter key
-  res#>>'{author,reference}'    AS clinician_ref,     -- Practitioner key
-  res->>'questionnaire'         AS questionnaire_ref, -- Questionnaire key
-  item->>'linkId'               AS question_id,       -- Question key
-  vc->>'code'                   AS answer_code,       -- Fact measure (code)
-  cs.display                    AS answer_display,    -- Human-readable label
-  cs.ordinal_value              AS ordinal_value      -- Numeric measure
-FROM qr r
-CROSS JOIN LATERAL jsonb_array_elements(res->'item') AS item
-CROSS JOIN LATERAL jsonb_array_elements(item->'answer') AS a
-CROSS JOIN LATERAL (SELECT a->'valueCoding') AS vc(vc)
-LEFT JOIN cs ON cs.code = vc->>'code';
+  -- Keys / context
+  response_id,
+  authored_ts,
+  patient_ref,
+  encounter_ref,
+  clinician_ref,
+  questionnaire_ref,
+  question_id,
+
+  -- Coding fields (for Likert/NPS/etc.)
+  (answer_json->'valueCoding'->>'system')                AS answer_system,
+  (answer_json->'valueCoding'->>'code')                  AS answer_code,
+  COALESCE(
+    (answer_json->'valueCoding'->>'display'),
+    cs.display
+  )                                                      AS answer_display,
+  cs.ordinal_value                                       AS ordinal_value,
+
+  -- Free-text (PPNQ q1..q8 + q9-text)
+  (answer_json->>'valueString')                          AS answer_text,
+
+  -- What type of answer did we get?
+  CASE
+    WHEN answer_json ? 'valueCoding'  THEN 'coding'
+    WHEN answer_json ? 'valueString'  THEN 'string'
+    WHEN answer_json ? 'valueInteger' THEN 'integer'
+    WHEN answer_json ? 'valueDecimal' THEN 'decimal'
+    WHEN answer_json ? 'valueBoolean' THEN 'boolean'
+    WHEN answer_json ? 'valueDate'    THEN 'date'
+    WHEN answer_json ? 'valueTime'    THEN 'time'
+    ELSE 'other'
+  END                                                    AS answer_kind,
+
+  -- Generic numeric measure (prefers ordinal; falls back to numeric primitives)
+  CASE
+    WHEN cs.ordinal_value IS NOT NULL THEN cs.ordinal_value
+    WHEN answer_json ? 'valueInteger' THEN (answer_json->>'valueInteger')::numeric
+    WHEN answer_json ? 'valueDecimal' THEN (answer_json->>'valueDecimal')::numeric
+    WHEN answer_json ? 'valueBoolean' THEN CASE (answer_json->>'valueBoolean') WHEN 'true' THEN 1 ELSE 0 END
+    ELSE NULL
+  END AS numeric_value
+
+FROM qa
+LEFT JOIN cs
+  ON cs.system = (answer_json->'valueCoding'->>'system')
+ AND cs.code   = (answer_json->'valueCoding'->>'code');
