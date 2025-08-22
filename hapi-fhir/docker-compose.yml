@@ -10,7 +10,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./volumes/postgres:/var/lib/postgresql/data
+      - pof-pgdata:/var/lib/postgresql/data
+    shm_size: "1g"                 # more shared memory for PG
+    mem_limit: "5g"                # keep PG below ~5 Gi
+    mem_reservation: "3g"
+    cpus: "3.0"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U admin -d prem_on_fhir"]
       interval: 10s
@@ -30,8 +34,10 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin123
     volumes:
-      - ./volumes/pgadmin:/var/lib/pgadmin
+      - pof-pgadmin:/var/lib/pgadmin 
       - ./servers.json:/pgadmin4/servers.json:ro
+    mem_limit: "768m"
+    cpus: "0.5"
 
   hapi-fhir-server:
     image: hapiproject/hapi:v8.2.0-2-tomcat
@@ -44,9 +50,17 @@ services:
       - "8080:8080"
     volumes:
       - ./hapi.application.yaml:/app/config/application.yaml:ro
+    
+    # Give JVM headroom above -Xmx for off-heap/native/GC
+    mem_limit: "6g"
+    mem_reservation: "4g"
+    cpus: "3.0"
+    ulimits:
+      nofile: 65536
       
     environment:
-      JAVA_TOOL_OPTIONS: "-Xms2g -Xmx4g -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+      # Heap sized for 16-GB host; matches container limit with headroom
+      JAVA_TOOL_OPTIONS: "-Xms4g -Xmx6g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+ParallelRefProcEnabled -XX:+AlwaysPreTouch"
       
       # Tell Spring to load extra config from /app/config/
       SPRING_CONFIG_ADDITIONAL_LOCATION: file:/app/config/
@@ -57,3 +71,11 @@ services:
       SPRING_DATASOURCE_PASSWORD: admin
       SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
+
+      # Lift Tomcat body limits for very large Bundles
+      SERVER_TOMCAT_MAX_SWALLOW_SIZE: -1
+      SERVER_TOMCAT_MAX_HTTP_FORM_POST_SIZE: -1
+
+volumes:
+  pof-pgdata:
+  pof-pgadmin:

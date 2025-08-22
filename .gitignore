@@ -1,5 +1,19 @@
+# Config
 volumes/
-output/
-node_modules/
 .env
-/.venv
+
+# React Dashboard
+node_modules/
+
+# Data
+data-generation/questionnaire_responses/input/
+output/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+/venv/

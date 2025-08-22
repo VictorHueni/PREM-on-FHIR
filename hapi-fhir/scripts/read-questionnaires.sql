@@ -151,7 +151,8 @@ ORDER BY
   (regexp_replace(link_id, '\D','','g'))::int
 
 
-
+-- Control resource
+SELECT res_type, count(res_id) FROM hfj_resource GROUP BY res_type ORDER BY res_type;
 
 
 -- FACT: QuestionnaireResponse Answers (generic for coding + string)
