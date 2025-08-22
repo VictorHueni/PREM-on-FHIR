@@ -1,0 +1,21 @@
+{
+  "resourceType": "ValueSet",
+  "url": "http://example.org/fhir/ValueSet/nreq-likert-3",
+  "version": "1.0",
+  "name": "NreqLikert3ValueSet",
+  "status": "active",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>NREQ Likert 3 answers</p></div>"
+  },
+  "compose": {
+    "include": [{
+      "system": "http://example.org/fhir/CodeSystem/nreq-likert-3",
+      "concept": [
+        { "code": "agree" },
+        { "code": "neutral" },
+        { "code": "disagree" }
+      ]
+    }]
+  }
+}

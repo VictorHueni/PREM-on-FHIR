@@ -1,0 +1,351 @@
+{
+  "resourceType": "Questionnaire",
+  "url": "http://example.org/fhir/Questionnaire/NREQ",
+  "version": "1.0",
+  "identifier": [
+    {
+      "system": "http://example.org/nreq",
+      "value": "NREQ-17-v1"
+    }
+  ],
+  "name": "NREQ",
+  "title": "Neurorehabilitation Experience Questionnaire (NREQ)",
+  "status": "active",
+  "date": "2025-08-16",
+  "publisher": "University of Surrey / Surrey Community Health",
+  "description": "Validated 17-item Neurorehabilitation Experience Questionnaire (NREQ) assessing patient-reported experience of inpatient neurorehabilitation.",
+  "purpose": "To capture patient experience of neurorehabilitation care in inpatient settings.",
+  "copyright": "© University of Surrey, 2010. Developed as part of neurorehabilitation research and validation studies.",
+  "approvalDate": "2010-01-01",
+  "effectivePeriod": {
+    "start": "2025-08-16"
+  },
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns='http://www.w3.org/1999/xhtml'><p><b>NREQ Questionnaire</b> – Neurorehabilitation Experience Questionnaire</p></div>"
+  },
+  "subjectType": [
+    "Patient"
+  ],
+  "useContext": [
+    {
+      "code": {
+        "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+        "code": "focus"
+      },
+      "valueCodeableConcept": {
+        "text": "Inpatient Neurorehabilitation"
+      }
+    }
+  ],
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/Questionnaire"
+    ],
+    "tag": [
+      {
+        "system": "http://example.org/fhir/tags",
+        "code": "prem",
+        "display": "PREM"
+      }
+    ]
+  },
+  "code": [
+    {
+      "system": "http://example.org/fhir/codesystem/prem",
+      "code": "NREQ-17",
+      "display": "Neurorehabilitation Experience Questionnaire (17-item)"
+    }
+  ],
+  "item": [
+    {
+      "linkId": "nreq-q1",
+      "text": "When I arrived I was given information about the unit and what would happen during my stay",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q01"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "access"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q2",
+      "text": "The facilities on the unit were good (e.g., washing facilities, toilets)",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q02"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "comprehensiveness"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q3",
+      "text": "There was somewhere secure to keep my belongings",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q03"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "patient-safety"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q4",
+      "text": "I was able to discuss personal matters in private",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q04"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "patient-safety"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q5",
+      "text": "There were enough things to do in my free time (e.g., watch TV, join a group)",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q05"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "comprehensiveness"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q6",
+      "text": "There was a friendly atmosphere on the unit",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q06"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "person-centredness"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q7",
+      "text": "I felt the staff really cared about me",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q07"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "trust"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q8",
+      "text": "The staff worked well as a team",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q08"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "coordination"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q9",
+      "text": "I felt able to talk to the staff about any problems I had",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q09"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "person-centredness"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q10",
+      "text": "I was asked what I wanted to achieve during my stay",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q10"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "person-centredness"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q11",
+      "text": "I felt as though the staff and I were partners in the whole process of care",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q11"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "person-centredness"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q12",
+      "text": "The staff kept me informed every step of the way",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q12"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "continuity"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q13",
+      "text": "My family or carer was involved in discussions about my treatment if I wanted them to be",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q13"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "coordination"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q14",
+      "text": "I am happy with the amount of therapy or treatment I received for...",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q14"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "comprehensiveness"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q15",
+      "text": "I received enough emotional support",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q15"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "self-management-support"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q16",
+      "text": "I am feeling well supported and prepared for my discharge",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q16"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "continuity"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    },
+    {
+      "linkId": "nreq-q17",
+      "text": "I am satisfied with the progress I have made during my stay",
+      "type": "choice",
+      "required": true,
+      "code": [
+        {
+          "system": "http://example.org/fhir/CodeSystem/nreq-items",
+          "code": "NREQ-Q17"
+        },
+        {
+          "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+          "code": "overall-perceived-quality"
+        }
+      ],
+      "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+    }
+  ]
+}

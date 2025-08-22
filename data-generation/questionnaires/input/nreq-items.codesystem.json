@@ -1,0 +1,246 @@
+{
+  "resourceType": "CodeSystem",
+  "url": "http://example.org/fhir/CodeSystem/nreq-items",
+  "version": "1.0",
+  "name": "NreqQuestions",
+  "title": "Neurorehabilitation Experience Questionnaire (NREQ) Items",
+  "status": "active",
+  "content": "complete",
+  "caseSensitive": false,
+  "publisher": "University of Surrey / Surrey Community Health",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>NREQ item codes (Q01–Q17) with linkId, type, required, binding, domain, and order.</p></div>"
+  },
+  "property": [
+    { "code": "linkId",         "type": "string",  "description": "Questionnaire.item.linkId" },
+    { "code": "qtype",          "type": "code",    "description": "Questionnaire.item.type (choice|string)" },
+    { "code": "required",       "type": "boolean", "description": "Questionnaire.item.required" },
+    { "code": "answerValueSet", "type": "string",  "description": "Questionnaire.item.answerValueSet" },
+    { "code": "domain",         "type": "code",    "description": "PaRIS/NREQ domain code" },
+    { "code": "order",          "type": "integer", "description": "Display order (1..n)" }
+  ],
+  "concept": [
+    {
+      "code": "NREQ-Q01",
+      "display": "Information on arrival",
+      "definition": "When I arrived I was given information about the unit and what would happen during my stay",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q1" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "access" },
+        { "code": "order", "valueInteger": 1 }
+      ]
+    },
+    {
+      "code": "NREQ-Q02",
+      "display": "Facilities",
+      "definition": "The facilities on the unit were good (e.g., washing facilities, toilets)",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q2" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "comprehensiveness" },
+        { "code": "order", "valueInteger": 2 }
+      ]
+    },
+    {
+      "code": "NREQ-Q03",
+      "display": "Secure belongings",
+      "definition": "There was somewhere secure to keep my belongings",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q3" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "patient-safety" },
+        { "code": "order", "valueInteger": 3 }
+      ]
+    },
+    {
+      "code": "NREQ-Q04",
+      "display": "Privacy for personal matters",
+      "definition": "I was able to discuss personal matters in private",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q4" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "patient-safety" },
+        { "code": "order", "valueInteger": 4 }
+      ]
+    },
+    {
+      "code": "NREQ-Q05",
+      "display": "Activities in free time",
+      "definition": "There were enough things to do in my free time (e.g., watch TV, join a group)",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q5" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "comprehensiveness" },
+        { "code": "order", "valueInteger": 5 }
+      ]
+    },
+    {
+      "code": "NREQ-Q06",
+      "display": "Friendly atmosphere",
+      "definition": "There was a friendly atmosphere on the unit",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q6" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "person-centredness" },
+        { "code": "order", "valueInteger": 6 }
+      ]
+    },
+    {
+      "code": "NREQ-Q07",
+      "display": "Staff cared about me",
+      "definition": "I felt the staff really cared about me",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q7" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "trust" },
+        { "code": "order", "valueInteger": 7 }
+      ]
+    },
+    {
+      "code": "NREQ-Q08",
+      "display": "Teamwork",
+      "definition": "The staff worked well as a team",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q8" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "coordination" },
+        { "code": "order", "valueInteger": 8 }
+      ]
+    },
+    {
+      "code": "NREQ-Q09",
+      "display": "Able to talk to staff",
+      "definition": "I felt able to talk to the staff about any problems I had",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q9" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "person-centredness" },
+        { "code": "order", "valueInteger": 9 }
+      ]
+    },
+    {
+      "code": "NREQ-Q10",
+      "display": "Asked about my goals",
+      "definition": "I was asked what I wanted to achieve during my stay",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q10" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "person-centredness" },
+        { "code": "order", "valueInteger": 10 }
+      ]
+    },
+    {
+      "code": "NREQ-Q11",
+      "display": "Partners in care",
+      "definition": "I felt as though the staff and I were partners in the whole process of care",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q11" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "person-centredness" },
+        { "code": "order", "valueInteger": 11 }
+      ]
+    },
+    {
+      "code": "NREQ-Q12",
+      "display": "Kept informed",
+      "definition": "The staff kept me informed every step of the way",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q12" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "continuity" },
+        { "code": "order", "valueInteger": 12 }
+      ]
+    },
+    {
+      "code": "NREQ-Q13",
+      "display": "Family/carer involvement",
+      "definition": "My family or carer was involved in discussions about my treatment if I wanted them to be",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q13" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "coordination" },
+        { "code": "order", "valueInteger": 13 }
+      ]
+    },
+    {
+      "code": "NREQ-Q14",
+      "display": "Amount of therapy/treatment",
+      "definition": "I am happy with the amount of therapy or treatment I received for...",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q14" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "comprehensiveness" },
+        { "code": "order", "valueInteger": 14 }
+      ]
+    },
+    {
+      "code": "NREQ-Q15",
+      "display": "Emotional support",
+      "definition": "I received enough emotional support",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q15" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "self-management-support" },
+        { "code": "order", "valueInteger": 15 }
+      ]
+    },
+    {
+      "code": "NREQ-Q16",
+      "display": "Prepared for discharge",
+      "definition": "I am feeling well supported and prepared for my discharge",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q16" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "continuity" },
+        { "code": "order", "valueInteger": 16 }
+      ]
+    },
+    {
+      "code": "NREQ-Q17",
+      "display": "Satisfied with progress",
+      "definition": "I am satisfied with the progress I have made during my stay",
+      "property": [
+        { "code": "linkId", "valueString": "nreq-q17" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3" },
+        { "code": "domain", "valueCode": "overall-perceived-quality" },
+        { "code": "order", "valueInteger": 17 }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "resourceType": "CodeSystem",
+  "url": "http://example.org/fhir/CodeSystem/nreq-likert-3",
+  "version": "1.0",
+  "name": "NreqLikert3",
+  "status": "active",
+  "caseSensitive": false,
+  "content": "complete",
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Nreq Likert 3 – 3-point Likert with ordinal scoring</p></div>"
+  },
+  "property": [
+    { "code": "ordinalValue", "description": "0–100 score", "type": "decimal" }
+  ],
+  "concept": [
+    {
+      "code": "agree",
+      "display": "Mostly agree",
+      "property": [ { "code": "ordinalValue", "valueDecimal": 100 } ]
+    },
+    {
+      "code": "neutral",
+      "display": "Not sure",
+      "property": [ { "code": "ordinalValue", "valueDecimal": 50 } ]
+    },
+    {
+      "code": "disagree",
+      "display": "Mostly disagree",
+      "property": [ { "code": "ordinalValue", "valueDecimal": 0 } ]
+    }
+  ]
+}

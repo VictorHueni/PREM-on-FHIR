@@ -1,0 +1,126 @@
+{
+    "resourceType": "CodeSystem",
+    "url": "http://example.org/fhir/CodeSystem/nps-scale",
+    "version": "1.0",
+    "name": "NetPromoterScoreScale",
+    "title": "Net Promoter Score 0–10 Scale",
+    "status": "active",
+    "content": "complete",
+    "caseSensitive": true,
+    "text": {
+        "status": "generated",
+        "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Net Promoter Score (NPS) scale</p></div>"
+    },
+    "concept": [
+        {
+            "code": "0",
+            "display": "0 – Not at all likely",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 0
+                }
+            ]
+        },
+        {
+            "code": "1",
+            "display": "1",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 1
+                }
+            ]
+        },
+        {
+            "code": "2",
+            "display": "2",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 2
+                }
+            ]
+        },
+        {
+            "code": "3",
+            "display": "3",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 3
+                }
+            ]
+        },
+        {
+            "code": "4",
+            "display": "4",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 4
+                }
+            ]
+        },
+        {
+            "code": "5",
+            "display": "5 – Neutral",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 5
+                }
+            ]
+        },
+        {
+            "code": "6",
+            "display": "6",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 6
+                }
+            ]
+        },
+        {
+            "code": "7",
+            "display": "7",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 7
+                }
+            ]
+        },
+        {
+            "code": "8",
+            "display": "8",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 8
+                }
+            ]
+        },
+        {
+            "code": "9",
+            "display": "9",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 9
+                }
+            ]
+        },
+        {
+            "code": "10",
+            "display": "10 – Extremely likely",
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                    "valueDecimal": 10
+                }
+            ]
+        }
+    ]
+}

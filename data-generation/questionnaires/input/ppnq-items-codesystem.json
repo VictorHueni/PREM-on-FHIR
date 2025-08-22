@@ -1,0 +1,157 @@
+{
+  "resourceType": "CodeSystem",
+  "url": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+  "version": "1.1",
+  "name": "PremParisNeuroRehabItems",
+  "title": "PREM PaRIS Neurorehabilitation Questionnaire Items",
+  "status": "active",
+  "content": "complete",
+  "caseSensitive": true,
+  "text": {
+    "status": "generated",
+    "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>PREM PaRIS Neurorehabilitation Questionnaire Items – CodeSystem</p></div>"
+  },
+  "property": [
+    { "code": "linkId", "type": "string", "description": "Questionnaire.item.linkId" },
+    { "code": "qtype", "type": "code", "description": "Questionnaire.item.type (string|choice)" },
+    { "code": "required", "type": "boolean", "description": "Questionnaire.item.required" },
+    { "code": "answerValueSet", "type": "string", "description": "Questionnaire.item.answerValueSet (if choice)" },
+    { "code": "domain", "type": "code", "description": "PaRIS domain code" },
+    { "code": "order", "type": "integer", "description": "Display order (1..n)" }
+  ],
+  "concept": [
+    {
+      "code": "PPNQ-Q01",
+      "display": "Access",
+      "definition": "Please describe your experience accessing neurorehabilitation services or contacting your care team when you needed support.",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q1" },
+        { "code": "qtype", "valueCode": "string" },
+        { "code": "required", "valueBoolean": false },
+        { "code": "domain", "valueCode": "access" },
+        { "code": "order", "valueInteger": 1 }
+      ]
+    },
+    {
+      "code": "PPNQ-Q02",
+      "display": "Comprehensiveness",
+      "definition": "In what ways did the rehabilitation program address (or not address) all of your needs (physical, cognitive, emotional, social)?",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q2" },
+        { "code": "qtype", "valueCode": "string" },
+        { "code": "required", "valueBoolean": false },
+        { "code": "domain", "valueCode": "comprehensiveness" },
+        { "code": "order", "valueInteger": 2 }
+      ]
+    },
+    {
+      "code": "PPNQ-Q03a",
+      "display": "Continuity – Same professionals",
+      "definition": "How did the consistency of working with the same rehabilitation professionals impact your experience?",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q3a" },
+        { "code": "qtype", "valueCode": "string" },
+        { "code": "required", "valueBoolean": false },
+        { "code": "domain", "valueCode": "continuity" },
+        { "code": "order", "valueInteger": 3 }
+      ]
+    },
+    {
+      "code": "PPNQ-Q03b",
+      "display": "Continuity – Information sharing across professionals",
+      "definition": "Can you describe how well your different rehabilitation professionals (therapists, doctors, nurses, psychologists) shared information and worked together over time to support your recovery?",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q3b" },
+        { "code": "qtype", "valueCode": "string" },
+        { "code": "required", "valueBoolean": false },
+        { "code": "domain", "valueCode": "continuity" },
+        { "code": "order", "valueInteger": 4 }
+      ]
+    },
+    {
+      "code": "PPNQ-Q04",
+      "display": "Coordination",
+      "definition": "Can you describe how well your different specialists (therapists, doctors, nurses, psychologists) worked together in your rehabilitation?",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q4" },
+        { "code": "qtype", "valueCode": "string" },
+        { "code": "required", "valueBoolean": false },
+        { "code": "domain", "valueCode": "coordination" },
+        { "code": "order", "valueInteger": 5 }
+      ]
+    },
+    {
+      "code": "PPNQ-Q05",
+      "display": "Patient Safety",
+      "definition": "Please share any experiences where you felt safe or unsafe during your rehabilitation (e.g., exercises, therapies, medication).",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q5" },
+        { "code": "qtype", "valueCode": "string" },
+        { "code": "required", "valueBoolean": false },
+        { "code": "domain", "valueCode": "patient-safety" },
+        { "code": "order", "valueInteger": 6 }
+      ]
+    },
+    {
+      "code": "PPNQ-Q06",
+      "display": "Person-centredness",
+      "definition": "How well did the rehabilitation team listen to your personal goals, preferences, and values?",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q6" },
+        { "code": "qtype", "valueCode": "string" },
+        { "code": "required", "valueBoolean": false },
+        { "code": "domain", "valueCode": "person-centredness" },
+        { "code": "order", "valueInteger": 7 }
+      ]
+    },
+    {
+      "code": "PPNQ-Q07",
+      "display": "Self-management Support",
+      "definition": "How did the rehabilitation team help (or not help) you develop skills and strategies to manage your condition in daily life?",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q7" },
+        { "code": "qtype", "valueCode": "string" },
+        { "code": "required", "valueBoolean": false },
+        { "code": "domain", "valueCode": "self-management-support" },
+        { "code": "order", "valueInteger": 8 }
+      ]
+    },
+    {
+      "code": "PPNQ-Q08",
+      "display": "Trust",
+      "definition": "What made you trust (or not trust) your rehabilitation team?",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q8" },
+        { "code": "qtype", "valueCode": "string" },
+        { "code": "required", "valueBoolean": false },
+        { "code": "domain", "valueCode": "trust" },
+        { "code": "order", "valueInteger": 9 }
+      ]
+    },
+    {
+      "code": "PPNQ-Q09",
+      "display": "Net Promoter Score (0–10)",
+      "definition": "On a scale from 0 to 10, how likely are you to recommend this rehabilitation program to a friend or family member in need of similar care?",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q9" },
+        { "code": "qtype", "valueCode": "choice" },
+        { "code": "required", "valueBoolean": true },
+        { "code": "answerValueSet", "valueString": "http://example.org/fhir/ValueSet/nps-0-10" },
+        { "code": "domain", "valueCode": "overall-perceived-quality" },
+        { "code": "order", "valueInteger": 10 }
+      ]
+    },
+    {
+      "code": "PPNQ-Q09-TEXT",
+      "display": "Reason for NPS score",
+      "definition": "What is the main reason for your score?",
+      "property": [
+        { "code": "linkId", "valueString": "ppnq-q9-text" },
+        { "code": "qtype", "valueCode": "string" },
+        { "code": "required", "valueBoolean": false },
+        { "code": "domain", "valueCode": "overall-perceived-quality" },
+        { "code": "order", "valueInteger": 11 }
+      ]
+    }
+  ]
+}
