@@ -1,16 +1,16 @@
 {
   "Servers": {
     "1": {
-      "Name": "HAPI FHIR - Source DB",
+      "Name": "OLTP - HAPI FHIR (prem_on_fhir)",
       "Group": "PREM",
-      "Host": "db",
+      "Host": "oltp-db",
       "Port": 5432,
       "MaintenanceDB": "prem_on_fhir",
       "Username": "admin",
       "SSLMode": "prefer"
     },
     "2": {
-      "Name": "Analytics - Zones (raw/stg/mart)",
+      "Name": "OLAP - Analytics (analytics)",
       "Group": "PREM",
       "Host": "analytics-db",
       "Port": 5432,

@@ -9,7 +9,7 @@ COPY keeps/ /app/keeps/
 ENV KEEP_FILE=keep_neuro.json \
     POPULATION=5 \
     AGE_RANGE=18-100 \
-    EXTRA_ARGS="--exporter.fhir.export=true --exporter.baseDirectory=/output --generate.only_alive_patients=true --generate.max_attempts_to_keep_patient=20000"
+    EXTRA_ARGS="--exporter.fhir.bulk_data=true --exporter.baseDirectory=/output --generate.only_alive_patients=true --generate.max_attempts_to_keep_patient=20000"
 
 RUN printf '#!/usr/bin/env bash\nset -e\nexec java -jar /app/synthea-with-dependencies.jar -p "${POPULATION}" -a "${AGE_RANGE}" -k "/app/keeps/${KEEP_FILE}" ${EXTRA_ARGS} "$@"\n' > /app/run.sh \
     && chmod +x /app/run.sh

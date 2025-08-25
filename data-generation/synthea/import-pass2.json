@@ -1,0 +1,81 @@
+{
+  "resourceType": "Parameters",
+  "parameter": [
+    { "name": "inputFormat", "valueString": "application/fhir+ndjson" },
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "AllergyIntolerance" },
+      { "name": "url", "valueUrl": "http://synthea-files/AllergyIntolerance.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "CarePlan" },
+      { "name": "url", "valueUrl": "http://synthea-files/CarePlan.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Claim" },
+      { "name": "url", "valueUrl": "http://synthea-files/Claim.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Device" },
+      { "name": "url", "valueUrl": "http://synthea-files/Device.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "DiagnosticReport" },
+      { "name": "url", "valueUrl": "http://synthea-files/DiagnosticReport.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "DocumentReference" },
+      { "name": "url", "valueUrl": "http://synthea-files/DocumentReference.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "ExplanationOfBenefit" },
+      { "name": "url", "valueUrl": "http://synthea-files/ExplanationOfBenefit.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "ImagingStudy" },
+      { "name": "url", "valueUrl": "http://synthea-files/ImagingStudy.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Immunization" },
+      { "name": "url", "valueUrl": "http://synthea-files/Immunization.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "MedicationAdministration" },
+      { "name": "url", "valueUrl": "http://synthea-files/MedicationAdministration.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "MedicationRequest" },
+      { "name": "url", "valueUrl": "http://synthea-files/MedicationRequest.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Observation" },
+      { "name": "url", "valueUrl": "http://synthea-files/Observation.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Procedure" },
+      { "name": "url", "valueUrl": "http://synthea-files/Procedure.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Provenance" },
+      { "name": "url", "valueUrl": "http://synthea-files/Provenance.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "SupplyDelivery" },
+      { "name": "url", "valueUrl": "http://synthea-files/SupplyDelivery.ndjson" }
+    ]}
+  ]
+}

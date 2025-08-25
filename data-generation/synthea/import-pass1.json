@@ -1,0 +1,51 @@
+{
+  "resourceType": "Parameters",
+  "parameter": [
+    { "name": "inputFormat", "valueString": "application/fhir+ndjson" },
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Patient" },
+      { "name": "url", "valueUrl": "http://synthea-files/Patient.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Practitioner" },
+      { "name": "url", "valueUrl": "http://synthea-files/Practitioner.1756058856566.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "PractitionerRole" },
+      { "name": "url", "valueUrl": "http://synthea-files/PractitionerRole.1756058856566.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Organization" },
+      { "name": "url", "valueUrl": "http://synthea-files/Organization.1756058856566.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Location" },
+      { "name": "url", "valueUrl": "http://synthea-files/Location.1756058856566.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Encounter" },
+      { "name": "url", "valueUrl": "http://synthea-files/Encounter.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "CareTeam" },
+      { "name": "url", "valueUrl": "http://synthea-files/CareTeam.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Condition" },
+      { "name": "url", "valueUrl": "http://synthea-files/Condition.ndjson" }
+    ]},
+
+    { "name": "input", "part": [
+      { "name": "type", "valueCode": "Medication" },
+      { "name": "url", "valueUrl": "http://synthea-files/Medication.ndjson" }
+    ]}
+  ]
+}

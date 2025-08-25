@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: 'jdbc:postgresql://db:5432/prem_on_fhir'
+    url: 'jdbc:postgresql://oltp-db:5432/prem_on_fhir'
     username: admin
     password: admin
     driverClassName: org.postgresql.Driver
@@ -8,3 +8,10 @@ spring:
     properties:
       hibernate.dialect: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
       hibernate.search.enabled: false
+hapi:
+  fhir:
+    expunge-enabled: true
+    delete-expunge-enabled: true
+    allow-multiple-delete: true
+    bulk_export-enabled: true
+    bulk_import-enabled: true
