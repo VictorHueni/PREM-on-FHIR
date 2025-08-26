@@ -229,5 +229,5 @@ WHERE c.res_type = 'Patient';
 
 GRANT SELECT ON public.v_fhir_current_json TO airbyte_ro;
 GRANT SELECT ON public.v_prem_questionnaire TO airbyte_ro;
-GRANT SELECT ON public.v_prem_questionnaire TO airbyte_ro;
+GRANT SELECT ON public.v_prem_qr_answers TO airbyte_ro;
 GRANT SELECT ON public.v_dim_patient TO airbyte_ro;

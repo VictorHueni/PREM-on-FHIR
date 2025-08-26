@@ -1,6 +1,6 @@
 # PREM-on-FHIR
 ```
-ocker compose --profile all up -d
+docker compose --profile all up -d
 ```
 
 ## Questionnaire
@@ -27,12 +27,13 @@ python export_qr_header.py
 
 
 ## QR Bundle maker
- python -m venv .venv
+
+```
+python -m venv .venv
 .venv/Scripts/activate
 python -m pip install -r requirements.txt
 python export_qr_header.py
 
-```
 python qr_bundle_maker.py --mode ppnq --csv ./input/QuestionnaireResponse-Header.csv --out output --llm
 python qr_bundle_maker.py --mode ppnq --csv ./input/QuestionnaireResponse-Header.csv --out output --dry-run
 python qr_bundle_maker.py --mode nreq --csv ./input/QuestionnaireResponse-Header.csv --out output --seed 42 --likert-dist 0.2,0.5,0.3
