@@ -32,10 +32,10 @@ OUT_DIR = Path("./input")
 OUT_FILE = OUT_DIR / "QuestionnaireResponse-Header.csv"
 
 SQL = """
--- Select Questionnaire header
+-- Select Questionnaire header (use logical IDs!)
 WITH enc AS (
   SELECT e.res_id,
-         COALESCE(fi.forced_id, e.res_id::text) AS enc_id
+         COALESCE(fi.forced_id, e.fhir_id) AS enc_logical_id
   FROM   hfj_resource e
   LEFT JOIN hfj_forced_id fi ON fi.resource_pid = e.res_id
   WHERE  e.res_type = 'Encounter' AND e.res_deleted_at IS NULL
@@ -50,7 +50,7 @@ enc_patient AS (
 ),
 pat AS (
   SELECT p.res_id,
-         COALESCE(fp.forced_id, p.res_id::text) AS pat_id
+         COALESCE(fp.forced_id, p.fhir_id) AS pat_logical_id
   FROM   hfj_resource p
   LEFT JOIN hfj_forced_id fp ON fp.resource_pid = p.res_id
   WHERE  p.res_type = 'Patient' AND p.res_deleted_at IS NULL
@@ -68,7 +68,7 @@ enc_prac_one AS (
 ),
 prac AS (
   SELECT pr.res_id,
-         COALESCE(fpr.forced_id, pr.res_id::text) AS prac_id
+         COALESCE(fpr.forced_id, pr.fhir_id) AS prac_logical_id
   FROM   hfj_resource pr
   LEFT JOIN hfj_forced_id fpr ON fpr.resource_pid = pr.res_id
   WHERE  pr.res_type = 'Practitioner' AND pr.res_deleted_at IS NULL
@@ -82,13 +82,13 @@ enc_date AS (
   WHERE  r.res_type = 'Encounter' AND d.sp_name = 'date'
 )
 SELECT
-  'Patient/'   || pat.pat_id AS patientId,
-  'Encounter/' || enc.enc_id AS encounterId,
-  CASE WHEN prac.prac_id IS NOT NULL
-       THEN 'Practitioner/' || prac.prac_id
+  'Patient/'   || pat.pat_logical_id AS patientId,
+  'Encounter/' || enc.enc_logical_id AS encounterId,
+  CASE WHEN prac.prac_logical_id IS NOT NULL
+       THEN 'Practitioner/' || prac.prac_logical_id
        ELSE NULL END        AS practitionerId,
   COALESCE(enc_date.period_end, enc_date.period_start, NOW()) AS authored,
-  'Patient/' || pat.pat_id  AS src
+  'Patient/' || pat.pat_logical_id  AS src
 FROM enc
 JOIN enc_patient ON enc.res_id = enc_patient.enc_res_id
 JOIN pat         ON pat.res_id = enc_patient.pat_res_id

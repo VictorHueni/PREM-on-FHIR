@@ -44,20 +44,19 @@ BEGIN
 END$$;
 
 -- --- DATABASE-LEVEL PRIVILEGES ---
--- Airbyte and dbt must be able to create schemas/tables in this database.
 GRANT CONNECT ON DATABASE analytics TO airbyte_user, dbt_user, bi_user;
 GRANT CREATE  ON DATABASE analytics TO airbyte_user, dbt_user;
 
 -- --- OWNERSHIP / USAGE PER SCHEMA ---
--- Make Airbyte the owner of the zones it writes to, or at least allow CREATE.
+-- Airbyte owns the zones it writes to
 ALTER SCHEMA raw              OWNER TO airbyte_user;
 ALTER SCHEMA airbyte_internal OWNER TO airbyte_user;
 
--- dbt owns transformation zones so it can run DDL freely.
+-- dbt owns transformation zones
 ALTER SCHEMA stg  OWNER TO dbt_user;
 ALTER SCHEMA mart OWNER TO dbt_user;
 
--- USAGE/CREATE by role groups (principals inherit via group membership)
+-- Group-role access (principals inherit via membership)
 GRANT USAGE  ON SCHEMA raw, airbyte_internal   TO airbyte_loader, dbt_owner;
 GRANT CREATE ON SCHEMA raw, airbyte_internal   TO airbyte_loader;
 
@@ -65,7 +64,7 @@ GRANT USAGE  ON SCHEMA stg, mart               TO dbt_owner, bi_reader;
 GRANT CREATE ON SCHEMA stg, mart               TO dbt_owner;
 
 -- --- DEFAULT PRIVILEGES (future objects) ---
--- 1) Objects created by AIRBYTE in raw/airbyte_internal should be readable by dbt.
+-- Objects created by AIRBYTE in raw/airbyte_internal readable by dbt
 ALTER DEFAULT PRIVILEGES FOR ROLE airbyte_user IN SCHEMA raw
   GRANT SELECT ON TABLES TO dbt_owner;
 ALTER DEFAULT PRIVILEGES FOR ROLE airbyte_user IN SCHEMA raw
@@ -76,7 +75,7 @@ ALTER DEFAULT PRIVILEGES FOR ROLE airbyte_user IN SCHEMA airbyte_internal
 ALTER DEFAULT PRIVILEGES FOR ROLE airbyte_user IN SCHEMA airbyte_internal
   GRANT USAGE, SELECT ON SEQUENCES TO dbt_owner;
 
--- 2) Objects created by DBT in stg/mart should be readable by BI users.
+-- Objects created by DBT in stg/mart readable by BI
 ALTER DEFAULT PRIVILEGES FOR ROLE dbt_user IN SCHEMA stg
   GRANT SELECT ON TABLES TO bi_reader;
 ALTER DEFAULT PRIVILEGES FOR ROLE dbt_user IN SCHEMA stg
@@ -91,13 +90,22 @@ ALTER DEFAULT PRIVILEGES FOR ROLE dbt_user IN SCHEMA mart
 REVOKE CREATE ON SCHEMA public FROM PUBLIC;
 REVOKE USAGE  ON SCHEMA public FROM PUBLIC;
 
+-- Allow required users to use functions/types in public (extensions live here)
+GRANT USAGE ON SCHEMA public TO airbyte_user, dbt_user, bi_user;
+
 -- --- SEARCH PATHS & TIME ZONE ---
-ALTER DATABASE CURRENT_DATABASE() SET timezone     TO 'Europe/Zurich';
+ALTER DATABASE CURRENT_DATABASE() SET timezone    TO 'Europe/Zurich';
 ALTER DATABASE CURRENT_DATABASE() SET search_path TO "$user", public;
 
-ALTER ROLE airbyte_loader IN DATABASE CURRENT_DATABASE() SET search_path = raw, airbyte_internal, public;
-ALTER ROLE dbt_owner     IN DATABASE CURRENT_DATABASE() SET search_path = stg, mart, raw, public;
-ALTER ROLE bi_reader     IN DATABASE CURRENT_DATABASE() SET search_path = mart, public;
+-- Set per-user search_path (NOLOGIN roles don't hold settings for sessions)
+ALTER ROLE airbyte_user IN DATABASE CURRENT_DATABASE()
+  SET search_path = raw, airbyte_internal, public;
+
+ALTER ROLE dbt_user IN DATABASE CURRENT_DATABASE()
+  SET search_path = stg, mart, raw, public;
+
+ALTER ROLE bi_user IN DATABASE CURRENT_DATABASE()
+  SET search_path = mart, public;
 
 -- --- EXTENSIONS (in public) ---
 CREATE EXTENSION IF NOT EXISTS pgcrypto           WITH SCHEMA public;
@@ -105,6 +113,3 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp"        WITH SCHEMA public;
 CREATE EXTENSION IF NOT EXISTS pg_trgm            WITH SCHEMA public;
 CREATE EXTENSION IF NOT EXISTS citext             WITH SCHEMA public;
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements WITH SCHEMA public;
-
--- (Optional) If other owners already exist on these schemas and you want to preserve them,
--- you can keep GRANT CREATE instead of ALTER SCHEMA ... OWNER TO ..

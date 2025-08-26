@@ -5,6 +5,9 @@ volumes/
 # React Dashboard
 node_modules/
 
+
+.idea/
+
 # Data
 data-generation/questionnaire_responses/input/
 output/
@@ -16,4 +19,5 @@ __pycache__/
 *.pyd
 
 # Virtual environment
+/.venv/
 /venv/
