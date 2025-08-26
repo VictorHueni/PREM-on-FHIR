@@ -385,7 +385,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"resourceType\": \"Parameters\",\r\n  \"parameter\": [\r\n    {\r\n      \"name\": \"expungeDeletedResources\",\r\n      \"valueBoolean\": true\r\n    },{\r\n      \"name\": \"expungePreviousVersions\",\r\n      \"valueBoolean\": true\r\n    }\r\n  ]\r\n}",
+							"raw": "{\r\n  \"resourceType\": \"Parameters\",\r\n  \"parameter\": [\r\n    { \"name\": \"expungeEverything\", \"valueBoolean\": true }\r\n  ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
