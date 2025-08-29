@@ -22,6 +22,11 @@ clean-targets:         # directories to be removed by `dbt clean`
   - "dbt_packages"
 
 
+vars:
+  report_tz: "UTC"                 # or "Europe/Zurich" etc.
+  patient_pseudonym_salt: "change-me-in-prod"
+
+
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
