@@ -1057,7 +1057,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost:8080/fhir/Questionnaire?url={{questionnaire_uuid}}&_pretty=true",
+					"raw": "http://localhost:8080/fhir/Questionnaire?url=http://example.org/fhir/Questionnaire/NREQ&_pretty=true",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1070,7 +1070,7 @@
 					"query": [
 						{
 							"key": "url",
-							"value": "{{questionnaire_uuid}}"
+							"value": "http://example.org/fhir/Questionnaire/NREQ"
 						},
 						{
 							"key": "_pretty",
