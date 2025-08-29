@@ -105,8 +105,8 @@ services:
     profiles: ["core","all"]
     # Mount your existing Synthea folder read-only into nginx's doc root
     volumes:
-      - ./data-generation/synthea/output/fhir:/usr/share/nginx/html:ro
-      - ./data-generation/synthea/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./01-data-generation/synthea/output/fhir:/usr/share/nginx/html:ro
+      - ./01-data-generation/synthea/nginx.conf:/etc/nginx/nginx.conf:ro
       # If the P: drive form doesn't work on your Docker Desktop, use the /c/... or /mnt/p/... style you used for HAPI
     ports:
       - "8088:80"   # optional: only needed if you also want to hit it from the host

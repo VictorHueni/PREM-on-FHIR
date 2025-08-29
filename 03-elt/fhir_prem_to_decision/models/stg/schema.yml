@@ -1,0 +1,107 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: questionnaireresponse_current
+      - name: questionnaire_current
+      - name: encounter_current
+      - name: patient_current
+      - name: practitioner_current
+      - name: organization_current
+      - name: codesystem_current
+
+models:
+
+  - name: stg_items
+    description: "Questionnaire items (one row per questionnaire_id, linkId)"
+    columns:
+      - name: questionnaire_id
+        tests: [not_null]
+      - name: linkid
+        tests:
+          - not_null
+          - unique:
+              # keep test-scoped config here (not in arguments)
+              config:
+                where: "linkid is not null"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - questionnaire_id
+              - linkid
+
+  - name: stg_responses
+    description: "One row per QuestionnaireResponse"
+    columns:
+      - name: qr_id
+        tests: [not_null, unique]
+      - name: questionnaire_id
+        tests: [not_null]
+      - name: authored_ts
+        tests: [not_null]
+      - name: encounter_ref
+      - name: org_ref
+      - name: clinician_ref
+
+  - name: stg_answers
+    description: "Exploded answers with ordinals and top-box flags"
+    columns:
+      - name: qr_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_responses')
+                field: qr_id
+      - name: questionnaire_id
+        tests: [not_null]
+      - name: item_linkid
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_items')
+                field: linkid
+      - name: answer_ordinal
+        tests: [not_null]
+      - name: answer_kind
+        tests: [not_null]
+      - name: numeric_value
+        tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1, 2, 3, 4, 5]
+                quote: false
+              config:
+                severity: warn
+                where: "answer_kind='coding' and numeric_value is not null"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - qr_id
+              - item_linkid
+              - answer_ordinal
+
+  - name: stg_dim_patients
+    columns:
+      - name: patient_id
+        tests: [not_null, unique]
+
+  - name: stg_dim_encounters
+    columns:
+      - name: encounter_id
+        tests: [not_null, unique]
+
+  - name: stg_dim_practitioners
+    columns:
+      - name: practitioner_id
+        tests: [not_null, unique]
+
+  - name: stg_dim_organizations
+    columns:
+      - name: org_id
+        tests: [not_null, unique]

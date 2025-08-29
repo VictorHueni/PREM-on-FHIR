@@ -7,8 +7,8 @@
 CREATE SCHEMA IF NOT EXISTS raw;
 CREATE SCHEMA IF NOT EXISTS stg;
 CREATE SCHEMA IF NOT EXISTS mart;
--- Airbyte uses this when "Raw table schema" is left blank
-CREATE SCHEMA IF NOT EXISTS airbyte_internal;
+-- If you plan to use Airbyte's "airbyte_internal", create it; otherwise don't reference it
+-- CREATE SCHEMA IF NOT EXISTS airbyte_internal;
 
 -- --- ROLE GROUPS (no login) ---
 DO $$
@@ -48,31 +48,33 @@ GRANT CONNECT ON DATABASE analytics TO airbyte_user, dbt_user, bi_user;
 GRANT CREATE  ON DATABASE analytics TO airbyte_user, dbt_user;
 
 -- --- OWNERSHIP / USAGE PER SCHEMA ---
--- Airbyte owns the zones it writes to
-ALTER SCHEMA raw              OWNER TO airbyte_user;
-ALTER SCHEMA airbyte_internal OWNER TO airbyte_user;
+-- Airbyte owns the zone it writes to
+ALTER SCHEMA raw  OWNER TO airbyte_user;
 
 -- dbt owns transformation zones
 ALTER SCHEMA stg  OWNER TO dbt_user;
 ALTER SCHEMA mart OWNER TO dbt_user;
 
--- Group-role access (principals inherit via membership)
-GRANT USAGE  ON SCHEMA raw, airbyte_internal   TO airbyte_loader, dbt_owner;
-GRANT CREATE ON SCHEMA raw, airbyte_internal   TO airbyte_loader;
+-- Airbyte needs USAGE+CREATE on raw (owner already has it, but keep this if you ever switch to group roles)
+GRANT USAGE, CREATE ON SCHEMA raw TO airbyte_loader;
 
-GRANT USAGE  ON SCHEMA stg, mart               TO dbt_owner, bi_reader;
-GRANT CREATE ON SCHEMA stg, mart               TO dbt_owner;
+-- dbt needs USAGE on raw to read, and CREATE on stg/mart to build
+GRANT USAGE  ON SCHEMA raw       TO dbt_owner;    -- ❗ added
+GRANT USAGE  ON SCHEMA stg, mart TO dbt_owner, bi_reader;
+GRANT CREATE ON SCHEMA stg, mart TO dbt_owner;
+
+-- --- ONE-TIME GRANTS ON EXISTING RAW OBJECTS (default privs don’t backfill) ---
+GRANT SELECT ON ALL TABLES    IN SCHEMA raw TO dbt_owner;                -- ❗ added
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA raw TO dbt_owner;         -- ❗ added
+-- (optional direct grants)
+-- GRANT SELECT ON ALL TABLES IN SCHEMA raw TO dbt_user;
+-- GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA raw TO dbt_user;
 
 -- --- DEFAULT PRIVILEGES (future objects) ---
--- Objects created by AIRBYTE in raw/airbyte_internal readable by dbt
+-- Objects created by AIRBYTE in raw readable by dbt
 ALTER DEFAULT PRIVILEGES FOR ROLE airbyte_user IN SCHEMA raw
   GRANT SELECT ON TABLES TO dbt_owner;
 ALTER DEFAULT PRIVILEGES FOR ROLE airbyte_user IN SCHEMA raw
-  GRANT USAGE, SELECT ON SEQUENCES TO dbt_owner;
-
-ALTER DEFAULT PRIVILEGES FOR ROLE airbyte_user IN SCHEMA airbyte_internal
-  GRANT SELECT ON TABLES TO dbt_owner;
-ALTER DEFAULT PRIVILEGES FOR ROLE airbyte_user IN SCHEMA airbyte_internal
   GRANT USAGE, SELECT ON SEQUENCES TO dbt_owner;
 
 -- Objects created by DBT in stg/mart readable by BI
@@ -94,18 +96,15 @@ REVOKE USAGE  ON SCHEMA public FROM PUBLIC;
 GRANT USAGE ON SCHEMA public TO airbyte_user, dbt_user, bi_user;
 
 -- --- SEARCH PATHS & TIME ZONE ---
-ALTER DATABASE CURRENT_DATABASE() SET timezone    TO 'Europe/Zurich';
-ALTER DATABASE CURRENT_DATABASE() SET search_path TO "$user", public;
+ALTER DATABASE analytics SET timezone    TO 'Europe/Zurich';
+ALTER DATABASE analytics SET search_path TO '"$user", public';
 
--- Set per-user search_path (NOLOGIN roles don't hold settings for sessions)
-ALTER ROLE airbyte_user IN DATABASE CURRENT_DATABASE()
-  SET search_path = raw, airbyte_internal, public;
 
-ALTER ROLE dbt_user IN DATABASE CURRENT_DATABASE()
-  SET search_path = stg, mart, raw, public;
+-- Keep search_path clean; remove airbyte_internal unless you created it
+ALTER ROLE airbyte_user IN DATABASE analytics SET search_path = raw, public;
+ALTER ROLE dbt_user     IN DATABASE analytics SET search_path = stg, mart, raw, public;
+ALTER ROLE bi_user      IN DATABASE analytics SET search_path = mart, public;
 
-ALTER ROLE bi_user IN DATABASE CURRENT_DATABASE()
-  SET search_path = mart, public;
 
 -- --- EXTENSIONS (in public) ---
 CREATE EXTENSION IF NOT EXISTS pgcrypto           WITH SCHEMA public;

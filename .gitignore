@@ -5,11 +5,17 @@ volumes/
 # React Dashboard
 node_modules/
 
-
+# PyCharm
 .idea/
 
+# Dbt
+target/
+dbt_packages/
+logs/
+
+
 # Data
-data-generation/questionnaire_responses/input/
+01-data-generation/questionnaire_responses/input/
 output/
 
 # Python

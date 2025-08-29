@@ -373,7 +373,7 @@ def load_dotenv(path: Path) -> Dict[str, str]:
 def get_llm_config() -> LLMConfig:
     # precedence: actual environment then .env file; we read os.environ at call time
     import os
-    env_file = Path(".env")
+    env_file = Path("../../.env")
     file_env = load_dotenv(env_file)
     api_key = os.getenv("OPENAI_API_KEY") or file_env.get("OPENAI_API_KEY")
     model = os.getenv("LLM_MODEL") or file_env.get("LLM_MODEL") or "gpt-4o-mini"

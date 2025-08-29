@@ -49,3 +49,9 @@ abctl local status
 
 
 ## Transform (transform)
+
+dbt clean && dbt deps
+
+dbt compile --select stg.*
+
+dbt build --select stg.*

@@ -17,7 +17,7 @@ import psycopg2.extras
 from dotenv import load_dotenv
 
 # ---- Load .env ----
-env_file = ".env"
+env_file = "../../.env"
 if Path(env_file).exists():
     load_dotenv(env_file)
 
