@@ -160,6 +160,13 @@ models:
         tests: [not_null, unique]
 
   - name: stg_dim_organizations
+    description: "Organizations (facilities/departments) with type, hierarchy, contact & address."
     columns:
       - name: org_id
         tests: [not_null, unique]
+      - name: org_kind_norm
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['provider','department','team','payor','insurer','government','education','religious','clinical-research','other','unknown']
+                quote: true
