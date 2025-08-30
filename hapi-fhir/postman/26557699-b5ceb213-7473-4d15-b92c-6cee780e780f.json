@@ -1414,7 +1414,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Patient Copy",
+			"name": "Get Organizations",
 			"id": "26557699-c593e92a-1fd6-4ac3-9f12-f1ea5432f133",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
