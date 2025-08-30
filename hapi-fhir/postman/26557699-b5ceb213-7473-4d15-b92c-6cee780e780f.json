@@ -1458,7 +1458,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/fhir/Organization?_summary=true&_count=30",
+					"raw": "http://localhost:8080/fhir/Practitioner?_summary=true&_count=30",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1466,7 +1466,7 @@
 					"port": "8080",
 					"path": [
 						"fhir",
-						"Organization"
+						"Practitioner"
 					],
 					"query": [
 						{
