@@ -1,5 +1,3 @@
-{{ config(materialized='view', schema='dq', tags=['dq']) }}
-
 with item_summary as (
   select
     -- Use the normalized key that matches stg_responses/stg_answers

@@ -1,5 +1,3 @@
-{{ config(materialized='view', schema='dq', tags=['dq']) }}
-
 with a as (
   select
     a.qr_id,

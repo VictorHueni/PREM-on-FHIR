@@ -41,22 +41,30 @@ on-run-end:
 # files using the `{{ config(...) }}` macro.
 models:
   fhir_prem_to_decision:
-    +materialized: view  # default
+    +materialized: view
+
     stg:
       +schema: stg
       +materialized: view
       +tags: ['stg']
+      nlp:
+        +tags: ['nlp']
+        nlp_predictions_inbox:
+          +materialized: table  # landing table inside stg
+      dq:
+        +tags: ['dq']
+
     core:
-      +schema: stg        # keep core in stg schema as tables
+      +schema: stg
       +materialized: table
       +tags: ['core']
+
     mart:
       +schema: mart
       +materialized: table
       +tags: ['mart']
+      nlp:
+        +tags: ['nlp']
       +grants:
         select: ['bi_reader']
-    dq:
-      +schema: stg
-      +materialized: view
-      +tags: ['dq']
+
