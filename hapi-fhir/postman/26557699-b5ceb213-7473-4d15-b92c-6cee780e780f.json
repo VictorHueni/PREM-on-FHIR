@@ -1449,7 +1449,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Organizations Copy",
+			"name": "Get Practitioner",
 			"id": "26557699-acaaca1a-06e3-48e9-9b53-c6e9631cb0be",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
