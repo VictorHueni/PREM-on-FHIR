@@ -27,6 +27,12 @@ vars:
   patient_pseudonym_salt: "change-me-in-prod"
 
 
+# Run constraints only if *core* models ran in this invocation
+on-run-end:
+  - "{{ add_core_constraints() }}"
+
+
+    
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
