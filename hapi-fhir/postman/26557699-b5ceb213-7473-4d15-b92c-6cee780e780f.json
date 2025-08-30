@@ -1484,7 +1484,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Patient Copy",
+			"name": "Get Patient By Id",
 			"id": "26557699-c040dac4-e433-4cc5-bc41-45122516e288",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
