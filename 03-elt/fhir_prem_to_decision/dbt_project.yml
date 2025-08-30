@@ -45,12 +45,15 @@ models:
     stg:
       +schema: stg
       +materialized: view
+      +tags: ['stg']
     core:
       +schema: stg        # keep core in stg schema as tables
       +materialized: table
+      +tags: ['core']
     mart:
       +schema: mart
       +materialized: table
+      +tags: ['mart']
       +grants:
         select: ['bi_reader']
     dq:
