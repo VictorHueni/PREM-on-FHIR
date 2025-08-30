@@ -20,13 +20,13 @@ models:
       - name: questionnaire_id
         tests: [not_null]
       - name: linkid
-        tests:
-          - not_null
+        tests: [not_null]
       - name: question_type
         tests:
           - accepted_values:
-              values: ['group','display','boolean','decimal','integer','date','dateTime','time','string','choice','quantity']
-              quote: true
+              arguments:
+                values: ['group','display','boolean','decimal','integer','date','dateTime','time','string','choice','quantity']
+                quote: true
               config:
                 where: "question_type is not null"
                 severity: error
@@ -36,9 +36,7 @@ models:
     tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
-            combination_of_columns:
-              - questionnaire_id
-              - linkid
+            combination_of_columns: [questionnaire_id, linkid]
 
   - name: stg_responses
     description: "One row per QuestionnaireResponse"
@@ -55,9 +53,11 @@ models:
       - name: encounter_id
         tests:
           - relationships:
-              to: ref('stg_dim_encounters')
-              field: encounter_id
-              config: { where: "encounter_id is not null" }
+              arguments:
+                to: ref('stg_dim_encounters')
+                field: encounter_id
+              config:
+                where: "encounter_id is not null"
       - name: loaded_at
         tests: [not_null]   # if Airbyte always populates it
 
@@ -107,12 +107,11 @@ models:
           - accepted_values:
               arguments:
                 values: [0, 1, 2, 3, 4, 5]
-                quote: false
               config:
                 severity: warn
                 where: "answer_kind='coding' and value_coding_system ilike '%likert%' and numeric_value is not null"
 
-      # Optional: keep if you want to enforce presence of text on string answers
+      # Optional: enforce presence of text on string answers
       - name: value_string
         tests:
           - not_null:
@@ -123,7 +122,7 @@ models:
       - dbt_utils.unique_combination_of_columns:
           arguments:
             combination_of_columns: [qr_id, item_linkid, answer_ordinal]
-            
+
   - name: stg_dim_patients
     columns:
       - name: patient_id
@@ -142,9 +141,11 @@ models:
       - name: patient_id
         tests:
           - relationships:
-              to: ref('stg_dim_patients')
-              field: patient_id
-              config: { where: "patient_id is not null" }
+              arguments:
+                to: ref('stg_dim_patients')
+                field: patient_id
+              config:
+                where: "patient_id is not null"
       - name: encounter_class
         tests:
           - accepted_values:

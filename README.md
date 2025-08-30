@@ -50,8 +50,22 @@ abctl local status
 
 ## Transform (transform)
 
-dbt clean && dbt deps
+`dbt clean && dbt deps`
+`dbt compile --select stg.*`
+`dbt build --select stg.*`
 
-dbt compile --select stg.*
+Models only: `dbt run`
 
-dbt build --select stg.*
+Just tests: `dbt test`
+
+Full refresh (rebuild tables): `dbt build --full-refresh`
+
+Run a folder (e.g., core only): `dbt run -s models/core/` (or) `dbt run -s core`
+
+Include parents/children: `dbt build -s +core` (with upstream) or `dbt build -s core+` (with downstream)
+
+Faster local runs: `dbt build --threads 6`
+
+Only changed models (iterating):
+run once normally to create a state manifest
+`dbt build --select state:modified+ --state target/`

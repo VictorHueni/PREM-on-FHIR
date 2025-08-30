@@ -23,7 +23,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 
 vars:
-  report_tz: "UTC"                 # or "Europe/Zurich" etc.
+  report_tz: "Europe/Zurich"                # or "UTC" etc.
   patient_pseudonym_salt: "change-me-in-prod"
 
 
