@@ -47,3 +47,7 @@ models:
       +materialized: table
       +grants:
         select: ['bi_reader']
+    dq:
+      +schema: stg
+      +materialized: view
+      +tags: ['dq']

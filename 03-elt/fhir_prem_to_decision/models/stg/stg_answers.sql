@@ -2,14 +2,18 @@
 
 WITH RECURSIVE
 
--- Top-level QR rows + robust questionnaire_id
+-- 1) Pull the QR JSON we need (robust fallback for questionnaire id)
 qrs AS (
   SELECT
     COALESCE(qr_id, (resource::jsonb->>'id'))                    AS qr_id,
     authored_ts,
     questionnaire_ref,
-    split_part(COALESCE(questionnaire_ref, resource::jsonb->>'questionnaire'), '/', 2)
-                                                                AS questionnaire_id,
+    /* FIX: proper fallback for both URL and relative ref */
+    CASE
+      WHEN COALESCE(questionnaire_ref, resource::jsonb->>'questionnaire') ~* '^https?://'
+        THEN regexp_replace(COALESCE(questionnaire_ref, resource::jsonb->>'questionnaire'), '^.*/', '')
+      ELSE split_part(COALESCE(questionnaire_ref, resource::jsonb->>'questionnaire'), '/', 2)
+    END                                                         AS questionnaire_id_fallback,
     patient_ref,
     encounter_ref,
     author_ref,
@@ -17,11 +21,11 @@ qrs AS (
   FROM {{ source('raw', 'questionnaireresponse_current') }}
 ),
 
--- Explode QR.item tree -> answers (recursive)
+-- 2) Walk the QR.item tree and explode answers
 item_tree AS (
-  -- root
+  -- roots
   SELECT
-    q.qr_id, q.authored_ts, q.questionnaire_id, q.patient_ref, q.encounter_ref, q.author_ref,
+    q.qr_id, q.authored_ts, q.questionnaire_id_fallback, q.patient_ref, q.encounter_ref, q.author_ref,
     (i->>'linkId')::text AS linkid,
     i                    AS item_node
   FROM qrs q
@@ -29,9 +33,9 @@ item_tree AS (
 
   UNION ALL
 
-  -- nested
+  -- children
   SELECT
-    it.qr_id, it.authored_ts, it.questionnaire_id, it.patient_ref, it.encounter_ref, it.author_ref,
+    it.qr_id, it.authored_ts, it.questionnaire_id_fallback, it.patient_ref, it.encounter_ref, it.author_ref,
     (i->>'linkId')::text AS linkid,
     i                    AS item_node
   FROM item_tree it
@@ -42,7 +46,7 @@ answers AS (
   SELECT
     it.qr_id,
     it.authored_ts,
-    it.questionnaire_id,
+    it.questionnaire_id_fallback,
     it.patient_ref,
     it.encounter_ref,
     it.author_ref AS clinician_ref,
@@ -53,7 +57,7 @@ answers AS (
   CROSS JOIN LATERAL jsonb_array_elements(COALESCE(it.item_node->'answer','[]'::jsonb)) AS ans
 ),
 
--- CodeSystem → ordinal lookup
+-- 3) CodeSystem → (display, ordinal) map
 cs AS (
   SELECT
     (c.resource::jsonb->>'url')::text AS system,
@@ -71,18 +75,18 @@ cs AS (
   CROSS JOIN LATERAL jsonb_array_elements(COALESCE((c.resource::jsonb)->'concept','[]'::jsonb)) AS concept
 ),
 
+-- 4) Base projections
 base AS (
   SELECT
     a.qr_id,
     a.authored_ts,
-    a.questionnaire_id,
+    a.questionnaire_id_fallback,
     a.patient_ref,
     a.encounter_ref,
     a.clinician_ref,
     a.item_linkid,
     a.answer_ordinal,
 
-    -- raw projections
     a.ans->>'valueString'             AS value_string,
     (a.ans->>'valueInteger')::int     AS value_integer,
     (a.ans->>'valueDecimal')::numeric AS value_decimal,
@@ -110,7 +114,6 @@ base AS (
       ELSE 'other'
     END AS answer_kind,
 
-    -- numeric scoring (Likert via ordinal; otherwise numeric/boolean/quantity)
     CASE
       WHEN cs.ordinal_value IS NOT NULL THEN cs.ordinal_value
       WHEN a.ans ? 'valueInteger'       THEN (a.ans->>'valueInteger')::numeric
@@ -119,6 +122,9 @@ base AS (
       WHEN a.ans ? 'valueQuantity'
            AND (a.ans->'valueQuantity'->>'value') ~ '^-?[0-9]+(\.[0-9]+)?$'
                                          THEN (a.ans->'valueQuantity'->>'value')::numeric
+      WHEN a.ans ? 'valueCoding'
+           AND (a.ans->'valueCoding'->>'code') ~ '^[0-9]+(\.[0-9]+)?$'
+                                         THEN (a.ans->'valueCoding'->>'code')::numeric
       ELSE NULL
     END AS numeric_value
   FROM answers a
@@ -128,32 +134,12 @@ base AS (
    AND cs.code   = (a.ans->'valueCoding'->>'code')
 ),
 
--- Item metadata (domain + is_scored, is_free_text, etc.)
-itm AS (
-  SELECT
-    questionnaire_id,
-    linkid,
-    domain_code_value     AS item_domain,
-    domain_code_system    AS item_domain_system,
-    is_scored,
-    is_free_text
-  FROM {{ ref('stg_items') }}
-),
-
--- Likert max observed (per questionnaire × linkId)
-ordinals AS (
-  SELECT
-    b.questionnaire_id,
-    b.item_linkid,
-    MAX(b.numeric_value) FILTER (WHERE b.answer_kind = 'coding') AS max_ordinal_observed
-  FROM base b
-  GROUP BY 1,2
-),
-
--- Bring in time buckets & clean IDs from stg_responses
+-- 5) Normalized keys & buckets from stg_responses
 resp AS (
   SELECT
     qr_id,
+    authored_ts,
+    questionnaire_id,
     qr_date,
     qr_week_start  AS qr_week,
     qr_month_start AS qr_month,
@@ -162,25 +148,56 @@ resp AS (
     clinician_id,
     org_id
   FROM {{ ref('stg_responses') }}
+),
+
+-- 6) Item dictionary (leaf-only), WITH normalized key
+itm AS (
+  SELECT
+    questionnaire_key,       -- <— from stg_items fix above
+    questionnaire_id,        -- original logical id (kept in case you need it)
+    linkid,
+    domain_key,
+    domain_code_value   AS item_domain,
+    domain_code_system  AS item_domain_system,
+    is_scored,
+    is_free_text,
+    is_leaf
+  FROM {{ ref('stg_items') }}
+),
+
+-- 7) Observed max ordinal
+ordinals AS (
+  SELECT
+    COALESCE(r.questionnaire_id, b.questionnaire_id_fallback) AS questionnaire_id_norm,
+    b.item_linkid,
+    MAX(b.numeric_value) FILTER (WHERE b.answer_kind = 'coding') AS max_ordinal_observed
+  FROM base b
+  LEFT JOIN resp r ON r.qr_id = b.qr_id
+  GROUP BY 1,2
+),
+
+-- 8) Patient DOB
+pat AS (
+  SELECT patient_id, birth_date
+  FROM {{ ref('stg_dim_patients') }}
 )
 
 SELECT
-  -- stable answer id
   md5(
     coalesce(b.qr_id,'') || '|' ||
     coalesce(b.item_linkid,'') || '|' ||
     coalesce(b.answer_ordinal::text,'')
-  )                                          AS answer_id,
+  )                                           AS answer_id,
 
   b.qr_id,
+
+  COALESCE(r.questionnaire_id, b.questionnaire_id_fallback) AS questionnaire_id,
   r.qr_date,
   r.qr_week,
   r.qr_month,
 
   b.authored_ts,
-  b.questionnaire_id,
 
-  -- refs + clean ids (from stg_responses for consistency)
   b.patient_ref,
   b.encounter_ref,
   b.clinician_ref,
@@ -190,8 +207,11 @@ SELECT
   r.org_id,
 
   b.item_linkid,
+  i.domain_key,
   i.item_domain,
   i.item_domain_system,
+  i.is_leaf,
+  i.is_scored,
 
   b.answer_ordinal,
   b.answer_kind,
@@ -201,53 +221,73 @@ SELECT
   b.value_code,
   b.value_coding_system,
 
-  -- scoring helpers
-  o.max_ordinal_observed                     AS likert_max_for_item,
+  o.max_ordinal_observed                      AS likert_max_for_item,
   CASE
     WHEN b.answer_kind='coding'
      AND o.max_ordinal_observed IS NOT NULL
      AND o.max_ordinal_observed > 0
       THEN b.numeric_value / o.max_ordinal_observed
-  END                                        AS score_pct,
+  END                                         AS score_pct,
 
-  -- flags
-  (b.answer_kind='string')                   AS is_free_text,
+  (b.answer_kind='string')                    AS is_free_text,
   (b.answer_kind='coding' AND o.max_ordinal_observed IS NOT NULL)
-                                             AS has_ordinal,
+                                              AS has_ordinal,
+
   CASE
     WHEN b.answer_kind='coding'
      AND o.max_ordinal_observed IS NOT NULL
      AND b.numeric_value = o.max_ordinal_observed
       THEN TRUE ELSE FALSE
-  END                                        AS answer_is_top_box,
+  END                                         AS answer_is_top_box,
+
   CASE
     WHEN b.answer_kind='coding'
      AND o.max_ordinal_observed IS NOT NULL
      AND b.numeric_value >= (o.max_ordinal_observed - 1)
       THEN TRUE ELSE FALSE
-  END                                        AS answer_is_top2_box,
+  END                                         AS answer_is_top2_box,
+
   CASE
-    -- treat classic Likerts as bottom if 0 or 1
     WHEN b.answer_kind='coding'
      AND b.value_coding_system ILIKE '%likert%'
      AND b.numeric_value IN (0,1)
       THEN TRUE ELSE FALSE
-  END                                        AS answer_is_bottom_box,
+  END                                         AS answer_is_bottom_box,
 
-  -- simple cleaned text for NLP
+  (b.value_coding_system ILIKE '%nps%' OR b.value_coding_system ILIKE '%/nps-%') AS is_nps,
+  CASE
+    WHEN (b.value_coding_system ILIKE '%nps%' OR b.value_coding_system ILIKE '%/nps-%')
+     AND b.numeric_value BETWEEN 0 AND 6  THEN 'detractor'
+    WHEN (b.value_coding_system ILIKE '%nps%' OR b.value_coding_system ILIKE '%/nps-%')
+     AND b.numeric_value BETWEEN 7 AND 8  THEN 'passive'
+    WHEN (b.value_coding_system ILIKE '%nps%' OR b.value_coding_system ILIKE '%/nps-%')
+     AND b.numeric_value BETWEEN 9 AND 10 THEN 'promoter'
+  END                                         AS nps_bucket,
+
   CASE WHEN b.answer_kind='string'
        THEN lower(regexp_replace(coalesce(b.value_string,''),'[^[:alnum:]\s]+','','g'))
-  END                                        AS value_string_clean,
+  END                                         AS value_string_clean,
 
-  -- pass through item scoring flag
-  i.is_scored
+  CASE
+    WHEN p.birth_date IS NOT NULL
+    THEN date_part(
+           'year',
+           age( (b.authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::date
+             , p.birth_date )
+         )::int
+  END                                         AS age_at_authored
 
 FROM base b
-LEFT JOIN itm i
-       ON i.questionnaire_id = b.questionnaire_id
-      AND i.linkid           = b.item_linkid
-LEFT JOIN ordinals o
-       ON o.questionnaire_id = b.questionnaire_id
-      AND o.item_linkid      = b.item_linkid
 LEFT JOIN resp r
-       ON r.qr_id            = b.qr_id
+  ON r.qr_id = b.qr_id
+LEFT JOIN itm i
+  ON i.questionnaire_key = COALESCE(r.questionnaire_id, b.questionnaire_id_fallback)  -- << key fix
+ AND i.linkid            = b.item_linkid
+LEFT JOIN ordinals o
+  ON o.questionnaire_id_norm = COALESCE(r.questionnaire_id, b.questionnaire_id_fallback)
+ AND o.item_linkid           = b.item_linkid
+LEFT JOIN pat p
+  ON p.patient_id       = r.patient_id
+
+-- Keep only leaf items once the join works; temporarily you can relax this if debugging
+WHERE i.is_leaf = TRUE

@@ -1,128 +1,128 @@
 {{ config(materialized='view') }}
 
-with qr as (
-  select
+WITH qr AS (
+  SELECT
     qr_id,
     authored_ts,
-    -- Prefer canonical URL found in the JSON, else the reference column
-    coalesce((resource::jsonb->>'questionnaire')::text, questionnaire_ref) as questionnaire_any,
+    -- prefer canonical URL in JSON; fall back to ref column
+    COALESCE((resource::jsonb->>'questionnaire')::text, questionnaire_ref) AS questionnaire_any,
     patient_ref,
     encounter_ref,
     author_ref,
 
     -- Airbyte lineage
-    _airbyte_raw_id          as airbyte_raw_id,
-    _airbyte_extracted_at    as loaded_at,
-    _airbyte_generation_id   as airbyte_generation_id,
-    _airbyte_meta::jsonb     as airbyte_meta
-  from {{ source('raw', 'questionnaireresponse_current') }}
+    _airbyte_raw_id        AS airbyte_raw_id,
+    _airbyte_extracted_at  AS loaded_at,
+    _airbyte_generation_id AS airbyte_generation_id,
+    _airbyte_meta::jsonb   AS airbyte_meta
+  FROM {{ source('raw','questionnaireresponse_current') }}
 ),
 
--- tease out URL vs relative id
-qr_keys as (
-  select
+-- tease out URL vs logical id
+qr_keys AS (
+  SELECT
     q.*,
-    case when questionnaire_any ~* '^https?://' then questionnaire_any end                            as questionnaire_canonical_url,
-    case when questionnaire_any like 'Questionnaire/%' then split_part(questionnaire_any,'/',2) end    as questionnaire_logical_id
-  from qr q
+    CASE WHEN questionnaire_any ~* '^https?://'     THEN questionnaire_any END AS questionnaire_canonical_url,
+    CASE WHEN questionnaire_any LIKE 'Questionnaire/%'
+         THEN split_part(questionnaire_any,'/',2)
+    END AS questionnaire_logical_id
+  FROM qr q
 ),
 
 -- Questionnaire metadata by canonical URL
-q_meta_url as (
-  select
-    (resource::jsonb->>'url')::text as questionnaire_canonical_url,
-    questionnaire_id                as questionnaire_logical_id_meta,
-    (resource::jsonb->>'version')::text as questionnaire_version_meta
-  from {{ source('raw','questionnaire_current') }}
+q_meta_url AS (
+  SELECT
+    (resource::jsonb->>'url')::text    AS questionnaire_canonical_url,
+    questionnaire_id                   AS questionnaire_logical_id_meta,
+    (resource::jsonb->>'version')::text AS questionnaire_version_meta
+  FROM {{ source('raw','questionnaire_current') }}
 ),
 
 -- Fallback metadata by logical id
-q_meta_id as (
-  select
-    questionnaire_id                as questionnaire_logical_id_meta,
-    (resource::jsonb->>'url')::text as questionnaire_canonical_url_meta,
-    (resource::jsonb->>'version')::text as questionnaire_version_meta
-  from {{ source('raw','questionnaire_current') }}
+q_meta_id AS (
+  SELECT
+    questionnaire_id                   AS questionnaire_logical_id_meta,
+    (resource::jsonb->>'url')::text    AS questionnaire_canonical_url_meta,
+    (resource::jsonb->>'version')::text AS questionnaire_version_meta
+  FROM {{ source('raw','questionnaire_current') }}
 ),
 
-enc as (
-  select
+-- Encounter context (for org/practitioner backfill + clean ids)
+enc AS (
+  SELECT
     encounter_id,
-    'Encounter/' || encounter_id as encounter_ref,
+    'Encounter/' || encounter_id AS encounter_ref,
     org_ref,
     practitioner_ref
-  from {{ source('raw','encounter_current') }}
+  FROM {{ source('raw','encounter_current') }}
 ),
 
-base as (
-  select
+base AS (
+  SELECT
     k.qr_id,
     k.authored_ts,
 
-    -- version via URL first, then by logical id
-    coalesce(u.questionnaire_version_meta, i.questionnaire_version_meta) as questionnaire_version,
+    -- Canonical URL (best available)
+    COALESCE(k.questionnaire_canonical_url, i.questionnaire_canonical_url_meta) AS questionnaire_url,
 
-    -- questionnaire_id: last segment of canonical URL (e.g. NREQ), else logical id
-    coalesce(
-      case when k.questionnaire_canonical_url is not null
-           then regexp_replace(k.questionnaire_canonical_url, '^.*/', '')
-      end,
+    -- Version via URL first, then by logical id
+    COALESCE(u.questionnaire_version_meta, i.questionnaire_version_meta) AS questionnaire_version,
+
+    -- questionnaire_id: last segment of canonical URL (e.g., NREQ), else logical id
+    COALESCE(
+      CASE
+        WHEN COALESCE(k.questionnaire_canonical_url, i.questionnaire_canonical_url_meta) IS NOT NULL
+        THEN regexp_replace(COALESCE(k.questionnaire_canonical_url, i.questionnaire_canonical_url_meta), '^.*/', '')
+      END,
       k.questionnaire_logical_id
-    ) as questionnaire_id,
+    ) AS questionnaire_id,
 
     -- keep original refs
     k.patient_ref,
     k.encounter_ref,
-    coalesce(k.author_ref, e.practitioner_ref) as clinician_ref,
+    COALESCE(k.author_ref, e.practitioner_ref) AS clinician_ref,
     e.org_ref,
 
     -- clean ids (strip prefixes)
-    nullif(split_part(coalesce(k.patient_ref, ''), '/', 2), '')                           as patient_id,
-    nullif(split_part(coalesce(k.encounter_ref, ''), '/', 2), '')                         as encounter_id,
-    nullif(split_part(coalesce(coalesce(k.author_ref, e.practitioner_ref), ''), '/', 2), '') as clinician_id,
-    nullif(split_part(coalesce(e.org_ref, ''), '/', 2), '')                               as org_id,
+    NULLIF(split_part(COALESCE(k.patient_ref, ''), '/', 2), '')                          AS patient_id,
+    NULLIF(split_part(COALESCE(k.encounter_ref, ''), '/', 2), '')                        AS encounter_id,
+    NULLIF(split_part(COALESCE(COALESCE(k.author_ref, e.practitioner_ref), ''), '/', 2), '') AS clinician_id,
+    NULLIF(split_part(COALESCE(e.org_ref, ''), '/', 2), '')                              AS org_id,
 
     -- context flags
-    (k.encounter_ref is not null)                                as has_encounter_ref,
-    (e.org_ref is not null)                                      as has_org_ref,
-    (coalesce(k.author_ref, e.practitioner_ref) is not null)     as has_clinician_ref,
+    (k.encounter_ref IS NOT NULL)                            AS has_encounter_ref,
+    (e.org_ref IS NOT NULL)                                  AS has_org_ref,
+    (COALESCE(k.author_ref, e.practitioner_ref) IS NOT NULL) AS has_clinician_ref,
 
-    -- time buckets (bucket starts + label)
-    -- pick a reporting TZ once (configurable)
-    -- {{ var('report_tz', 'UTC') }}
-
-    -- Boundaries
-    (authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::date                 AS qr_date,
-    date_trunc('week',  authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::date  AS qr_week_start,   -- ISO week: Monday start
+    -- time buckets (reporting TZ configurable)
+    (authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::date AS qr_date,
+    date_trunc('week',  authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::date  AS qr_week_start,   -- ISO week (Mon)
     date_trunc('month', authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::date  AS qr_month_start,
+    to_char(date_trunc('week', authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}'), 'IYYY-"W"IW')      AS qr_week_label,
 
-    -- Human label (ISO week-year safe)
-    to_char(date_trunc('week', authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}'),
-            'IYYY-"W"IW')                                                             AS qr_week_label,
-
-    -- Numeric features (useful for GROUP BY / filters)
-    extract(isoyear from authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::int AS qr_iso_year,
-    extract(week    from authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::int AS qr_iso_week,
-    extract(year    from authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::int AS qr_year,
-    extract(month   from authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::int AS qr_month_num,
+    -- numeric helpers
+    EXTRACT(isoyear FROM authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::int AS qr_iso_year,
+    EXTRACT(week    FROM authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::int AS qr_iso_week,
+    EXTRACT(year    FROM authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::int AS qr_year,
+    EXTRACT(month   FROM authored_ts AT TIME ZONE '{{ var("report_tz","UTC") }}')::int AS qr_month_num,
 
     -- lineage from Airbyte
     k.airbyte_raw_id,
-    k.loaded_at                    -- _airbyte_extracted_at passthrough
-  from qr_keys k
-  left join enc e
-    on k.encounter_ref = e.encounter_ref
-  left join q_meta_url u
-    on k.questionnaire_canonical_url = u.questionnaire_canonical_url
-  left join q_meta_id i
-    on k.questionnaire_logical_id = i.questionnaire_logical_id_meta
+    k.loaded_at
+  FROM qr_keys k
+  LEFT JOIN enc e
+    ON k.encounter_ref = e.encounter_ref
+  LEFT JOIN q_meta_url u
+    ON k.questionnaire_canonical_url = u.questionnaire_canonical_url
+  LEFT JOIN q_meta_id i
+    ON k.questionnaire_logical_id = i.questionnaire_logical_id_meta
 )
 
-select
+SELECT
   b.*,
-  case
-    when b.encounter_id is not null
-     and row_number() over (partition by b.encounter_id order by b.authored_ts desc) = 1
-    then true else false
-  end as is_latest_for_encounter
-from base b
+  CASE
+    WHEN b.encounter_id IS NOT NULL
+     AND row_number() OVER (PARTITION BY b.encounter_id ORDER BY b.authored_ts DESC) = 1
+    THEN TRUE ELSE FALSE
+  END AS is_latest_for_encounter
+FROM base b

@@ -1,0 +1,27 @@
+models:
+  - name: dq_response_rollup
+    description: "Per-QR rollup of answer counts, completion, and quality coverage."
+    columns:
+      - name: qr_id
+        tests: [not_null, unique]
+      - name: questionnaire_id
+        tests: [not_null]
+      - name: n_answers_total
+      - name: expected_items_leaf
+      - name: completion_ratio_total
+        description: "Answered leaf items / expected leaf items (0..1)."
+      - name: pct_mapped_ordinal
+        description: "% of coding answers in this response that have an ordinal mapping."
+
+  - name: dq_questionnaire_staleness
+    description: "Staleness monitor per questionnaire (+version): item counts, last answers seen, and last metadata update."
+    columns:
+      - name: questionnaire_id
+        tests: [not_null, unique]
+      - name: questionnaire_version
+      - name: item_count_leaf
+        tests: [not_null]
+      - name: last_seen_in_answers
+      - name: questionnaire_last_updated
+      - name: days_since_last_answer
+      - name: days_since_last_update
