@@ -1,0 +1,24 @@
+db:
+  host: localhost
+  port: 5432
+  database: analytics
+  user: postgres
+  password: ""
+  schema: stg
+
+scoring:
+  model_name: hf_roberta_zsc
+  batch_limit: 1000
+  since: "7d"           # "7d" / "24h" / "2024-01-01" / ISO8601
+  theme_confidence_min: 0.40
+  rule_override_max_zsc: 0.80
+
+models:
+  sentiment: cardiffnlp/twitter-roberta-base-sentiment-latest
+  zero_shot: MoritzLaurer/deberta-v3-base-mnli-fever-anli
+  toxicity: ""          # optional, e.g. "unitary/toxic-bert"
+  enable_zero_shot: true
+
+hf:
+  cache_dir: .hf_cache
+  token: ""             # optional

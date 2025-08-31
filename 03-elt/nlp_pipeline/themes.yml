@@ -1,0 +1,22 @@
+labels:
+  - environment
+  - communication
+  - respect_dignity
+  - information_discharge
+  - coordination_timeliness
+  - access
+  - safety
+  - pain_management
+  - facilities_food
+  - other
+
+keywords:
+  environment: [room, noise, clean, cleanliness, privacy, bed, ward, toilet, shower, temperature]
+  communication: [explain, explained, told, listen, listened, understand, understanding, information, questions, language, interpreter]
+  respect_dignity: [respect, respectful, dignity, kind, rude, ignore, ignored, compassion, compassionate]
+  information_discharge: [discharge, instructions, medication, follow-up, "follow up", aftercare, leaflet]
+  coordination_timeliness: [wait, waiting, delay, delayed, coordination, coordinate, test, results, transfer, schedule, timely]
+  access: [appointment, booking, availability, available, transport, parking, visiting, visit]
+  safety: [safe, safety, fall, hygiene, infection, "medication error", pressure, ulcer, error]
+  pain_management: [pain, analgesia, relief, discomfort, painful]
+  facilities_food: [food, meal, cafeteria, diet, water, taste, kitchen]

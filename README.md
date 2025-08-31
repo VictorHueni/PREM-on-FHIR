@@ -50,6 +50,8 @@ abctl local status
 
 ## Transform (transform)
 
+
+### dbt models
 `dbt clean && dbt deps`
 `dbt compile --select stg.*`
 `dbt build --select stg.*`
@@ -69,3 +71,25 @@ Faster local runs: `dbt build --threads 6`
 Only changed models (iterating):
 run once normally to create a state manifest
 `dbt build --select state:modified+ --state target/`
+
+
+
+### nlp pipeline
+build
+DOCKER_BUILDKIT=1 docker build -t pof-prem-nlp:latest .
+
+first run: will download the models into a *volume* (not the image)
+docker run --rm \
+  --env-file .env \
+  -e PG_HOST=host.docker.internal \
+  -v pof-prem_hfcache:/app/.hf_cache \
+  prem-nlp:latest \
+  score --since 10y --limit 100 --verbose
+
+  
+__override defaults if you want:__
+`docker run --rm --env-file .env -e PG_HOST=host.docker.internal prem-nlp:latest score --since 30d --limit 100`
+
+`python -m pipeline.cli score --since 10y --limit 200 --verbose`
+# or a dry run to avoid writing:
+`python -m pipeline.cli score --since 10y --limit 50 --verbose --dry-run`

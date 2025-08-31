@@ -1,0 +1,8 @@
+psycopg2-binary==2.9.10
+python-dotenv==1.1.1
+PyYAML==6.0.2
+transformers==4.56.0
+torch==2.8.0
+langid==1.1.6
+regex==2025.8.29
+tqdm==4.67.1
