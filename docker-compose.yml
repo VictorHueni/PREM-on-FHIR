@@ -115,7 +115,7 @@ services:
   # -------- dbt runner (optional, dev helper) --------
   dbt-run:
     build:
-      context: ./03-elt/fhir_prem_to_decision
+      context: ./02-elt/fhir_prem_to_decision
       dockerfile: Dockerfile
     image: pof-dbt:1.10.10
     container_name: pof-dbt
@@ -128,14 +128,14 @@ services:
       DBT_PROFILES_DIR: /usr/app
     working_dir: /usr/app
     volumes:
-      - ./03-elt/fhir_prem_to_decision:/usr/app
+      - ./02-elt/fhir_prem_to_decision:/usr/app
     depends_on:
       analytics-db: { condition: service_healthy }
 
   # -------- NLP one-shot container --------
   nlp:
     build:
-      context: ./03-elt/nlp_pipeline
+      context: ./02-elt/nlp_pipeline
     image: pof-nlp:latest
     container_name: pof-nlp
     profiles: ["analytics","all"]

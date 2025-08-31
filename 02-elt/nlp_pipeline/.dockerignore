@@ -1,0 +1,7 @@
+# local environments & caches
+venv/
+.hf_cache/
+__pycache__/
+*.pyc
+.idea/
+.hf_cache/

@@ -1,0 +1,75 @@
+version: 2
+
+models:
+  - name: mart_prem_kpi_daily
+    description: "Daily PREM KPIs by org × clinician × encounter_class with domain means."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [period_date, org_id, clinician_id, encounter_class]
+    columns:
+      - name: org_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_organization')
+                field: org_id
+      - name: clinician_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_practitioner')
+                field: practitioner_id
+              config: {severity: warn}
+      - name: encounter_class
+        description: "FHIR Encounter.class; may be UNKNOWN if missing."
+
+  - name: mart_prem_item_heatmap
+    description: "Monthly item × org heatmap: mean score, top-box %, problem rate, N."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [period_month, org_id, questionnaire_id, item_linkid]
+    columns:
+      - name: org_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_organization')
+                field: org_id
+
+  - name: mart_prem_equity_slice
+    description: "Monthly equity slices by age band & gender with overall and per-domain means."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [period_month, org_id, age_band, gender_norm]
+    columns:
+      - name: org_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_organization')
+                field: org_id
+
+  - name: mart_prem_outliers
+    description: "Monthly z-scores vs network mean for orgs & clinicians; |z| ≥ 2 flags."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [period_month, entity_type, entity_id]
+
+exposures:
+  - name: prem_quality_dashboard
+    type: dashboard
+    maturity: medium
+    url: "http://localhost:3000/dashboard/prem"   # change to your BI URL
+    description: "PREM quality & improvement dashboard for neurorehab."
+    depends_on:
+      - ref('mart_prem_kpi_daily')
+      - ref('mart_prem_item_heatmap')
+      - ref('mart_prem_equity_slice')
+      - ref('mart_prem_outliers')
+    owner:
+      name: "Quality Analytics"
+      email: "quality@example.com"

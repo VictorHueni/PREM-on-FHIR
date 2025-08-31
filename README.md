@@ -59,7 +59,7 @@ make elt             # dbt stg+core -> NLP -> dbt marts
 │     ├─ Dockerfile                # builds a Synthea runner
 │     ├─ output/                   # generated NDJSON
 │     └─ upload_synthea.sh         # bulk import via $import + polling
-├─ 03-elt/
+├─ 02-elt/
 │  ├─ extract_load_config/         # Airbyte exports/screenshots
 │  ├─ fhir_prem_to_decision/       # dbt project (stg/core/mart)
 │  └─ nlp_pipeline/                # NLP job (Dockerized, runs one-shot)
@@ -380,7 +380,7 @@ make elt             # dbt stg+core -> NLP -> dbt marts
 │     ├─ Dockerfile                # builds a Synthea runner
 │     ├─ output/                   # generated NDJSON
 │     └─ upload_synthea.sh         # bulk import via $import + polling
-├─ 03-elt/
+├─ 02-elt/
 │  ├─ extract_load_config/         # Airbyte exports/screenshots
 │  ├─ fhir_prem_to_decision/       # dbt project (stg/core/mart)
 │  └─ nlp_pipeline/                # NLP job (Dockerized, runs one-shot)
@@ -417,76 +417,70 @@ This starts:
 
 ### 2. Generate & upload sample data
 
+#### 2.1 Setup
+- **`make init`** : Create virtualenv (if missing) and install CLI dependencies.
+- **`make venv`** : Create virtualenv only.
+- **`make deps`** : Install dependencies into the virtualenv.
+
+#### 2.2 FHIR Server
+
+- **`make fhir-wait`** : Poll `$(FHIR_BASE)/metadata` until HAPI returns 200.
+
+
 #### 2.1 Synthea 
+
+- **`make synthea-build`** : Build the Synthea Docker image from `01-data-generation/synthea` (tag: `syntheadocker`).  
+- **`make synthea-run`** : Run Synthea and write NDJSON to `01-data-generation/synthea/output`.
+
+Override knobs per run (or put in `.env`):
 ```bash
-# Build the Synthea image
-docker build -t syntheadocker 01-data-generation/synthea
-
-# Run Synthea (writes NDJSON into 01-data-generation/synthea/output)
-docker run --rm -it \
-  -v "$PWD/01-data-generation/synthea/output:/output" \
-  syntheadocker
-
-# Upload via FHIR $import + poll until completed
-01-data-generation/synthea/upload_synthea.sh 01-data-generation/synthea/params/import-pass1.json
+POPULATION=25 AGE_RANGE=18-90 KEEP_FILE=keep_neuro.json EXTRA_ARGS="--exporter.fhir.bulk_data=true ..." make synthea-run
 ```
-
-
-```
-docker build -t syntheadocker .
-docker run --rm -it --mount type=bind,source="$(pwd)/output",target=/output syntheadocker
-./upload_patient.sh
-```
-
-
-
 
 #### 2.2 Questionnaire
-```bash
-python 01-data-generation/questionnaires/questionnaire_bundle_maker.py \
-  --in 01-data-generation/questionnaires/input \
-  --out 01-data-generation/questionnaires/output/questionnaire_bundle.json
+`make bundle-questionnaires` : scan 02-resources/fhir/questionnaires (or your configured Q_IN_DIR) for CodeSystem/ValueSet/Questionnaire JSON and build a `transaction Bundle → $(Q_BUNDLE)`.
+`make post-questionnaires` : POST that transaction Bundle to $(FHIR_BASE).
 
-01-data-generation/questionnaires/upload_questionnaire.sh
-```
 
 #### 2.3 QuestionnaireResponses (scaffolded from header CSV)
 ##### 2.3.1 Questionnaire Header
-```bash
-python 01-data-generation/questionnaire_responses/export_qr_header.py
-```
-
-```
-python -m venv .venv
-.venv/Scripts/activate
-pip install --upgrade pip
-pip install psycopg2-binary python-dotenv
-python export_qr_header.py
-```
+`make qr-export-headers` : run the SQL against your HAPI DB and write QuestionnaireResponse-Header.csv → $(HDR_CSV)
+(DB envs respected: DB_HOST/PORT/NAME/USER/PASS or their OLTP_DB_* aliases).
 
 ##### 2.3.2 Questionnaire Response bundle maker
+
+
+`make qr-make-bundle`s : generate QR batch bundles from the header CSV → $(QR_OUT).
+Controls (set as env before the command):
+- QR_MODE=nreq|ppnq (default nreq)
+- QR_SEED=42 (deterministic)
+- QR_CHUNK=250 (max QRs per bundle file)
+
+NREQ weighting: 
+- QR_LIKERT_DIST=0.2,0.5,0.3
+
+PPNQ text: 
+dry run (placeholders): QR_DRY_RUN=1 (default)
+LLM mode: QR_USE_LLM=1 (needs OPENAI_API_KEY; optional LLM_MODEL, LLM_TEMPERATURE, LLM_MAX_RETRIES)
+
+examples:
 ```bash
-python 01-data-generation/questionnaire_responses/qr_bundle_maker.py \
-  --mode nreq \
-  --csv 01-data-generation/questionnaire_responses/input/QuestionnaireResponse-Header.csv \
-  --out 01-data-generation/questionnaire_responses/output \
-  --seed 42 --likert-dist 0.2,0.5,0.3
-01-data-generation/questionnaire_responses/upload_qr.sh
+# NREQ with weighted Likert distribution and fixed seed
+QR_MODE=nreq QR_LIKERT_DIST=0.2,0.5,0.3 QR_SEED=7 make -e qr-make-bundles
+
+# PPNQ dry-run placeholders
+QR_MODE=ppnq QR_DRY_RUN=1 make -e qr-make-bundles
+
+# PPNQ via LLM
+QR_MODE=ppnq QR_USE_LLM=1 LLM_MODEL=gpt-4o-mini make -e qr-make-bundles
 ```
 
 
-```
-python -m venv .venv
-.venv/Scripts/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-python qr_bundle_maker.py --mode ppnq --csv ./input/QuestionnaireResponse-Header.csv --out output --llm
-python qr_bundle_maker.py --mode ppnq --csv ./input/QuestionnaireResponse-Header.csv --out output --dry-run
-python qr_bundle_maker.py --mode nreq --csv ./input/QuestionnaireResponse-Header.csv --out output --seed 42 --likert-dist 0.2,0.5,0.3
-./upload_patient.sh
-```
+#### 2.4 End to End
+`make seed-all` : one button: init → synthea-build → synthea-run → fhir-wait → bundle-questionnaires → post-questionnaires → qr-export-headers → qr-make-bundles → post-qr-bundles.
 
-
+#### 2.5 Clean up 
+`make clean` : remove generated Synthea output, QR output, header CSVs, and curl logs.
 
 
 ### 3. ELT
