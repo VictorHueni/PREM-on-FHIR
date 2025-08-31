@@ -1,0 +1,163 @@
+name: prem-on-fhir
+
+services:
+  # -------- OLTP Postgres (HAPI backing DB) --------
+  oltp-db:
+    build: { context: ./00-setup/oltp-db }
+    image: oltp-postgres:16
+    container_name: pof-oltp-db
+    restart: always
+    profiles: ["core","all"]
+    environment:
+      POSTGRES_DB:       ${OLTP_DB_NAME}
+      POSTGRES_USER:     ${OLTP_DB_USER}
+      POSTGRES_PASSWORD: ${OLTP_DB_PASSWORD}
+    ports:
+      - "${OLTP_DB_PORT_HOST}:5432"
+    volumes:
+      - pof-pgdata:/var/lib/postgresql/data
+    shm_size: "${OLTP_SHM_SIZE}"
+    mem_limit: "${OLTP_MEM_LIMIT}"
+    mem_reservation: "${OLTP_MEM_RES}"
+    cpus: "${OLTP_CPUS}"
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U ${OLTP_DB_USER} -d ${OLTP_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # -------- HAPI FHIR --------
+  hapi-fhir-server:
+    image: hapiproject/hapi:v8.2.0-2-tomcat
+    container_name: pof-hapi-fhir-server
+    restart: always
+    profiles: ["core","all"]
+    depends_on:
+      oltp-db: { condition: service_healthy }
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./00-setup/hapi-fhir/hapi.application.yaml:/app/config/application.yaml:ro
+    environment:
+      SPRING_CONFIG_ADDITIONAL_LOCATION: file:/app/config/
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://oltp-db:5432/${OLTP_DB_NAME}"
+      SPRING_DATASOURCE_USERNAME: ${OLTP_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${OLTP_DB_PASSWORD}
+      SPRING_DATASOURCE_DRIVERCLASSNAME: org.postgresql.Driver
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgresDialect
+      SERVER_TOMCAT_MAX_SWALLOW_SIZE: -1
+      SERVER_TOMCAT_MAX_HTTP_FORM_POST_SIZE: -1
+      JAVA_TOOL_OPTIONS: "${HAPI_JAVA_OPTS}"
+    mem_limit: "${HAPI_MEM_LIMIT}"
+    mem_reservation: "${HAPI_MEM_RES}"
+    cpus: "${HAPI_CPUS}"
+    ulimits:
+      nofile: 65536
+
+  # -------- Analytics Postgres (OLAP) --------
+  analytics-db:
+    build: { context: ./00-setup/analytics-db }
+    image: analytics-postgres:16
+    container_name: pof-analytics-db
+    restart: always
+    profiles: ["analytics","core", "all"]
+    environment:
+      POSTGRES_DB:       ${AN_DB_NAME}
+      POSTGRES_USER:     ${AN_DB_USER}
+      POSTGRES_PASSWORD: ${AN_DB_PASSWORD}
+    ports:
+      - "${AN_DB_PORT}:5432"
+    command: ["postgres","-c","config_file=/etc/postgresql/postgresql.analytics.conf"]
+    volumes:
+      - analytics-pgdata:/var/lib/postgresql/data
+    shm_size: "${AN_SHM_SIZE}"
+    mem_limit: "${AN_MEM_LIMIT}"
+    mem_reservation: "${AN_MEM_RES}"
+    cpus: "${AN_CPUS}"
+    healthcheck:
+      test: ["CMD-SHELL","pg_isready -U ${AN_DB_USER} -d ${AN_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # -------- pgAdmin --------
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: pof-pgadmin
+    restart: always
+    profiles: ["core","all"]
+    depends_on:
+      oltp-db: { condition: service_healthy }
+      analytics-db: { condition: service_healthy }
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL:    ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    volumes:
+      - pof-pgadmin:/var/lib/pgadmin
+      - ./00-setup/pgadmin/servers.json:/pgadmin4/servers.json:ro
+    mem_limit: "${PGADMIN_MEM_LIMIT}"
+    cpus: "${PGADMIN_CPUS}"
+
+  # -------- Static web server for Synthea files --------
+  synthea-files:
+    image: nginx:alpine
+    container_name: pof-synthea-files
+    restart: always
+    profiles: ["core","all"]
+    volumes:
+        - ${SYNTHEA_OUT_DIR}:/usr/share/nginx/html:ro
+        - ./00-setup/synthea-files/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "${SYNTHEA_HTTP_PORT}:80"
+
+  # -------- dbt runner (optional, dev helper) --------
+  dbt-run:
+    build:
+      context: ./03-elt/fhir_prem_to_decision
+      dockerfile: Dockerfile
+    image: pof-dbt:1.10.10
+    container_name: pof-dbt
+    profiles: ["analytics","all"]
+    environment:
+      AN_DB_HOST: analytics-db    
+      AN_DB_PORT: "5432"          
+      DBT_USER: ${DBT_USER}
+      DBT_PASSWORD: ${DBT_PASSWORD}
+      DBT_PROFILES_DIR: /usr/app
+    working_dir: /usr/app
+    volumes:
+      - ./03-elt/fhir_prem_to_decision:/usr/app
+    depends_on:
+      analytics-db: { condition: service_healthy }
+
+  # -------- NLP one-shot container --------
+  nlp:
+    build:
+      context: ./03-elt/nlp_pipeline
+    image: pof-nlp:latest
+    container_name: pof-nlp
+    profiles: ["analytics","all"]
+    environment:
+      PG_HOST: analytics-db       
+      PG_PORT: "5432"             
+      PG_DB: ${PG_DB}
+      PG_USER: ${PG_USER}
+      PG_PASSWORD: ${PG_PASSWORD}
+      PG_SCHEMA: ${PG_SCHEMA}
+    volumes:
+      - nlp-hfcache:/app/.hf_cache
+    depends_on:
+      analytics-db: { condition: service_healthy }
+    entrypoint: ["python","-m","pipeline.cli"]
+    command: ["--help"]
+    # Optional local resource caps for NLP runs (CPU/GPU depends on your base image)
+    # mem_limit: "6g"
+    # cpus: "2.0"
+
+volumes:
+  pof-pgdata:
+  pof-pgadmin:
+  analytics-pgdata:
+  nlp-hfcache:

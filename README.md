@@ -79,11 +79,16 @@ cp .env.example .env
 
 
 ## Steps by Step Guide
-### 1. Bring up infrastructure
+
+### Bring up all services to life
+
 ```bash
-cd 00-setup
-docker compose --profile all up -d
-docker compose ps
+docker compose --profile all  up -d --build
+```
+
+#### 1.1 Bring up infrastructure
+```bash
+docker compose --profile core up -d --build
 ```
 
 This starts:
@@ -93,6 +98,30 @@ This starts:
 - pgadmin,
 - synthea-files (nginx web server serves NDJSON from 00-setup/synthea-files for convenient bulk import)
 
+Useful sanity check
+```bash
+# show container status + mapped ports
+docker compose ps
+
+# tail logs for a service (Ctrl+C to quit)
+docker compose logs -f analytics-db
+docker compose logs -f oltp-db
+docker compose logs -f hapi-fhir-server
+docker compose logs -f synthea-files
+docker compose logs -f pgadmin
+```
+
+#### 1.2 Bring up the DBT project & the NLP Pipelines
+```bash
+docker compose --profile analytics up -d --build
+```
+
+Useful sanity check
+```bash
+docker compose run --rm dbt-run dbt --version
+docker compose run --rm dbt-run dbt debug
+docker compose run --rm nlp --help
+```
 
 ### 2. Generate & upload sample data
 

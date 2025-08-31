@@ -1,0 +1,11 @@
+# keep the build context tiny
+.git/
+.venv/
+.hf_cache/
+**/__pycache__/
+**/.pytest_cache/
+**/.ipynb_checkpoints/
+.DS_Store
+target/
+logs/
+dbt_packages/

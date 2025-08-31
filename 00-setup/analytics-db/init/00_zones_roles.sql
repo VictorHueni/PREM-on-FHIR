@@ -59,13 +59,13 @@ ALTER SCHEMA mart OWNER TO dbt_user;
 GRANT USAGE, CREATE ON SCHEMA raw TO airbyte_loader;
 
 -- dbt needs USAGE on raw to read, and CREATE on stg/mart to build
-GRANT USAGE  ON SCHEMA raw       TO dbt_owner;    -- ❗ added
+GRANT USAGE  ON SCHEMA raw       TO dbt_owner;
 GRANT USAGE  ON SCHEMA stg, mart TO dbt_owner, bi_reader;
 GRANT CREATE ON SCHEMA stg, mart TO dbt_owner;
 
 -- --- ONE-TIME GRANTS ON EXISTING RAW OBJECTS (default privs don’t backfill) ---
-GRANT SELECT ON ALL TABLES    IN SCHEMA raw TO dbt_owner;                -- ❗ added
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA raw TO dbt_owner;         -- ❗ added
+GRANT SELECT ON ALL TABLES    IN SCHEMA raw TO dbt_owner;     
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA raw TO dbt_owner;
 -- (optional direct grants)
 -- GRANT SELECT ON ALL TABLES IN SCHEMA raw TO dbt_user;
 -- GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA raw TO dbt_user;

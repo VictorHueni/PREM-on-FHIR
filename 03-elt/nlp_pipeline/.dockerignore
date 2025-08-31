@@ -3,8 +3,5 @@ venv/
 .hf_cache/
 __pycache__/
 *.pyc
-
-
-# OS/editor noise
-.DS_Store
-Thumbs.db
+.idea/
+.hf_cache/

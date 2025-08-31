@@ -35,4 +35,5 @@ VOLUME ["/app/.hf_cache"]
 
 # Default command (overridable at `docker run`)
 ENTRYPOINT ["/usr/bin/tini","--","python","-m","pipeline.cli"]
-CMD ["score","--since","90d","--limit","500"]
+CMD ["--help"] 
+# CMD ["score","--since","90d","--limit","500"]
