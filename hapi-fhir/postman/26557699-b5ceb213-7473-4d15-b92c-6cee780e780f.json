@@ -370,7 +370,7 @@
 					"response": []
 				},
 				{
-					"name": "Validate Questionnaire Response Copy",
+					"name": "Dele Questionnaire Response",
 					"id": "26557699-54c0adba-5cd6-4f73-bba4-c902752a9471",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
