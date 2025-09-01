@@ -1,0 +1,23 @@
+{
+  "name": "Analytics Server",
+  "workspaceId": "28e0deb7-6f86-42e1-9ba2-5ba9a5b422e2",
+  "definitionId": "25c5221d-dce2-4163-ade9-739ef790f503",
+  "configuration": {
+    "port": 5442,
+    "schema": "raw",
+    "ssl": false,
+    "host": "host.docker.internal",
+    "database": "analytics",
+    "password": "******",
+    "ssl_mode": {
+      "mode": "disable"
+    },
+    "username": "airbyte_user",
+    "drop_cascade": false,
+    "tunnel_method": {
+      "tunnel_method": "NO_TUNNEL"
+    },
+    "disable_type_dedupe": false,
+    "unconstrained_number": false
+  }
+}

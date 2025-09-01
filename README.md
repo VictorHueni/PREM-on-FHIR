@@ -19,7 +19,7 @@ End-to-end pipeline to generate synthetic PREM data, load it into a FHIR server,
 ## Quickstart
 ```bash
 # 1) Start infra (analytics DB, HAPI FHIR, pgAdmin, nginx to serve NDJSON)
-cd 00-setup
+docker compose --profile all build
 docker compose --profile all up -d
 
 # 2) Seed synthetic data (Synthea + Questionnaire + QuestionnaireResponses)
@@ -325,16 +325,18 @@ End-to-end pipeline to generate synthetic PREM data, load it into a FHIR server,
 
 ## ToDo's
 - [ ] add general arch diagram + c4 diagram if possible
-- [ ] make sure all script using env var use the same env files
-- [ ] Validate the docker run cmd and well as shell script params for synthea steps
-- [ ] Make sure of the usage of virutal env for seed steps
+- [x] make sure all script using env var use the same env files
+- [x] Validate the docker run cmd and well as shell script params for synthea steps
+- [x] Make sure of the usage of virutal env for seed steps
 - [ ] Build a make file for Use make seed-all (wraps all the steps above).
 - [ ] Add Aibytes config 
-- [ ] Add Docker compose image for dbt
-- [ ] validate the usage of the .hf_cache model (the docker should be standalone)
-- [ ] validate usage of docker or docker compose for nlp pipeline
-- [ ] create make files
-- [ ] refactor all command in the readme prefering using cd .. before executing the command to avoid long path
+- [x] Add Docker compose image for dbt
+- [x] validate the usage of the .hf_cache model (the docker should be standalone)
+- [x] validate usage of docker or docker compose for nlp pipeline
+- [x] create make files
+- [x] refactor all command in the readme prefering using cd .. before executing the command to avoid long path
+- [ ] make a post script init to execute the airbyte view creation when oltp-db and hapi fhir are all start up and table are available
+- [ ] Make the synthea script leverages the parameters.json createad after generation
 
 
 ## Quickstart
@@ -399,8 +401,7 @@ cp .env.example .env
 ```
 
 
-## Steps by Step Guide
-### 1. Bring up infrastructure
+## Steps by Step Guide (except airbytes)
 ```bash
 cd 00-setup
 docker compose --profile all up -d
@@ -413,6 +414,8 @@ This starts:
 - hapi-fhir-server (FHIR server),
 - pgadmin,
 - synthea-files (nginx web server serves NDJSON from 00-setup/synthea-files for convenient bulk import)
+
+Then you need t oexecute direclty in the db `./00-setup/oltp-db/post-init/20-airbyte-views.sql` to prepare the views for airbytes ETL
 
 
 ### 2. Generate & upload sample data
@@ -429,6 +432,7 @@ This starts:
 
 #### 2.1 Synthea 
 
+##### Generate ndjson
 - **`make synthea-build`** : Build the Synthea Docker image from `01-data-generation/synthea` (tag: `syntheadocker`).  
 - **`make synthea-run`** : Run Synthea and write NDJSON to `01-data-generation/synthea/output`.
 
@@ -436,6 +440,21 @@ Override knobs per run (or put in `.env`):
 ```bash
 POPULATION=25 AGE_RANGE=18-90 KEEP_FILE=keep_neuro.json EXTRA_ARGS="--exporter.fhir.bulk_data=true ..." make synthea-run
 ```
+
+##### Modify params files
+Then you need to edit `P:\dev\PREM-on-FHIR\01-data-generation\synthea\import-pass1.json`:
+- Location
+- Organization
+- Practioner
+- PractitionerRole
+
+All those files are generated with a unique identifier in their files name, You need to update it 
+
+##### Import ressources
+`make fhir-import-many` : This will first import all the files in import pass 1 (they are ressources that needs to be inserted first otherwise it cuase issue with the others in import pass 2)
+
+you could get some error like missing files (due  to not generated or wrong id replacement in the previous steps) Please correct and reexcute the script
+
 
 #### 2.2 Questionnaire
 `make bundle-questionnaires` : scan 02-resources/fhir/questionnaires (or your configured Q_IN_DIR) for CodeSystem/ValueSet/Questionnaire JSON and build a `transaction Bundle → $(Q_BUNDLE)`.
@@ -450,7 +469,7 @@ POPULATION=25 AGE_RANGE=18-90 KEEP_FILE=keep_neuro.json EXTRA_ARGS="--exporter.f
 ##### 2.3.2 Questionnaire Response bundle maker
 
 
-`make qr-make-bundle`s : generate QR batch bundles from the header CSV → $(QR_OUT).
+`make qr-make-bundles` : generate QR batch bundles from the header CSV → $(QR_OUT).
 Controls (set as env before the command):
 - QR_MODE=nreq|ppnq (default nreq)
 - QR_SEED=42 (deterministic)
@@ -475,7 +494,6 @@ QR_MODE=ppnq QR_DRY_RUN=1 make -e qr-make-bundles
 QR_MODE=ppnq QR_USE_LLM=1 LLM_MODEL=gpt-4o-mini make -e qr-make-bundles
 ```
 
-
 #### 2.4 End to End
 `make seed-all` : one button: init → synthea-build → synthea-run → fhir-wait → bundle-questionnaires → post-questionnaires → qr-export-headers → qr-make-bundles → post-qr-bundles.
 
@@ -499,31 +517,34 @@ abctl local status
 
 This steps has to be run only if the Airbytes config is finalized and the first run has been done
 
+
+
 ##### 3.2.1 Containerized DBT
 ```bash
 # Install deps
-docker compose run --rm dbt-run deps
+docker compose run --rm dbt-run dbt deps
+
 
 # Build stg + core
-docker compose run --rm dbt-run build -s stg+ core+
+docker compose run --rm dbt-run dbt build -s stg+ core+
 
 # Build marts
-docker compose run --rm dbt-run build -s mart+
+docker compose run --rm dbt-run dbt build -s mart+
 ```
 
 
 ```bash
 # Only compile
-docker compose run --rm dbt-run compile --select stg.*
+docker compose run --rm dbt-run dbt compile --select stg.*
 
 # Only tests
-docker compose run --rm dbt-run test
+docker compose run --rm dbt-run dbt test
 
 # Full refresh
-docker compose run --rm dbt-run build --full-refresh
+docker compose run --rm dbt-run dbt build --full-refresh
 
 # Only changed models (after one prior run produced a manifest)
-docker compose run --rm dbt-run build --select state:modified+ --state target/
+docker compose run --rm dbt-run dbt build --select state:modified+ --state target/
 ```
 
 ##### 3.2.2 Common dbt manual workflows
@@ -564,11 +585,14 @@ docker run --rm \
 ```
 
 #### 4.2 Subsequent
+
+docker run --rm --env-file .env -e PG_HOST=host.docker.internal prem-nlp:latest score --since 10y --limit 10000 --verbose
 __override defaults if you want:__
 `docker run --rm --env-file .env -e PG_HOST=host.docker.internal prem-nlp:latest score --since 30d --limit 100`
 
 `python -m pipeline.cli score --since 10y --limit 200 --verbose`
-# or a dry run to avoid writing:
+
+__or a dry run to avoid writing:__
 `python -m pipeline.cli score --since 10y --limit 50 --verbose --dry-run`
 
 

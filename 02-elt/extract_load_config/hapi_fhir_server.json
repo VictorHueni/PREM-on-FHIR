@@ -1,0 +1,25 @@
+{
+  "name": "HAPI FHIR Server",
+  "workspaceId": "28e0deb7-6f86-42e1-9ba2-5ba9a5b422e2",
+  "definitionId": "decd338e-5647-4c0b-adf4-da0e75f5a750",
+  "configuration": {
+    "port": 5432,
+    "host": "host.docker.internal",
+    "schemas": [
+      "airbyte_export"
+    ],
+    "database": "prem_on_fhir",
+    "password": "******",
+    "ssl_mode": {
+      "mode": "disable"
+    },
+    "username": "airbyte_ro",
+    "tunnel_method": {
+      "tunnel_method": "NO_TUNNEL"
+    },
+    "replication_method": {
+      "method": "Xmin"
+    },
+    "entra_service_principal_auth": false
+  }
+}

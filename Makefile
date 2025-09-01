@@ -20,6 +20,13 @@ FHIR_BASE ?= http://localhost:8080/fhir
 SYN_CONTEXT := 01-data-generation/synthea
 SYN_OUT     := $(SYN_CONTEXT)/output
 
+# Bulk $import
+IMPORT_PARAMS ?= $(SYN_CONTEXT)/import-pass1.json   # point this at your Parameters JSON
+IMPORT_FILES ?= $(SYN_CONTEXT)/import-pass1.json \
+                $(SYN_CONTEXT)/import-pass2.json
+IMPORT_POLL   ?= 30                           	# seconds between polls
+IMPORT_TIMEOUT_MIN ?= 60                      	# total minutes before giving up
+
 # Questionnaire source (folder with CodeSystem/ValueSet/Questionnaire JSON files)
 Q_CONTEXT   := 01-data-generation/questionnaires
 Q_IN_DIR    := $(Q_CONTEXT)/input
@@ -84,6 +91,29 @@ deps: venv
 fhir-wait:
 	@echo "⏳ Waiting for HAPI at $(FHIR_BASE)…"
 	@$(PY) $(CLI) fhir wait-ready --base "$(FHIR_BASE)" --interval 3 --timeout 120
+
+# Bulk $import (Parameters JSON -> HAPI)
+fhir-import:
+	@echo "📥 Submitting bulk $import using $(IMPORT_PARAMS) → $(FHIR_BASE)…"
+	@test -f "$(IMPORT_PARAMS)" || { echo "❌ Missing Parameters JSON: $(IMPORT_PARAMS)"; exit 1; }
+	@$(PY) $(CLI) fhir import "$(IMPORT_PARAMS)" \
+	  --base "$(FHIR_BASE)" \
+	  --interval $(IMPORT_POLL) \
+	  --timeout-minutes $(IMPORT_TIMEOUT_MIN)
+
+# Bulk $import (many files, in order)
+fhir-import-many:
+	@echo "📥 Submitting bulk \$import for multiple files → $(FHIR_BASE)…"
+	@set -e; \
+	for f in $(IMPORT_FILES); do \
+	  echo "—> 📦 $$f"; \
+	  test -f "$$f" || { echo "❌ Missing Parameters JSON: $$f"; exit 1; }; \
+	  $(PY) $(CLI) fhir import "$$f" \
+	    --base "$(FHIR_BASE)" \
+	    --interval $(IMPORT_POLL) \
+	    --timeout-minutes $(IMPORT_TIMEOUT_MIN); \
+	done
+	@echo "✅ All imports completed."
 
 
 # ------- Synthea -------
@@ -152,7 +182,7 @@ post-qr-bundles:
 	  --log-dir ./curl-logs
 
 # ------- One button -------
-seed-all: init synthea-build synthea-run fhir-wait \
+seed-all: init synthea-build synthea-run fhir-wait  fhir-import-many \
           bundle-questionnaires post-questionnaires \
           qr-export-headers qr-make-bundles post-qr-bundles
 	@echo "✅ seed-all complete."
