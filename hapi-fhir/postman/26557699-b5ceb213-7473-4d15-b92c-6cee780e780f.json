@@ -1484,7 +1484,7 @@
 			"response": []
 		},
 		{
-			"name": "Get Practitioner Copy",
+			"name": "Get Encounter",
 			"id": "26557699-d49b5b0a-22ad-4d3a-912f-380ef8ff8e4c",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
