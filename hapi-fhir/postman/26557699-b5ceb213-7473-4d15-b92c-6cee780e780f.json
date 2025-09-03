@@ -1554,7 +1554,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/fhir/Patient/2301c95d-0369-efd1-7bd0-2175141d046f",
+					"raw": "http://localhost:8080/fhir/Encounter/735a1175-3509-9a50-65bb-2a4370aa921a",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -1562,8 +1562,8 @@
 					"port": "8080",
 					"path": [
 						"fhir",
-						"Patient",
-						"2301c95d-0369-efd1-7bd0-2175141d046f"
+						"Encounter",
+						"735a1175-3509-9a50-65bb-2a4370aa921a"
 					]
 				},
 				"description": "Generated from cURL: curl -s \"http://localhost:8080/fhir/Patient?_summary=true&_count=5\" | jq .\r\n"
