@@ -1543,6 +1543,32 @@
 				"description": "Generated from cURL: curl -s \"http://localhost:8080/fhir/Patient?_summary=true&_count=5\" | jq .\r\n"
 			},
 			"response": []
+		},
+		{
+			"name": "Get Patient By Id Copy",
+			"id": "26557699-ff9d788c-165c-411b-ac6c-96c798ebd8ea",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/fhir/Patient/2301c95d-0369-efd1-7bd0-2175141d046f",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"fhir",
+						"Patient",
+						"2301c95d-0369-efd1-7bd0-2175141d046f"
+					]
+				},
+				"description": "Generated from cURL: curl -s \"http://localhost:8080/fhir/Patient?_summary=true&_count=5\" | jq .\r\n"
+			},
+			"response": []
 		}
 	],
 	"event": [
