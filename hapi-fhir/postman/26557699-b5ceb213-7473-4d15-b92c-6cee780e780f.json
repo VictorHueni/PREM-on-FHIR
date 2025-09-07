@@ -408,6 +408,18 @@
 						"description": "Generated from cURL: curl -sS -X POST http://localhost:8080/fhir/Questionnaire \\\n  -H \"Content-Type: application/fhir+json\" -d '{\n    \"resourceType\":\"Questionnaire\",\n    \"url\":\"urn:uuid:prem-v1\",\n    \"status\":\"active\",\n    \"title\":\"PREM v1\",\n    \"item\":[\n      {\"linkId\":\"q1\",\"text\":\"Respectful treatment?\",\"type\":\"boolean\"},\n      {\"linkId\":\"q2\",\"text\":\"Rate cleanliness\",\"type\":\"choice\",\n       \"answerOption\":[\n        {\"valueCoding\":{\"code\":\"1\",\"display\":\"Very poor\"}},\n        {\"valueCoding\":{\"code\":\"2\",\"display\":\"Poor\"}},\n        {\"valueCoding\":{\"code\":\"3\",\"display\":\"OK\"}},\n        {\"valueCoding\":{\"code\":\"4\",\"display\":\"Good\"}},\n        {\"valueCoding\":{\"code\":\"5\",\"display\":\"Excellent\"}}\n       ]},\n      {\"linkId\":\"q3\",\"text\":\"What could we improve?\",\"type\":\"text\"}\n    ]\n  }'\n"
 					},
 					"response": []
+				},
+				{
+					"name": "New Request",
+					"id": "26557699-f445c796-ac38-4cdf-b82e-3086ce0dc496",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			],
 			"id": "26557699-12a7ca26-577a-4714-9b85-a585003420fe"
