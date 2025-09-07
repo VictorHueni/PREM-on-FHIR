@@ -410,6 +410,46 @@
 					"response": []
 				},
 				{
+					"name": "http://localhost:8080/fhir/QuestionnaireResponse?_lastUpdated=gt1900-01-01T00:00:00Z&_expunge=true",
+					"id": "26557699-8816a63a-63fa-4c5b-b291-8a8977b75124",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/fhir+json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/fhir/QuestionnaireResponse?_lastUpdated=gt1900-01-01T00:00:00Z&_expunge=true",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"fhir",
+								"QuestionnaireResponse"
+							],
+							"query": [
+								{
+									"key": "_lastUpdated",
+									"value": "gt1900-01-01T00:00:00Z"
+								},
+								{
+									"key": "_expunge",
+									"value": "true"
+								}
+							]
+						},
+						"description": "Generated from cURL: curl -X DELETE \"http://localhost:8080/fhir/QuestionnaireResponse?_lastUpdated=gt1900-01-01T00:00:00Z&_expunge=true\" \\\r\n  -H \"Accept: application/fhir+json\"\r\n"
+					},
+					"response": []
+				},
+				{
 					"name": "New Request",
 					"id": "26557699-f445c796-ac38-4cdf-b82e-3086ce0dc496",
 					"protocolProfileBehavior": {
