@@ -448,18 +448,6 @@
 						"description": "Generated from cURL: curl -X DELETE \"http://localhost:8080/fhir/QuestionnaireResponse?_lastUpdated=gt1900-01-01T00:00:00Z&_expunge=true\" \\\r\n  -H \"Accept: application/fhir+json\"\r\n"
 					},
 					"response": []
-				},
-				{
-					"name": "New Request",
-					"id": "26557699-f445c796-ac38-4cdf-b82e-3086ce0dc496",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
 				}
 			],
 			"id": "26557699-12a7ca26-577a-4714-9b85-a585003420fe"
