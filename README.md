@@ -23,7 +23,6 @@ End-to-end pipeline to generate synthetic PREM data, load it into a FHIR server,
 ## Quickstart
 ```bash
 # 1) Start infra (analytics DB, HAPI FHIR, pgAdmin, nginx to serve NDJSON)
-cd 00-setup
 docker compose --profile all up -d
 
 # 2) Seed synthetic data (Synthea + Questionnaire + QuestionnaireResponses)
@@ -84,7 +83,6 @@ cp .env.example .env
 
 ## Steps by Step Guide (except airbytes)
 ```bash
-cd 00-setup
 docker compose --profile all up -d
 docker compose ps
 ```
