@@ -50,6 +50,7 @@ QR_USE_LLM     ?= 0             # 1=on, 0=off
 LLM_MODEL      ?= gpt-4o-mini
 LLM_TEMPERATURE?= 0.6
 LLM_MAX_RETRIES?= 3
+QR_VERBOSE     ?= 0
 
 # Docker image tag
 SYN_TAG     := syntheadocker
@@ -164,6 +165,9 @@ qr-make-bundles:
 	fi; \
 	if [ "$(strip $(QR_MODE))" = "ppnq" ] && [ "$(QR_DRY_RUN)" = "1" ]; then \
 	  EXTRA="$$EXTRA --dry-run"; \
+	fi; \
+	if [ "$(strip $(QR_VERBOSE))" = "1" ]; then \
+	  EXTRA="$$EXTRA --verbose"; \
 	fi; \
 	$(PY) $(CLI) qr make-bundles \
 	  --mode $(strip $(QR_MODE)) \

@@ -1,14 +1,12 @@
 -- =========================
--- Analytics DB bootstrap
--- Zones + Roles + Privileges for Airbyte + dbt + BI
+-- Analytics DB bootstrap (+ Metabase)
+-- Zones + Roles + Privileges for Airbyte + dbt + BI + Metabase
 -- =========================
 
 -- --- ZONES (schemas) ---
 CREATE SCHEMA IF NOT EXISTS raw;
 CREATE SCHEMA IF NOT EXISTS stg;
 CREATE SCHEMA IF NOT EXISTS mart;
--- If you plan to use Airbyte's "airbyte_internal", create it; otherwise don't reference it
--- CREATE SCHEMA IF NOT EXISTS airbyte_internal;
 
 -- --- ROLE GROUPS (no login) ---
 DO $$
@@ -41,10 +39,16 @@ BEGIN
     CREATE USER bi_user PASSWORD 'bi_password' LOGIN;
     GRANT bi_reader TO bi_user;
   END IF;
+
+  -- Metabase query user (read-only over analytics)
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='metabase_ro') THEN
+    CREATE USER metabase_ro PASSWORD 'change_me_ro' LOGIN;
+    GRANT bi_reader TO metabase_ro;
+  END IF;
 END$$;
 
--- --- DATABASE-LEVEL PRIVILEGES ---
-GRANT CONNECT ON DATABASE analytics TO airbyte_user, dbt_user, bi_user;
+-- --- DATABASE-LEVEL PRIVILEGES (analytics DB) ---
+GRANT CONNECT ON DATABASE analytics TO airbyte_user, dbt_user, bi_user, metabase_ro;
 GRANT CREATE  ON DATABASE analytics TO airbyte_user, dbt_user;
 
 -- --- OWNERSHIP / USAGE PER SCHEMA ---
@@ -58,26 +62,28 @@ ALTER SCHEMA mart OWNER TO dbt_user;
 -- Airbyte needs USAGE+CREATE on raw (owner already has it, but keep this if you ever switch to group roles)
 GRANT USAGE, CREATE ON SCHEMA raw TO airbyte_loader;
 
--- dbt needs USAGE on raw to read, and CREATE on stg/mart to build
+-- dbt can read raw and build in stg/mart
 GRANT USAGE  ON SCHEMA raw       TO dbt_owner;
 GRANT USAGE  ON SCHEMA stg, mart TO dbt_owner, bi_reader;
 GRANT CREATE ON SCHEMA stg, mart TO dbt_owner;
 
--- --- ONE-TIME GRANTS ON EXISTING RAW OBJECTS (default privs don’t backfill) ---
-GRANT SELECT ON ALL TABLES    IN SCHEMA raw TO dbt_owner;     
+-- --- ONE-TIME GRANTS ON EXISTING OBJECTS ---
+-- Make existing RAW readable by dbt
+GRANT SELECT ON ALL TABLES    IN SCHEMA raw TO dbt_owner;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA raw TO dbt_owner;
--- (optional direct grants)
--- GRANT SELECT ON ALL TABLES IN SCHEMA raw TO dbt_user;
--- GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA raw TO dbt_user;
+
+-- Make any existing STG/MART objects readable by BI (incl. metabase_ro)
+GRANT SELECT ON ALL TABLES    IN SCHEMA stg, mart TO bi_reader;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA stg, mart TO bi_reader;
 
 -- --- DEFAULT PRIVILEGES (future objects) ---
--- Objects created by AIRBYTE in raw readable by dbt
+-- Objects created by AIRBYTE in raw -> readable by dbt
 ALTER DEFAULT PRIVILEGES FOR ROLE airbyte_user IN SCHEMA raw
   GRANT SELECT ON TABLES TO dbt_owner;
 ALTER DEFAULT PRIVILEGES FOR ROLE airbyte_user IN SCHEMA raw
   GRANT USAGE, SELECT ON SEQUENCES TO dbt_owner;
 
--- Objects created by DBT in stg/mart readable by BI
+-- Objects created by DBT in stg/mart -> readable by BI (incl. metabase_ro)
 ALTER DEFAULT PRIVILEGES FOR ROLE dbt_user IN SCHEMA stg
   GRANT SELECT ON TABLES TO bi_reader;
 ALTER DEFAULT PRIVILEGES FOR ROLE dbt_user IN SCHEMA stg
@@ -93,18 +99,16 @@ REVOKE CREATE ON SCHEMA public FROM PUBLIC;
 REVOKE USAGE  ON SCHEMA public FROM PUBLIC;
 
 -- Allow required users to use functions/types in public (extensions live here)
-GRANT USAGE ON SCHEMA public TO airbyte_user, dbt_user, bi_user;
+GRANT USAGE ON SCHEMA public TO airbyte_user, dbt_user, bi_user, metabase_ro;
 
--- --- SEARCH PATHS & TIME ZONE ---
+-- --- SEARCH PATHS & TIME ZONE (analytics DB) ---
 ALTER DATABASE analytics SET timezone    TO 'Europe/Zurich';
 ALTER DATABASE analytics SET search_path TO '"$user", public';
 
-
--- Keep search_path clean; remove airbyte_internal unless you created it
 ALTER ROLE airbyte_user IN DATABASE analytics SET search_path = raw, public;
 ALTER ROLE dbt_user     IN DATABASE analytics SET search_path = stg, mart, raw, public;
 ALTER ROLE bi_user      IN DATABASE analytics SET search_path = mart, public;
-
+ALTER ROLE metabase_ro  IN DATABASE analytics SET search_path = mart, public;
 
 -- --- EXTENSIONS (in public) ---
 CREATE EXTENSION IF NOT EXISTS pgcrypto           WITH SCHEMA public;

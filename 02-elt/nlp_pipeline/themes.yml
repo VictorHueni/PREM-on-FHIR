@@ -1,22 +1,30 @@
 labels:
-  - environment
-  - communication
-  - respect_dignity
-  - information_discharge
-  - coordination_timeliness
   - access
-  - safety
-  - pain_management
-  - facilities_food
+  - comprehensiveness
+  - continuity
+  - coordination
+  - patient_safety
+  - person_centredness
+  - self_management_support
+  - trust
+  - overall_experience
+  - financial_access
+  - digital_access_modes
+  - environment_amenities
+  - symptoms_functioning
   - other
 
 keywords:
-  environment: [room, noise, clean, cleanliness, privacy, bed, ward, toilet, shower, temperature]
-  communication: [explain, explained, told, listen, listened, understand, understanding, information, questions, language, interpreter]
-  respect_dignity: [respect, respectful, dignity, kind, rude, ignore, ignored, compassion, compassionate]
-  information_discharge: [discharge, instructions, medication, follow-up, "follow up", aftercare, leaflet]
-  coordination_timeliness: [wait, waiting, delay, delayed, coordination, coordinate, test, results, transfer, schedule, timely]
-  access: [appointment, booking, availability, available, transport, parking, visiting, visit]
-  safety: [safe, safety, fall, hygiene, infection, "medication error", pressure, ulcer, error]
-  pain_management: [pain, analgesia, relief, discomfort, painful]
-  facilities_food: [food, meal, cafeteria, diet, water, taste, kitchen]
+  access: [access, accessible, appointment, booking, availability, available, open hours, opening hours, after-hours, weekend, transport, parking, distance, location, waiting, wait time, delay, delayed, timely, queue, phone line, hotline, hold music]
+  comprehensiveness: [comprehensive, holistic, whole-person, prevention, screening, vaccine, immunization, mental health, referrals, referral, community services, social care, home care, palliative, follow-up tests, lab, imaging]
+  continuity: [continuity, follow-up, follow up, regular doctor, same doctor, same clinician, usual provider, ongoing, relationship, long-term, knows my history]
+  coordination: [coordinate, coordination, coordinated, shared care, care plan, plan of care, discharge summary, information transfer, handoff, referral back, between services, team communication]
+  patient_safety: [safe, safety, unsafe, risk, error, mistake, medication error, wrong dose, infection, hygiene, fall, adverse, incident, near miss]
+  person_centredness: [respect, respectful, dignity, kind, compassion, compassionate, rude, ignored, listen, listened, listening, explain, explained, clear, understanding, shared decision, preferences, goals, values, choice]
+  self_management_support: [self-management, self management, education, educate, advice, leaflet, brochure, instructions, action plan, care plan, goals, target, skills, monitoring, equipment training]
+  trust: [trust, trusted, confidence, confident, reassure, credibility, competent, expertise, skill, professional, second opinion]
+  overall_experience: [overall, experience, satisfied, satisfaction, excellent, poor, good, bad, recommend, nps, rating, quality of care]
+  financial_access: [cost, costs, expensive, affordability, affordable, out-of-pocket, out of pocket, co-pay, copay, deductible, insurance, coverage, bill, billing, reimbursement]
+  digital_access_modes: [phone, telephone, call back, callback, video, telehealth, telemedicine, virtual, portal, email, sms, chat, app, online form]
+  environment_amenities: [clean, cleanliness, dirty, noise, noisy, privacy, waiting room, seating, toilet, restroom, temperature, heating, air conditioning, signage, wheelchair access, ramp]
+  symptoms_functioning: [pain, painful, discomfort, fatigue, breathless, shortness of breath, mobility, functioning, sleep, insomnia, mood, anxiety, depression, daily activities]

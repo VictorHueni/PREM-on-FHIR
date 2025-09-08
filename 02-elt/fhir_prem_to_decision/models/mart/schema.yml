@@ -59,6 +59,87 @@ models:
           arguments:
             combination_of_columns: [period_month, entity_type, entity_id]
 
+  - name: mart_prem_kpi_domains
+    description: >
+      Exploded domain-level KPIs derived from mart_prem_kpi_monthly.
+      One row per period_month × org_id × domain_key, with score and top-2-box metrics.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [period_month, org_id, domain_key]
+    columns:
+      - name: period_month
+        description: "Month of questionnaire response aggregation"
+        tests: [not_null]
+      - name: org_id
+        description: "Organization identifier"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_organization')
+                field: org_id
+      - name: domain_key
+        description: "Domain name or code (e.g., Communication, Coordination)"
+        tests: [not_null]
+      - name: score_pct_mean
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: { severity: warn }
+      - name: top2_box_pct_mean
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: { severity: warn }
+
+  - name: mart_prem_theme_sentiment_matrix
+    description: >
+      Theme × Sentiment summary per period_month and org_id.
+      Provides n_comments, total per theme, and pct_within_theme (share of sentiment within each theme).
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [period_month, org_id, theme_primary, sentiment_label]
+    columns:
+      - name: period_month
+        tests: [not_null]
+      - name: org_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_organization')
+                field: org_id
+      - name: theme_primary
+        description: "Primary theme label; 'Uncategorized' when missing."
+        tests: [not_null]
+      - name: sentiment_label
+        description: "Sentiment label (positive, neutral, negative, unscored)."
+        tests: [not_null]
+      - name: n_comments
+        description: "Count of comments for this Theme × Sentiment."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              config: { severity: warn }
+      - name: n_theme
+        description: "Total comments for this Theme (same month/org)."
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              config: { severity: warn }
+      - name: pct_within_theme
+        description: "n_comments / n_theme; share of sentiment within the theme (0–1)."
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: { severity: warn }
+
 exposures:
   - name: prem_quality_dashboard
     type: dashboard

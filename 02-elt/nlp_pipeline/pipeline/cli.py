@@ -11,7 +11,7 @@ from .preprocess import clean_text
 from .pii import contains_pii
 from .lang import detect_language
 from .sentiment import load_sentiment, score as score_sent
-from .themes import load_theme_config, load_zero_shot, pick_theme
+from .themes import load_theme_config, load_zero_shot, pick_themes
 from .toxicity import load_toxicity, score as score_tox
 
 try:
@@ -134,14 +134,29 @@ def main():
                 _pii = contains_pii(cleaned)
 
                 s_label, s_score = score_sent(sent_pipe, cleaned)
-                t_primary, t_secondary = pick_theme(
-                    cleaned,
-                    labels,
-                    zsc_pipe=zsc_pipe,
-                    keywords=keywords,
-                    conf_min=scoring_cfg.get("theme_confidence_min", 0.40),
-                    rule_override_max_zsc=scoring_cfg.get("rule_override_max_zsc", 0.80),
-                )
+
+                themes, scored = pick_themes(
+                                    text=cleaned,
+                                    labels=labels,
+                                    zsc_pipe=zsc_pipe,
+                                    keywords=keywords,
+                                    conf_min=scoring_cfg.get("theme_confidence_min", 0.40),
+                                )
+
+                # If ZSC top-1 is very confident, force it to the front
+                override = scoring_cfg.get("rule_override_max_zsc", 0.80)
+                if override is not None and scored:
+                    top_lab, top_score = scored[0]
+                if float(top_score) >= float(override):
+                        if top_lab in themes:
+                            try:
+                                themes.remove(top_lab)
+                            except ValueError:
+                                pass
+                        themes.insert(0, top_lab)
+
+                t_primary = themes[0] if themes else None
+                t_secondary = themes[1] if len(themes) > 1 else None
                 _tox = score_tox(tox_pipe, cleaned)
 
                 sent_counts[s_label] += 1

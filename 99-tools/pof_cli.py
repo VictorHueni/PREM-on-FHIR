@@ -47,6 +47,21 @@ from urllib.parse import parse_qs, urlparse
 import requests
 from dotenv import load_dotenv
 
+
+
+
+# ---------------------------
+# .env loading
+# ---------------------------
+
+LLM_STATS = {
+    "calls": 0,           # total HTTP POSTs made to the model
+    "successes": 0,       # successful generations
+    "retries": 0,         # retry POSTs after initial attempt
+    "total_tokens": 0,    # summed when OpenAI returns usage (optional)
+}
+
+
 # ---------------------------
 # .env loading
 # ---------------------------
@@ -102,6 +117,11 @@ def rel_ref(resource_type: str, identifier: str) -> str:
 def die(msg: str, code: int = 1) -> None:
     print(f"❌ {msg}", file=sys.stderr)
     raise SystemExit(code)
+
+def _vprint(enabled: bool, *args, **kwargs) -> None:
+    if enabled:
+        print(*args, **kwargs)
+
 
 
 # ---------------------------
@@ -428,7 +448,7 @@ SELECT
   CASE WHEN prac.prac_logical_id IS NOT NULL
        THEN 'Practitioner/' || prac.prac_logical_id
        ELSE NULL END        AS practitionerId,
-  COALESCE(enc_date.period_end, enc_date.period_start, NOW()) AS authored,
+  TO_CHAR(COALESCE(enc_date.period_end, enc_date.period_start, NOW()) at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS authored,
   'Patient/' || pat.pat_logical_id  AS src
 FROM enc
 JOIN enc_patient ON enc.res_id = enc_patient.enc_res_id
@@ -539,13 +559,42 @@ def _pick(row: Dict[str, Any], keys: List[str], default: str = "") -> str:
     return default
 
 def _to_fhir_dt(s: Optional[str]) -> str:
-    if s:
-        for fmt in ("%Y-%m-%d", "%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S",
-                    "%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S"):
-            try:
-                return datetime.strptime(s, fmt).replace(tzinfo=timezone.utc).isoformat()
-            except Exception:
-                pass
+    if not s:
+        return now_iso()
+    s = str(s).strip()
+
+    # 1) Best-effort ISO 8601 (handles 'YYYY-MM-DD HH:MM:SS[.fff][+HH:MM]', '...T...', and 'Z')
+    try:
+        dt = datetime.fromisoformat(s.replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc).isoformat()
+    except Exception:
+        pass
+
+    # 2) Common fallbacks (with and without timezone / microseconds)
+    fmts = [
+        "%Y-%m-%d",
+        "%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M:%S.%f",
+        "%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%S.%f",
+        "%Y-%m-%d %H:%M%z", "%Y-%m-%d %H:%M:%S%z", "%Y-%m-%d %H:%M:%S.%f%z",
+        "%Y-%m-%dT%H:%M%z", "%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S.%f%z",
+    ]
+    for fmt in fmts:
+        try:
+            dt = datetime.strptime(s, fmt)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt.astimezone(timezone.utc).isoformat()
+        except Exception:
+            continue
+
+    # 3) Unix epoch seconds (optional)
+    if re.fullmatch(r"\d{10}(\.\d+)?", s):
+        dt = datetime.fromtimestamp(float(s), tz=timezone.utc)
+        return dt.isoformat()
+
+    # Last resort
     return now_iso()
 
 def _read_header_csv(path: Path) -> List[Dict[str, Any]]:
@@ -652,7 +701,16 @@ def _validate_ppnq_answers(obj: Dict[str, Any]) -> List[Dict[str, Any]]:
             a["valueCoding"] = {"system": NPS_SYSTEM, "code": str(nps), "display": str(nps)}
     return out
 
-def _ppnq_answers_llm(questionnaire: Dict[str,Any], row: Dict[str,Any], model: str, temperature: float, max_retries: int) -> List[Dict[str,Any]]:
+def _ppnq_answers_llm(
+    questionnaire: Dict[str,Any],
+    row: Dict[str,Any],
+    model: str,
+    temperature: float,
+    max_retries: int,
+    verbose: bool = False,
+    row_index: Optional[int] = None,
+    total_rows: Optional[int] = None,
+) -> List[Dict[str,Any]]:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         die("OPENAI_API_KEY is required when using --llm. Put it in your .env.", 2)
@@ -671,16 +729,42 @@ def _ppnq_answers_llm(questionnaire: Dict[str,Any], row: Dict[str,Any], model: s
     }
 
     last = None
-    for attempt in range(max(1, int(max_retries))):
+    attempts = max(1, int(max_retries))
+    for attempt in range(attempts):
         try:
+            LLM_STATS["calls"] += 1
+            if attempt > 0:
+                LLM_STATS["retries"] += 1
+
+            tag = f"[row {row_index}/{total_rows}]" if (row_index and total_rows) else ""
+            _vprint(verbose, f"→ LLM call {LLM_STATS['calls']}{(' ' + tag) if tag else ''} (attempt {attempt+1}/{attempts}) …")
+
+            t0 = time.perf_counter()
             r = requests.post(url, headers=headers, json=payload, timeout=60)
+            dt = time.perf_counter() - t0
+
             if r.status_code == 200:
-                content = r.json()["choices"][0]["message"]["content"]
-                return _validate_ppnq_answers(json.loads(content))
+                j = r.json()
+                # Optional usage block (OpenAI returns this when available)
+                usage = j.get("usage") or {}
+                tot = int(usage.get("total_tokens") or 0)
+                if tot:
+                    LLM_STATS["total_tokens"] += tot
+                content = j["choices"][0]["message"]["content"]
+                ans = _validate_ppnq_answers(json.loads(content))
+
+                LLM_STATS["successes"] += 1
+                _vprint(verbose, f"   ✓ OK in {dt:.2f}s (tokens: {tot or 'n/a'})")
+                return ans
+
             last = RuntimeError(f"OpenAI HTTP {r.status_code}: {r.text[:2000]}")
+            _vprint(verbose, f"   ✗ HTTP {r.status_code}; will retry" if attempt+1 < attempts else f"   ✗ HTTP {r.status_code}; giving up")
         except Exception as e:
             last = e
+            _vprint(verbose, f"   ✗ Error: {e.__class__.__name__}: {e}")
+
         time.sleep(1.5 * (attempt + 1))
+
     raise last or RuntimeError("LLM generation failed.")
 
 def _ppnq_answers_dry(rng) -> List[Dict[str, Any]]:
@@ -803,18 +887,31 @@ def cmd_qr_make_bundles(args: argparse.Namespace) -> int:
             resources.append(_qr_from_header(args.mode, row, questionnaire, questionnaire_url, answers))
 
     else:  # ppnq
-        for row in header_rows:
+        total = len(header_rows)
+        started = time.perf_counter()
+        for idx, row in enumerate(header_rows, start=1):
             if args.llm and not args.dry_run:
+                _vprint(args.verbose, f"[{idx}/{total}] Generating answers via LLM …")
                 answers = _ppnq_answers_llm(
                     questionnaire, row,
                     model=args.llm_model,
                     temperature=args.llm_temperature,
                     max_retries=args.llm_max_retries,
+                    verbose=args.verbose,
+                    row_index=idx,
+                    total_rows=total,
                 )
             else:
+                _vprint(args.verbose, f"[{idx}/{total}] Dry-run text generation …")
                 answers = _ppnq_answers_dry(rng)
+
             resources.append(_qr_from_header(args.mode, row, questionnaire, questionnaire_url, answers))
 
+        # lightweight heartbeat every 25 rows (and at the end)
+        if args.verbose and (idx % 25 == 0 or idx == total):
+            elapsed = time.perf_counter() - started
+            _vprint(args.verbose, f"… progress: {idx}/{total} rows in {elapsed:.1f}s "
+                                  f"(LLM calls={LLM_STATS['calls']}, successes={LLM_STATS['successes']}, retries={LLM_STATS['retries']})")
     # write chunked bundles
     out_dir = Path(args.out); out_dir.mkdir(parents=True, exist_ok=True)
     prefix = args.mode
@@ -828,6 +925,15 @@ def cmd_qr_make_bundles(args: argparse.Namespace) -> int:
         files.append(p)
     print(f"Created {total} QuestionnaireResponses in {len(files)} file(s):")
     for p in files: print(f" - {p}")
+
+    if args.verbose and args.mode == "ppnq":
+        print("\nLLM summary:")
+        print(f"  calls     : {LLM_STATS['calls']}")
+        print(f"  successes : {LLM_STATS['successes']}")
+        print(f"  retries   : {LLM_STATS['retries']}")
+        if LLM_STATS["total_tokens"]:
+            print(f"  tokens    : {LLM_STATS['total_tokens']}")
+
     return 0
 
 
@@ -963,6 +1069,7 @@ def main() -> int:
     pqrmk.add_argument("--likert-dist", default=None, help="NREQ only: probs for 1,2,3 e.g. 0.2,0.5,0.3")
     pqrmk.add_argument("--dry-run", action="store_true", help="PPNQ only: generate placeholder text (no LLM)")
     pqrmk.add_argument("--llm", action="store_true", help="PPNQ only: call OpenAI for text answers (needs OPENAI_API_KEY)")
+    pqrmk.add_argument("-v", "--verbose", action="store_true", help="Verbose progress (LLM calls, timings, counters)")
 
     # optional LLM tuning (env-backed defaults)
     pqrmk.add_argument("--llm-model", default=os.getenv("LLM_MODEL", "gpt-4o-mini"))

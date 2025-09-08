@@ -60,16 +60,20 @@ services:
     image: analytics-postgres:16
     container_name: pof-analytics-db
     restart: always
-    profiles: ["analytics","core", "all"]
+    profiles: ["analytics","core", "dashboard", "all"]
     environment:
       POSTGRES_DB:       ${AN_DB_NAME}
       POSTGRES_USER:     ${AN_DB_USER}
       POSTGRES_PASSWORD: ${AN_DB_PASSWORD}
+      MB_DB_NAME:        ${MB_DB_NAME:-metabase}
+      MB_DB_USER:        ${MB_DB_USER:-metabase_app}
+      MB_DB_PASS:        ${MB_DB_PASS:-change_me_strong}
     ports:
       - "${AN_DB_PORT}:5432"
     command: ["postgres","-c","config_file=/etc/postgresql/postgresql.analytics.conf"]
     volumes:
       - analytics-pgdata:/var/lib/postgresql/data
+      - ./00-setup/analytics-db/init:/docker-entrypoint-initdb.d
     shm_size: "${AN_SHM_SIZE}"
     mem_limit: "${AN_MEM_LIMIT}"
     mem_reservation: "${AN_MEM_RES}"
@@ -138,7 +142,7 @@ services:
       context: ./02-elt/nlp_pipeline
     image: pof-nlp:latest
     container_name: pof-nlp
-    profiles: ["analytics","all"]
+    profiles: ["analytics", "nlp","all"]
     environment:
       PG_HOST: analytics-db       
       PG_PORT: "5432"             
@@ -155,9 +159,42 @@ services:
     # Optional local resource caps for NLP runs (CPU/GPU depends on your base image)
     # mem_limit: "6g"
     # cpus: "2.0"
+  
+  metabase:
+    image: metabase/metabase:latest   # or pin a version you prefer
+    container_name: pof-metabase
+    restart: always
+    profiles: ["analytics","all","dashboard"]
+    depends_on:
+      analytics-db: { condition: service_healthy }
+    ports:
+      - "3000:3000"                   # change host port if 3000 is busy
+    environment:
+      # Metabase application DB (stores users, dashboards, settings)
+      MB_DB_TYPE: postgres
+      MB_DB_HOST: analytics-db
+      MB_DB_PORT: "5432"
+      MB_DB_DBNAME: ${MB_DB_NAME:-metabase}
+      MB_DB_USER: ${MB_DB_USER:-metabase_app}
+      MB_DB_PASS: ${MB_DB_PASS:-change_me_strong}
+
+      # Nice-to-haves
+      MB_JETTY_PORT: "3000"
+      MB_SITE_URL: "http://localhost:3000"
+      JAVA_TOOL_OPTIONS: "-Xms512m -Xmx1024m"   # adjust for your RAM
+
+    # Optional: mount a plugins folder if you’ll add drivers later
+    volumes:
+      - metabase-plugins:/plugins
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
 volumes:
   pof-pgdata:
   pof-pgadmin:
   analytics-pgdata:
   nlp-hfcache:
+  metabase-plugins:
