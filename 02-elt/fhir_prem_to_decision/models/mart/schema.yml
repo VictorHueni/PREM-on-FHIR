@@ -140,6 +140,82 @@ models:
               expression: "between 0 and 1"
               config: { severity: warn }
 
+  - name: mart_prem_nps
+    description: >
+      Net Promoter Score (NPS) aggregates from PREM questionnaire responses.
+      Provides counts of promoters, passives, and detractors, plus the NPS %
+      at daily/weekly/monthly levels by org × clinician × encounter × patient.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [qr_date, org_id, clinician_id, encounter_id, patient_id]
+    columns:
+      - name: qr_date
+        description: "Date of questionnaire response"
+        tests: [not_null]
+      - name: qr_week_start
+        description: "Start of the ISO week for aggregation"
+      - name: qr_month_start
+        description: "Start of the month for aggregation"
+      - name: org_id
+        description: "Organization identifier"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_organization')
+                field: org_id
+      - name: clinician_id
+        description: "Practitioner providing care; may be null"
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_practitioner')
+                field: practitioner_id
+              config: {severity: warn}
+      - name: encounter_id
+        description: "Encounter identifier linked to the NPS response"
+      - name: patient_id
+        description: "Patient identifier (pseudonymized)"
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_patient')
+                field: patient_id
+              config: {severity: warn}
+      - name: promoters
+        description: "Count of NPS responses scored 9–10"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              config: {severity: warn}
+      - name: passives
+        description: "Count of NPS responses scored 7–8"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              config: {severity: warn}
+      - name: detractors
+        description: "Count of NPS responses scored 0–6"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              config: {severity: warn}
+      - name: total_responses
+        description: "Total number of valid NPS responses in the group"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              config: {severity: warn}
+      - name: nps_score_pct
+        description: "Net Promoter Score as a percentage: 100 × (Promoters – Detractors) / Total"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between -100 and 100"
+              config: {severity: warn}
+
+
 exposures:
   - name: prem_quality_dashboard
     type: dashboard
