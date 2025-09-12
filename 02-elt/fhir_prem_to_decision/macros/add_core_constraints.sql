@@ -1,6 +1,6 @@
 {% macro add_core_constraints() %}
   {% if execute %}
-    {% set core_schema = var('core_schema', 'stg') %}
+    {% set core_schema = var('core_schema', 'core') %}
 
     {% set dim_patient      = adapter.get_relation(database=target.database, schema=core_schema, identifier='dim_patient') %}
     {% set dim_encounter    = adapter.get_relation(database=target.database, schema=core_schema, identifier='dim_encounter') %}

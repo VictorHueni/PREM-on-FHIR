@@ -216,17 +216,246 @@ models:
               config: {severity: warn}
 
 
+                # ----------------------------
+  # Home KPIs (single-row view)
+  # ----------------------------
+  - name: mart_home_kpis
+    description: "Global KPIs: totals, 30-day trend, completion & coverage."
+    columns:
+      - name: responses_total
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+      - name: responses_last_30d
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+      - name: patients_total
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+      - name: avg_completion_scored
+        description: "Mean completion ratio over scored items (0–1)."
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: {severity: warn}
+      - name: pct_with_nps
+        description: "Share of responses that include NPS (0–1)."
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: {severity: warn}
+      - name: pct_with_freetext
+        description: "Share of responses with ≥1 free-text comment (0–1)."
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: {severity: warn}
+
+  # ------------------------------
+  # Daily trend by questionnaire
+  # ------------------------------
+  - name: mart_home_trend_daily
+    description: "Daily counts by questionnaire for headlines/sparkline."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [period_date, questionnaire_id]
+    columns:
+      - name: period_date
+        tests: [not_null]
+      - name: questionnaire_id
+        tests: [not_null]
+      - name: responses_n
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true: {expression: ">= 0"}
+      - name: patients_n
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true: {expression: ">= 0"}
+
+  # -----------------------------------------
+  # Roll-up by questionnaire (all orgs)
+  # -----------------------------------------
+  - name: mart_home_by_questionnaire
+    description: "Questionnaire-level roll-up: N, unique patients, NPS/text coverage, completion."
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [questionnaire_id]
+    columns:
+      - name: questionnaire_id
+        tests: [not_null]
+      - name: responses_n
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true: {expression: ">= 0"}
+      - name: patients_n
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true: {expression: ">= 0"}
+      - name: pct_with_nps
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: {severity: warn}
+      - name: pct_with_freetext
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: {severity: warn}
+      - name: avg_completion_scored
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: {severity: warn}
+
+              
+  # -------------------------------------------------
+  # Staleness view with traffic-light buckets/scores
+  # -------------------------------------------------
+
+  - name: mart_home_staleness
+    description: >
+      Org × Questionnaire staleness/coverage snapshot with traffic-light
+      freshness buckets and a combined staleness_score.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [org_id, questionnaire_id]
+    columns:
+      - name: org_id
+        description: "Organization identifier"
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_organization')
+                field: org_id
+
+      - name: questionnaire_id
+        description: "Normalized questionnaire key (matches stg_* and facts)"
+        tests: [not_null]
+
+      - name: responses_n
+        description: "Number of QuestionnaireResponses for this org × questionnaire"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true: {expression: ">= 0"}
+
+      - name: patients_n
+        description: "Distinct patients responding in this org × questionnaire"
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true: {expression: ">= 0"}
+
+      - name: pct_with_nps
+        description: "Share of responses that include NPS (0–1)"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: {severity: warn}
+
+      - name: pct_with_freetext
+        description: "Share of responses with ≥1 free-text answer (0–1)"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: {severity: warn}
+
+      - name: avg_completion_scored
+        description: "Avg completion ratio over scored items (0–1)"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "between 0 and 1"
+              config: {severity: warn}
+
+      - name: item_count_leaf
+        description: "Total leaf items defined in questionnaire"
+        tests:
+          - dbt_utils.expression_is_true: {expression: ">= 0"}
+
+      - name: item_count_scored
+        description: "Leaf items counted as scored in questionnaire"
+        tests:
+          - dbt_utils.expression_is_true: {expression: ">= 0"}
+
+      - name: last_seen_in_answers
+        description: "Most recent authored_ts seen in stg_answers for this questionnaire"
+
+      - name: days_since_last_answer
+        description: "Days since last answer observed (reporting TZ)"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              config: {severity: warn}
+
+      - name: answer_freshness
+        description: "Traffic-light bucket for last answer (green/amber/red/unknown)"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['green','amber','red','unknown']
+                quote: true
+
+      - name: answer_severity
+        description: "Numeric severity for last answer (0 best … 3 unknown)"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "in (0,1,2,3)"
+
+      - name: questionnaire_last_updated
+        description: "FHIR Questionnaire last_updated timestamp from raw"
+
+      - name: days_since_last_update
+        description: "Days since Questionnaire last updated (reporting TZ)"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              config: {severity: warn}
+
+      - name: update_freshness
+        description: "Traffic-light bucket for last update (green/amber/red/unknown)"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['green','amber','red','unknown']
+                quote: true
+
+      - name: update_severity
+        description: "Numeric severity for last update (0 best … 3 unknown)"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "in (0,1,2,3)"
+
+      - name: staleness_score
+        description: "Combined severity (answers ×2 + update); lower is better"
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+              config: {severity: warn}
+
+
 exposures:
   - name: prem_quality_dashboard
     type: dashboard
     maturity: medium
-    url: "http://localhost:3000/dashboard/prem"   # change to your BI URL
+    url: "http://localhost:3000/dashboard/prem"
     description: "PREM quality & improvement dashboard for neurorehab."
     depends_on:
       - ref('mart_prem_kpi_daily')
       - ref('mart_prem_item_heatmap')
       - ref('mart_prem_equity_slice')
       - ref('mart_prem_outliers')
+      - ref('mart_home_kpis')
+      - ref('mart_home_trend_daily')
+      - ref('mart_home_by_questionnaire')
+      - ref('mart_home_staleness')
     owner:
       name: "Quality Analytics"
       email: "quality@example.com"

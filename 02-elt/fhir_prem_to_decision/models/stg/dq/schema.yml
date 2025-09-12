@@ -15,9 +15,13 @@ models:
 
   - name: dq_questionnaire_staleness
     description: "Staleness monitor per questionnaire (+version): item counts, last answers seen, and last metadata update."
+    tests:
+    - dbt_utils.unique_combination_of_columns:
+        arguments:
+          combination_of_columns: [org_id, questionnaire_id, questionnaire_version]
     columns:
       - name: questionnaire_id
-        tests: [not_null, unique]
+        tests: [not_null]
       - name: questionnaire_version
       - name: item_count_leaf
         tests: [not_null]

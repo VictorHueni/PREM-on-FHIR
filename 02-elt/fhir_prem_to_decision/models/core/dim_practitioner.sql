@@ -3,6 +3,7 @@
 select
   practitioner_id,
   gender_norm,
+  full_name,
   clinician_slug,
   clinician_pseudonym,
   npi,
