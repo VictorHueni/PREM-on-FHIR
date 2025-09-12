@@ -28,7 +28,7 @@ import os, json, time, random, argparse
 from pathlib import Path
 
 from .utils import load_env_from_root, die, _vprint, env_bool
-from .constants import DEFAULT_BASE, NREQ_Q, PPNQ_Q
+from .constants import DEFAULT_BASE
 from .bundle_build import cmd_make_questionnaires
 from .wait_ready import cmd_wait_ready
 from .import_bulk import cmd_import
@@ -36,6 +36,9 @@ from .post_bundles import cmd_post_bundle, cmd_post_bundles
 from .qr_common import _read_header_csv, _qr_from_header, _bundle_entries
 from .nreq import _nreq_answers, _parse_likert_dist
 from .ppnq import _ppnq_answers_llm, _ppnq_answers_dry, LLM_STATS
+from .nreq import NREQ_Q
+from .ppnq import PPNQ_Q
+
 
 def main() -> int:
     load_env_from_root()

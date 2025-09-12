@@ -5,11 +5,10 @@ import argparse
 import os
 import time
 
-from typing import Optional
 import requests
-from http import make_session
-from utils import env_bool
-from constants import DEFAULT_BASE
+from .http import make_session
+from .utils import env_bool
+from .constants import DEFAULT_BASE
 
 
 

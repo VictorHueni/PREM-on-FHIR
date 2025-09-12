@@ -10,9 +10,9 @@ from typing import Optional
 from urllib.parse import parse_qs, urlparse
 import requests
 
-from http import make_session
-from utils import die, env_bool
-from constants import DEFAULT_BASE
+from .http import make_session
+from .utils import die, env_bool
+from .constants import DEFAULT_BASE
 
 
 # ---------------------------

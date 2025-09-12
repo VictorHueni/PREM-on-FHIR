@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Tuple
-from utils import die
+from .utils import die
 
 
 NREQ_Q = {
@@ -49,7 +49,7 @@ def _parse_likert_dist(s: Optional[str]) -> Optional[Tuple[float,float,float]]:
         return None
     parts = [float(x) for x in s.split(",")]
     if len(parts) != 3:
-        die("--likert-dist must be three comma-separated numbers, e.g. 0.2,0.5,0.3", 2)
+        die("--likert-dist must be three comma-separated numbers, e.g. 0.4,0.2,0.4", 2)
     total = sum(parts)
     if total <= 0:
         die("likert distribution must sum to > 0", 2)

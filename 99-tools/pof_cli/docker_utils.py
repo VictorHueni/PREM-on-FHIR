@@ -6,7 +6,7 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional
 
-from utils import die
+from .utils import die
 
 # ---------------------------
 # docker exec (for synthea)

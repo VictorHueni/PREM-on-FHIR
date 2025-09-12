@@ -16,7 +16,7 @@ exploded as (
     org_id,
     d.key                                      as domain_key,
     (d.value->>'score_pct_mean')::numeric      as score_pct_mean,
-    (d.value->>'top2_box_pct_mean')::numeric   as top2_box_pct_mean
+    (d.value->>'top_box_pct_mean')::numeric   as top_box_pct_mean
   from src
   cross join lateral jsonb_each(src.domain_metrics_json) as d(key, value)
 ),
@@ -24,7 +24,7 @@ monthly as (
   select
     period_month, org_id, domain_key,
     avg(score_pct_mean)      as score_pct_mean,
-    avg(top2_box_pct_mean)   as top2_box_pct_mean
+    avg(top_box_pct_mean)   as top_box_pct_mean
   from exploded
   group by 1,2,3
 )

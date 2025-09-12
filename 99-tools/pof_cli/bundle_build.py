@@ -8,8 +8,8 @@ import uuid
 from pathlib import Path
 from typing import Any, Dict, List
 
-from constants import ALLOWED, ORDER
-from utils import die
+from .constants import ALLOWED, ORDER
+from .utils import die
 
 
 # ---------------------------

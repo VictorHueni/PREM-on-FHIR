@@ -6,11 +6,10 @@ import csv
 import os
 import re
 import uuid
-from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from utils import die, now_iso, rel_ref
+from .utils import die, now_iso, rel_ref
 
 
 HEADER_ALIASES = {

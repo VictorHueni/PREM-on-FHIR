@@ -1,0 +1,1246 @@
+{
+  "resourceType": "Bundle",
+  "type": "batch",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:1bd62e10-708e-4c8e-9c21-36126a1d255e",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "4f2fc5a0-ce13-460a-9fb5-37406b93ba5a",
+        "status": "completed",
+        "questionnaire": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "subject": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "encounter": {
+          "reference": "Encounter/5046493d-fb92-7ee5-1213-ab3ab347b211"
+        },
+        "author": {
+          "reference": "Practitioner/14b98661-03ae-3e09-99b5-4e07d2b8e3a5"
+        },
+        "source": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "authored": "2013-05-18T20:50:57+00:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>PPNQ QR</b></p><p>ppnq-q1: Access to the facility was generally good.<br/>ppnq-q2: Most of my needs were met during the sessions.<br/>ppnq-q3a: There was decent continuity in my treatment.<br/>ppnq-q3b: Information shared with me was mostly clear.<br/>ppnq-q4: Coordination among staff was satisfactory.<br/>ppnq-q5: I felt safe during my rehabilitation.<br/>ppnq-q6: My preferences were considered, though not always.<br/>ppnq-q7: I received some helpful support for self-management.<br/>ppnq-q8: I trust the staff to provide quality care.<br/>ppnq-q9: 8<br/>ppnq-q9-text: Overall, I had a positive experience, but there\u2019s room for improvement.</p></div>"
+        },
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "answer": [
+              {
+                "valueString": "Access to the facility was generally good."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "answer": [
+              {
+                "valueString": "Most of my needs were met during the sessions."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "answer": [
+              {
+                "valueString": "There was decent continuity in my treatment."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "answer": [
+              {
+                "valueString": "Information shared with me was mostly clear."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "answer": [
+              {
+                "valueString": "Coordination among staff was satisfactory."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "answer": [
+              {
+                "valueString": "I felt safe during my rehabilitation."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "answer": [
+              {
+                "valueString": "My preferences were considered, though not always."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "answer": [
+              {
+                "valueString": "I received some helpful support for self-management."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "answer": [
+              {
+                "valueString": "I trust the staff to provide quality care."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://example.org/fhir/CodeSystem/nps-scale",
+                  "code": "8",
+                  "display": "8"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "answer": [
+              {
+                "valueString": "Overall, I had a positive experience, but there\u2019s room for improvement."
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:f586cef7-fe67-4a59-b830-9ef2a8cf1500",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "a3ac75be-9394-4c62-a0fa-9b5c25f42c20",
+        "status": "completed",
+        "questionnaire": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "subject": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "encounter": {
+          "reference": "Encounter/8f651c62-5d02-28d5-bf71-2f4e9f004f60"
+        },
+        "author": {
+          "reference": "Practitioner/eced1a5c-283d-33c3-9d33-db0c0d939965"
+        },
+        "source": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "authored": "1996-04-26T20:35:32+00:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>PPNQ QR</b></p><p>ppnq-q1: Access to the facility was convenient.<br/>ppnq-q2: My needs were mostly met during the sessions.<br/>ppnq-q3a: There was good continuity in my treatment.<br/>ppnq-q3b: Information shared by the staff was clear.<br/>ppnq-q4: Coordination among team members could improve.<br/>ppnq-q5: I felt safe during my rehabilitation.<br/>ppnq-q6: My preferences were considered, but not always.<br/>ppnq-q7: Support for self-management was helpful.<br/>ppnq-q8: I trust the staff to provide good care.<br/>ppnq-q9: 8<br/>ppnq-q9-text: Overall, it was a positive experience, though some areas could be better.</p></div>"
+        },
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "answer": [
+              {
+                "valueString": "Access to the facility was convenient."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "answer": [
+              {
+                "valueString": "My needs were mostly met during the sessions."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "answer": [
+              {
+                "valueString": "There was good continuity in my treatment."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "answer": [
+              {
+                "valueString": "Information shared by the staff was clear."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "answer": [
+              {
+                "valueString": "Coordination among team members could improve."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "answer": [
+              {
+                "valueString": "I felt safe during my rehabilitation."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "answer": [
+              {
+                "valueString": "My preferences were considered, but not always."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "answer": [
+              {
+                "valueString": "Support for self-management was helpful."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "answer": [
+              {
+                "valueString": "I trust the staff to provide good care."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://example.org/fhir/CodeSystem/nps-scale",
+                  "code": "8",
+                  "display": "8"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "answer": [
+              {
+                "valueString": "Overall, it was a positive experience, though some areas could be better."
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:29f18d8d-1b90-4fc6-b88c-269ef15e0d46",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "e64c7721-ee2b-423e-a0a1-acb2b4609d73",
+        "status": "completed",
+        "questionnaire": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "subject": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "encounter": {
+          "reference": "Encounter/9321ace1-a2a8-c608-446c-29a94938a68b"
+        },
+        "author": {
+          "reference": "Practitioner/14b98661-03ae-3e09-99b5-4e07d2b8e3a5"
+        },
+        "source": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "authored": "2020-03-13T20:45:29+00:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>PPNQ QR</b></p><p>ppnq-q1: Access to services was frustrating and limited.<br/>ppnq-q2: My needs were not adequately addressed during the treatment.<br/>ppnq-q3a: There was little continuity in my care.<br/>ppnq-q3b: Communication between providers was lacking.<br/>ppnq-q4: Coordination of my treatment felt disorganized.<br/>ppnq-q5: I didn\u2019t feel safe during some procedures.<br/>ppnq-q6: My preferences were often overlooked.<br/>ppnq-q7: Support for my self-management was minimal.<br/>ppnq-q8: I struggled to trust the staff due to inconsistencies.<br/>ppnq-q9: 0<br/>ppnq-q9-text: Overall, I felt disappointed with the quality of care.</p></div>"
+        },
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "answer": [
+              {
+                "valueString": "Access to services was frustrating and limited."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "answer": [
+              {
+                "valueString": "My needs were not adequately addressed during the treatment."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "answer": [
+              {
+                "valueString": "There was little continuity in my care."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "answer": [
+              {
+                "valueString": "Communication between providers was lacking."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "answer": [
+              {
+                "valueString": "Coordination of my treatment felt disorganized."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "answer": [
+              {
+                "valueString": "I didn\u2019t feel safe during some procedures."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "answer": [
+              {
+                "valueString": "My preferences were often overlooked."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "answer": [
+              {
+                "valueString": "Support for my self-management was minimal."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "answer": [
+              {
+                "valueString": "I struggled to trust the staff due to inconsistencies."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://example.org/fhir/CodeSystem/nps-scale",
+                  "code": "0",
+                  "display": "0"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "answer": [
+              {
+                "valueString": "Overall, I felt disappointed with the quality of care."
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:9a515b94-5166-4889-a2da-19cfb15254dd",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "8d1685d8-cf4e-4035-b29e-8755c985c8f3",
+        "status": "completed",
+        "questionnaire": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "subject": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "encounter": {
+          "reference": "Encounter/aca9ce5b-ef2f-dde5-e872-d3ac61a186ac"
+        },
+        "author": {
+          "reference": "Practitioner/14b98661-03ae-3e09-99b5-4e07d2b8e3a5"
+        },
+        "source": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "authored": "2022-03-18T20:35:52+00:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>PPNQ QR</b></p><p>ppnq-q1: Access to the facility was generally good, though parking could be challenging a<br/>ppnq-q2: The services met my basic needs, but I wish there were more options for personal<br/>ppnq-q3a: I appreciated the continuity of care, but I felt some sessions were rushed.<br/>ppnq-q3b: Information shared during sessions was helpful, yet sometimes it felt overwhelmi<br/>ppnq-q4: Coordination among staff was mostly effective, but there were a few communicatio<br/>ppnq-q5: I felt safe during my sessions, which is important for my recovery.<br/>ppnq-q6: My preferences were considered, although I would have liked more involvement in <br/>ppnq-q7: Support for self-management was adequate, but I needed more practical tips.<br/>ppnq-q8: I trust the team, but building a stronger relationship would enhance my experien<br/>ppnq-q9: 7<br/>ppnq-q9-text: Overall, I had a positive experience, but some areas could use improvement.</p></div>"
+        },
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "answer": [
+              {
+                "valueString": "Access to the facility was generally good, though parking could be challenging at times."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "answer": [
+              {
+                "valueString": "The services met my basic needs, but I wish there were more options for personalized care."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "answer": [
+              {
+                "valueString": "I appreciated the continuity of care, but I felt some sessions were rushed."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "answer": [
+              {
+                "valueString": "Information shared during sessions was helpful, yet sometimes it felt overwhelming."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "answer": [
+              {
+                "valueString": "Coordination among staff was mostly effective, but there were a few communication gaps."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "answer": [
+              {
+                "valueString": "I felt safe during my sessions, which is important for my recovery."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "answer": [
+              {
+                "valueString": "My preferences were considered, although I would have liked more involvement in decision-making."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "answer": [
+              {
+                "valueString": "Support for self-management was adequate, but I needed more practical tips."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "answer": [
+              {
+                "valueString": "I trust the team, but building a stronger relationship would enhance my experience."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://example.org/fhir/CodeSystem/nps-scale",
+                  "code": "7",
+                  "display": "7"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "answer": [
+              {
+                "valueString": "Overall, I had a positive experience, but some areas could use improvement."
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:f875a070-5fb7-4943-bb20-d97c766126c7",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "4fd79fcc-f643-4771-b5eb-638ce121fc69",
+        "status": "completed",
+        "questionnaire": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "subject": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "encounter": {
+          "reference": "Encounter/cc2d280e-a7b0-b827-25cb-01ed178bec64"
+        },
+        "author": {
+          "reference": "Practitioner/14b98661-03ae-3e09-99b5-4e07d2b8e3a5"
+        },
+        "source": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "authored": "2024-04-05T23:44:03+00:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>PPNQ QR</b></p><p>ppnq-q1: Access to services was generally good.<br/>ppnq-q2: Most of my needs were met during the program.<br/>ppnq-q3a: I experienced some continuity in my care.<br/>ppnq-q3b: Information sharing could be improved for clarity.<br/>ppnq-q4: Coordination among staff was adequate.<br/>ppnq-q5: I felt safe throughout my rehabilitation.<br/>ppnq-q6: My preferences were considered most of the time.<br/>ppnq-q7: I received some support for self-management.<br/>ppnq-q8: I trust the team with my care.<br/>ppnq-q9: 8<br/>ppnq-q9-text: Overall, I had a positive experience but there's room for improvement.</p></div>"
+        },
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "answer": [
+              {
+                "valueString": "Access to services was generally good."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "answer": [
+              {
+                "valueString": "Most of my needs were met during the program."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "answer": [
+              {
+                "valueString": "I experienced some continuity in my care."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "answer": [
+              {
+                "valueString": "Information sharing could be improved for clarity."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "answer": [
+              {
+                "valueString": "Coordination among staff was adequate."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "answer": [
+              {
+                "valueString": "I felt safe throughout my rehabilitation."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "answer": [
+              {
+                "valueString": "My preferences were considered most of the time."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "answer": [
+              {
+                "valueString": "I received some support for self-management."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "answer": [
+              {
+                "valueString": "I trust the team with my care."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://example.org/fhir/CodeSystem/nps-scale",
+                  "code": "8",
+                  "display": "8"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "answer": [
+              {
+                "valueString": "Overall, I had a positive experience but there's room for improvement."
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:43fa8651-1ccd-43c3-9ea7-cfd39e4cd4e9",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "ba1a88ea-aa0e-445d-9b2b-6ced6152d852",
+        "status": "completed",
+        "questionnaire": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "subject": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "encounter": {
+          "reference": "Encounter/cc375947-7294-3a58-51ea-440ed9528a4e"
+        },
+        "author": {
+          "reference": "Practitioner/14b98661-03ae-3e09-99b5-4e07d2b8e3a5"
+        },
+        "source": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "authored": "2021-03-19T20:11:11+00:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>PPNQ QR</b></p><p>ppnq-q1: Access to services was frustrating and difficult.<br/>ppnq-q2: My needs were not fully met during the rehabilitation.<br/>ppnq-q3a: There was a lack of continuity in my care.<br/>ppnq-q3b: Information sharing was inconsistent and often unclear.<br/>ppnq-q4: Coordination among staff seemed lacking at times.<br/>ppnq-q5: I didn't feel safe during some of the sessions.<br/>ppnq-q6: My preferences were not always considered.<br/>ppnq-q7: Support for self-management was minimal.<br/>ppnq-q8: I struggled to trust the process due to mixed experiences.<br/>ppnq-q9: 5<br/>ppnq-q9-text: I felt the overall experience did not meet my expectations.</p></div>"
+        },
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "answer": [
+              {
+                "valueString": "Access to services was frustrating and difficult."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "answer": [
+              {
+                "valueString": "My needs were not fully met during the rehabilitation."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "answer": [
+              {
+                "valueString": "There was a lack of continuity in my care."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "answer": [
+              {
+                "valueString": "Information sharing was inconsistent and often unclear."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "answer": [
+              {
+                "valueString": "Coordination among staff seemed lacking at times."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "answer": [
+              {
+                "valueString": "I didn't feel safe during some of the sessions."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "answer": [
+              {
+                "valueString": "My preferences were not always considered."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "answer": [
+              {
+                "valueString": "Support for self-management was minimal."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "answer": [
+              {
+                "valueString": "I struggled to trust the process due to mixed experiences."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://example.org/fhir/CodeSystem/nps-scale",
+                  "code": "5",
+                  "display": "5"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "answer": [
+              {
+                "valueString": "I felt the overall experience did not meet my expectations."
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:ae74addd-a03c-469c-b37c-070b706c3f88",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "40e08bee-a765-4574-bfab-ed7066b62ae5",
+        "status": "completed",
+        "questionnaire": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "subject": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "encounter": {
+          "reference": "Encounter/d5bd9dd7-0ab8-1772-63c2-a8e191942d68"
+        },
+        "author": {
+          "reference": "Practitioner/14b98661-03ae-3e09-99b5-4e07d2b8e3a5"
+        },
+        "source": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "authored": "2016-03-13T15:11:11+00:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>PPNQ QR</b></p><p>ppnq-q1: I had no trouble accessing the services I needed.<br/>ppnq-q2: My needs were met with great care and attention.<br/>ppnq-q3a: There was excellent continuity in my treatment.<br/>ppnq-q3b: The information shared with me was clear and helpful.<br/>ppnq-q4: The coordination among the staff was impressive.<br/>ppnq-q5: I felt safe throughout my rehabilitation process.<br/>ppnq-q6: My preferences were respected and taken into account.<br/>ppnq-q7: I received great support for managing my own care.<br/>ppnq-q8: I trust the team completely with my recovery.<br/>ppnq-q9: 9<br/>ppnq-q9-text: Overall, the experience was fantastic and made a real difference.</p></div>"
+        },
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "answer": [
+              {
+                "valueString": "I had no trouble accessing the services I needed."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "answer": [
+              {
+                "valueString": "My needs were met with great care and attention."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "answer": [
+              {
+                "valueString": "There was excellent continuity in my treatment."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "answer": [
+              {
+                "valueString": "The information shared with me was clear and helpful."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "answer": [
+              {
+                "valueString": "The coordination among the staff was impressive."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "answer": [
+              {
+                "valueString": "I felt safe throughout my rehabilitation process."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "answer": [
+              {
+                "valueString": "My preferences were respected and taken into account."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "answer": [
+              {
+                "valueString": "I received great support for managing my own care."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "answer": [
+              {
+                "valueString": "I trust the team completely with my recovery."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://example.org/fhir/CodeSystem/nps-scale",
+                  "code": "9",
+                  "display": "9"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "answer": [
+              {
+                "valueString": "Overall, the experience was fantastic and made a real difference."
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:fb9120a0-bfad-4d44-8bfe-1759277f946f",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "e7d7f923-5e8e-48d9-839e-ee7cc3159939",
+        "status": "completed",
+        "questionnaire": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "subject": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "encounter": {
+          "reference": "Encounter/d718e488-6107-1118-6063-7e731291e673"
+        },
+        "author": {
+          "reference": "Practitioner/14b98661-03ae-3e09-99b5-4e07d2b8e3a5"
+        },
+        "source": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "authored": "2024-03-22T20:32:52+00:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>PPNQ QR</b></p><p>ppnq-q1: Access to services was frustrating and often delayed.<br/>ppnq-q2: My needs were not fully met during treatment.<br/>ppnq-q3a: There was a lack of continuity in my care.<br/>ppnq-q3b: Information sharing was inconsistent and unclear.<br/>ppnq-q4: Coordination among staff felt disorganized.<br/>ppnq-q5: I didn't feel safe during some of the sessions.<br/>ppnq-q6: My preferences were often overlooked.<br/>ppnq-q7: Support for self-management was minimal.<br/>ppnq-q8: I struggled to build trust with the team.<br/>ppnq-q9: 0<br/>ppnq-q9-text: Overall, I was disappointed with the care I received.</p></div>"
+        },
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "answer": [
+              {
+                "valueString": "Access to services was frustrating and often delayed."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "answer": [
+              {
+                "valueString": "My needs were not fully met during treatment."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "answer": [
+              {
+                "valueString": "There was a lack of continuity in my care."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "answer": [
+              {
+                "valueString": "Information sharing was inconsistent and unclear."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "answer": [
+              {
+                "valueString": "Coordination among staff felt disorganized."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "answer": [
+              {
+                "valueString": "I didn't feel safe during some of the sessions."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "answer": [
+              {
+                "valueString": "My preferences were often overlooked."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "answer": [
+              {
+                "valueString": "Support for self-management was minimal."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "answer": [
+              {
+                "valueString": "I struggled to build trust with the team."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://example.org/fhir/CodeSystem/nps-scale",
+                  "code": "0",
+                  "display": "0"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "answer": [
+              {
+                "valueString": "Overall, I was disappointed with the care I received."
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:3d51b7e8-817c-443e-8e4e-c195597ada47",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "bd5fff97-b296-4223-97b3-a68e4b8b98d8",
+        "status": "completed",
+        "questionnaire": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "subject": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "encounter": {
+          "reference": "Encounter/e7529e52-a9f1-0e90-982f-0f5e19b08d80"
+        },
+        "author": {
+          "reference": "Practitioner/14b98661-03ae-3e09-99b5-4e07d2b8e3a5"
+        },
+        "source": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "authored": "2015-05-22T20:50:15+00:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>PPNQ QR</b></p><p>ppnq-q1: Access to the facility was convenient and straightforward.<br/>ppnq-q2: Most of my needs were met during the sessions.<br/>ppnq-q3a: I felt there was a good level of continuity in my care.<br/>ppnq-q3b: Information shared by the team was generally clear and helpful.<br/>ppnq-q4: Coordination between different providers could be improved.<br/>ppnq-q5: I felt safe during my rehabilitation activities.<br/>ppnq-q6: My preferences were mostly taken into account.<br/>ppnq-q7: I received adequate support for self-management.<br/>ppnq-q8: I have a reasonable level of trust in the care team.<br/>ppnq-q9: 8<br/>ppnq-q9-text: Overall, I had a positive experience, but some coordination issues were present.</p></div>"
+        },
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "answer": [
+              {
+                "valueString": "Access to the facility was convenient and straightforward."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "answer": [
+              {
+                "valueString": "Most of my needs were met during the sessions."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "answer": [
+              {
+                "valueString": "I felt there was a good level of continuity in my care."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "answer": [
+              {
+                "valueString": "Information shared by the team was generally clear and helpful."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "answer": [
+              {
+                "valueString": "Coordination between different providers could be improved."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "answer": [
+              {
+                "valueString": "I felt safe during my rehabilitation activities."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "answer": [
+              {
+                "valueString": "My preferences were mostly taken into account."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "answer": [
+              {
+                "valueString": "I received adequate support for self-management."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "answer": [
+              {
+                "valueString": "I have a reasonable level of trust in the care team."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://example.org/fhir/CodeSystem/nps-scale",
+                  "code": "8",
+                  "display": "8"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "answer": [
+              {
+                "valueString": "Overall, I had a positive experience, but some coordination issues were present."
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:21b69ec4-c88c-4c26-820b-8e983076b01d",
+      "resource": {
+        "resourceType": "QuestionnaireResponse",
+        "id": "2b88a33d-4ce4-41bb-831d-1eb3e8c4a85b",
+        "status": "completed",
+        "questionnaire": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "subject": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "encounter": {
+          "reference": "Encounter/e8b8f6b9-0c32-53a0-6b5a-baae46a76ccc"
+        },
+        "author": {
+          "reference": "Practitioner/14b98661-03ae-3e09-99b5-4e07d2b8e3a5"
+        },
+        "source": {
+          "reference": "Patient/b23f02ec-1c12-ce60-888a-4ae52a3e1fbe"
+        },
+        "authored": "2021-04-09T20:11:11+00:00",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p><b>PPNQ QR</b></p><p>ppnq-q1: Access to the facility was generally good, though parking could be a challenge.<br/>ppnq-q2: Most of my needs were met during therapy, but I felt some sessions lacked focus.<br/>ppnq-q3a: I appreciated the continuity of care, but there were a few gaps in communication<br/>ppnq-q3b: The information shared was helpful, yet I sometimes wished for more details.<br/>ppnq-q4: Coordination among staff was decent, although there were moments of confusion.<br/>ppnq-q5: I felt safe during my sessions, but some equipment seemed outdated.<br/>ppnq-q6: My preferences were often considered, but not always prioritized.<br/>ppnq-q7: I received some support for self-management, but it could be expanded.<br/>ppnq-q8: I trust the staff, but I think more transparency would enhance that trust.<br/>ppnq-q9: 8<br/>ppnq-q9-text: Overall, I had a positive experience, but there are areas for improvement.</p></div>"
+        },
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "answer": [
+              {
+                "valueString": "Access to the facility was generally good, though parking could be a challenge."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "answer": [
+              {
+                "valueString": "Most of my needs were met during therapy, but I felt some sessions lacked focus."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "answer": [
+              {
+                "valueString": "I appreciated the continuity of care, but there were a few gaps in communication."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "answer": [
+              {
+                "valueString": "The information shared was helpful, yet I sometimes wished for more details."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "answer": [
+              {
+                "valueString": "Coordination among staff was decent, although there were moments of confusion."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "answer": [
+              {
+                "valueString": "I felt safe during my sessions, but some equipment seemed outdated."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "answer": [
+              {
+                "valueString": "My preferences were often considered, but not always prioritized."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "answer": [
+              {
+                "valueString": "I received some support for self-management, but it could be expanded."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "answer": [
+              {
+                "valueString": "I trust the staff, but I think more transparency would enhance that trust."
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "answer": [
+              {
+                "valueCoding": {
+                  "system": "http://example.org/fhir/CodeSystem/nps-scale",
+                  "code": "8",
+                  "display": "8"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "answer": [
+              {
+                "valueString": "Overall, I had a positive experience, but there are areas for improvement."
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "QuestionnaireResponse"
+      }
+    }
+  ]
+}

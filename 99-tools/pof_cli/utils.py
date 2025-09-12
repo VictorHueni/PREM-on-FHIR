@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Optional
 from urllib.parse import parse_qs, urlparse
 
-import requests
 from dotenv import load_dotenv
 
 # ---------------------------

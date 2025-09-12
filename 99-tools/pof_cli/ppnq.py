@@ -9,8 +9,8 @@ import random
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import requests
-from utils import die, _vprint, _pick, _to_fhir_dt
-from constants import HEADER_ALIASES
+from .utils import die, _vprint
+from .qr_common import _pick, _to_fhir_dt, HEADER_ALIASES
 
 
 
@@ -55,17 +55,17 @@ def build_ppnq_prompt(
     keyword_plan: Dict[str, List[str]],
 ) -> str:
     """
-    Construct the user message that:
-      - tells the LLM to produce ONLY q1..q8 + q9-text,
-      - enforces coherence with a GIVEN NPS score/bucket,
-      - asks for concise, natural, single-sentence outputs,
-      - optionally suggests 0–2 keywords per item to include only if natural.
+    Build a strict prompt for PPNQ text generation:
+      - Require exactly q1..q8 + q9-text (10 items) as valueString.
+      - Forbid including q9 (the numeric score) in the output.
+      - Condition tone on an already-sampled NPS score/bucket.
+      - Optionally supply lightweight keyword hints per item.
     """
-    req_ids = [it["linkId"] for it in questionnaire.get("item", [])]
-    # we only ask for these linkIds from the LLM
-    llm_ids = [lid for lid in req_ids if lid in {
-        "ppnq-q1","ppnq-q2","ppnq-q3a","ppnq-q3b","ppnq-q4","ppnq-q5","ppnq-q6","ppnq-q7","ppnq-q8","ppnq-q9-text"
-    }]
+    # Fixed, explicit order we want back from the model
+    required_ids = [
+        "ppnq-q1","ppnq-q2","ppnq-q3a","ppnq-q3b",
+        "ppnq-q4","ppnq-q5","ppnq-q6","ppnq-q7","ppnq-q8","ppnq-q9-text"
+    ]
 
     # a small style palette seeded deterministically
     rng = random.Random(style_seed)
@@ -90,46 +90,70 @@ def build_ppnq_prompt(
         "ppnq-q9-text":"reason for NPS",
     }
 
-    # keyword suggestions block
+    # keyword suggestions block (optional + minimal)
     kw_lines = []
-    for lid in llm_ids:
+    for lid in required_ids:
         kws = keyword_plan.get(lid, [])
         if kws:
             kw_lines.append(f'  - {lid}: optional_keywords = {kws}')
     kw_block = "\n".join(kw_lines) if kw_lines else "  (no keyword suggestions)"
 
-    # build the full instructions
+    # Compose strict instructions
     lines = [
         "You write realistic, succinct patient feedback for a neurorehabilitation PREM.",
-        "Return a SINGLE JSON object with this shape:",
-        "{",
-        '  "answers": [',
-        '    {"linkId": "<id>", "valueString": "<one concise sentence>"}',
-        "  ]",
-        "}",
         "",
+        # Conditioning on sampled NPS (you will insert ppnq-q9 yourself later)
         f"NPS (given): {nps_score}  |  bucket: {nps_bucket}",
         "Your sentences MUST be coherent with this overall experience:",
         "- detractor (0–6): clearly negative or mixed negatives; mention issues briefly.",
         "- passive (7–8): overall positive with a minor critique.",
         "- promoter (9–10): clearly positive; highlight strengths.",
         "",
-        "Write one concise, natural sentence (~8–22 words) for each of the following linkIds:",
-    ]
-    for lid in llm_ids:
-        lines.append(f"- {lid}  ({domain_hints.get(lid,'')})")
-    lines += [
+        "STYLE:",
+        f"- Style hint (use sparingly): {style_hint}. Avoid repetitive phrasing.",
+        "- Use everyday language; avoid clinical jargon or identifiers.",
         "",
-        f"Style hint (use sparingly): {style_hint}. Avoid repeating the same phrasing.",
-        "If optional keywords are provided for an item, include at most one only if it fits naturally.",
-        "Use everyday language; avoid clinical jargon or identifiers.",
+        "CONTENT TO PRODUCE:",
+        "Return a SINGLE JSON object with this exact shape:",
+        "{",
+        '  "answers": [',
+        '    {"linkId": "<id>", "valueString": "<one concise sentence>"},',
+        '    ... exactly 10 items total ...',
+        "  ]",
+        "}",
         "",
-        "Optional keyword suggestions:",
+        "REQUIRED linkIds (EXACTLY these 10, in any order is OK):",
+        "  - " + ", ".join(required_ids),
+        "",
+        "CONSTRAINTS (STRICT):",
+        "- Use only valueString (plain text) for all items.",
+        "- Do NOT include ppnq-q9 (the numeric NPS score). It is provided separately.",
+        "- Include ppnq-q9-text (reason for the given NPS).",
+        "- Return EXACTLY 10 items in answers (no extra, no missing).",
+        "- Do not include markdown; output pure JSON only.",
+        "",
+        "OPTIONAL keyword suggestions (include at most one per item, only if natural):",
         kw_block,
         "",
-        "Output rules:",
-        "- Output ONLY the JSON (no markdown).",
-        '- Use only "valueString" (do NOT include ppnq-q9; that score is already given).',
+        "DOMAIN HINTS (for your own understanding, do not output):",
+    ]
+    for lid in required_ids:
+        lines.append(f"- {lid}: {domain_hints.get(lid,'')}")
+    lines += [
+        "",
+        "MINIMAL EXAMPLE (structure only; your content should be new):",
+        '{ "answers": [',
+        '  {"linkId":"ppnq-q1","valueString":"<one sentence>"},',
+        '  {"linkId":"ppnq-q2","valueString":"<one sentence>"},',
+        '  {"linkId":"ppnq-q3a","valueString":"<one sentence>"},',
+        '  {"linkId":"ppnq-q3b","valueString":"<one sentence>"},',
+        '  {"linkId":"ppnq-q4","valueString":"<one sentence>"},',
+        '  {"linkId":"ppnq-q5","valueString":"<one sentence>"},',
+        '  {"linkId":"ppnq-q6","valueString":"<one sentence>"},',
+        '  {"linkId":"ppnq-q7","valueString":"<one sentence>"},',
+        '  {"linkId":"ppnq-q8","valueString":"<one sentence>"},',
+        '  {"linkId":"ppnq-q9-text","valueString":"<one sentence coherent with NPS>"}',
+        "] }",
     ]
     return "\n".join(lines)
 
@@ -160,6 +184,7 @@ def _validate_ppnq_answers(obj: Dict[str, Any]) -> List[Dict[str, Any]]:
     missing = sorted(required - {a["linkId"] for a in out})
     if missing:
         die(f"LLM output missing required linkIds: {', '.join(missing)}", 2)
+
     # enforce we DO NOT get a ppnq-q9 coding from the model
     out = [a for a in out if a["linkId"] != "ppnq-q9"]
     return out
@@ -243,6 +268,13 @@ def _ppnq_answers_llm(
                     }
                 })
 
+                # If the model omitted the reason, auto-fill a single-sentence one
+                if not any(a.get("linkId") == "ppnq-q9-text" for a in ans):
+                    ans.append({
+                        "linkId": "ppnq-q9-text",
+                        "valueString": _reason_for_bucket(nps_bucket, rng),
+                    })
+
                 # token accounting (best-effort)
                 usage = data.get("usage") or {}
                 tot = usage.get("total_tokens")
@@ -303,6 +335,25 @@ def _ppnq_answers_dry(rng) -> List[Dict[str, Any]]:
         ])
     answers.append({"linkId":"ppnq-q9-text","valueString":reason})
     return answers
+
+def _reason_for_bucket(bucket: str, rng: random.Random) -> str:
+    if bucket == "promoter":
+        return rng.choice([
+            "Clear communication and coordinated care.",
+            "Skilled team and smooth coordination.",
+            "I felt supported and confident in the plan.",
+        ])
+    if bucket == "passive":
+        return rng.choice([
+            "Mostly positive, but access could be quicker.",
+            "Good overall, with some delays.",
+            "Helpful staff, though follow-up was uneven.",
+        ])
+    return rng.choice([
+        "Delays and poor coordination hurt my experience.",
+        "I felt unheard and worried about safety.",
+        "Information sharing was inconsistent.",
+    ])
   
   
 def gen_nps(rng: random.Random, dist: Optional[Dict[int, float]] = None) -> Tuple[int, str]:

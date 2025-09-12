@@ -10,7 +10,9 @@ ifneq ("$(wildcard .venv/bin/python)","")
   PY := .venv/bin/python
 endif
 
-CLI := 99-tools/pof_cli.py
+# Run the refactored CLI package (lives in 99-tools/pof_cli/)
+# Important: put 99-tools on PYTHONPATH so `-m pof_cli` imports.
+POF := PYTHONPATH=99-tools $(PY) -m pof_cli
 
 # ------- config you may tweak -------
 # FHIR server base (override from .env automatically; this is just a fallback)
@@ -91,13 +93,13 @@ deps: venv
 # ------- FHIR -------
 fhir-wait:
 	@echo "⏳ Waiting for HAPI at $(FHIR_BASE)…"
-	@$(PY) $(CLI) fhir wait-ready --base "$(FHIR_BASE)" --interval 3 --timeout 120
+	@$(POF) fhir wait-ready --base "$(FHIR_BASE)" --interval 3 --timeout 120
 
 # Bulk $import (Parameters JSON -> HAPI)
 fhir-import:
 	@echo "📥 Submitting bulk $import using $(IMPORT_PARAMS) → $(FHIR_BASE)…"
 	@test -f "$(IMPORT_PARAMS)" || { echo "❌ Missing Parameters JSON: $(IMPORT_PARAMS)"; exit 1; }
-	@$(PY) $(CLI) fhir import "$(IMPORT_PARAMS)" \
+	@$(POF) fhir import "$(IMPORT_PARAMS)" \
 	  --base "$(FHIR_BASE)" \
 	  --interval $(IMPORT_POLL) \
 	  --timeout-minutes $(IMPORT_TIMEOUT_MIN)
@@ -109,7 +111,7 @@ fhir-import-many:
 	for f in $(IMPORT_FILES); do \
 	  echo "—> 📦 $$f"; \
 	  test -f "$$f" || { echo "❌ Missing Parameters JSON: $$f"; exit 1; }; \
-	  $(PY) $(CLI) fhir import "$$f" \
+	  $(POF) fhir import "$$f" \
 	    --base "$(FHIR_BASE)" \
 	    --interval $(IMPORT_POLL) \
 	    --timeout-minutes $(IMPORT_TIMEOUT_MIN); \
@@ -125,7 +127,7 @@ synthea-build:
 # You can override population etc via environment or .env (POPULATION, AGE_RANGE, KEEP_FILE, EXTRA_ARGS)
 synthea-run:
 	@echo "🏃 Running Synthea into $(SYN_OUT)…"
-	@$(PY) $(CLI) synthea run \
+	@$(POF) synthea run \
 	  --image $(SYN_TAG) \
 	  --output "$(SYN_OUT)" \
 	  --population "$${POPULATION:-5}" \
@@ -137,20 +139,20 @@ synthea-run:
 bundle-questionnaires:
 	@echo "📦 Building Questionnaire transaction Bundle from $(Q_IN_DIR)…"
 	@mkdir -p "$(Q_IN_DIR)"
-	@$(PY) $(CLI) bundle make-questionnaires \
+	@$(POF) bundle make-questionnaires \
 	  --indir "$(Q_IN_DIR)" \
 	  --outfile "$(Q_BUNDLE)" \
 	  --method auto
 
 post-questionnaires:
 	@echo "📮 Posting Questionnaire transaction Bundle → $(FHIR_BASE)…"
-	@$(PY) $(CLI) fhir post-bundle "$(Q_BUNDLE)" --base "$(FHIR_BASE)" --timeout 120
+	@$(POF) fhir post-bundle "$(Q_BUNDLE)" --base "$(FHIR_BASE)" --timeout 120
 
 # ------- Headers CSV from HAPI DB (SQL -> CSV) -------
 qr-export-headers:
 	@echo "🗂  Exporting header CSV from DB to $(HDR_CSV)…"
 	@mkdir -p "$(HDR_OUT)"
-	@$(PY) $(CLI) qr export-headers --outdir "$(HDR_OUT)"
+	@$(POF) qr export-headers --outdir "$(HDR_OUT)"
 
 # ------- Generate QR Bundles from header CSV -------
 qr-make-bundles:
@@ -169,7 +171,7 @@ qr-make-bundles:
 	if [ "$(strip $(QR_VERBOSE))" = "1" ]; then \
 	  EXTRA="$$EXTRA --verbose"; \
 	fi; \
-	$(PY) $(CLI) qr make-bundles \
+	$(POF) qr make-bundles \
 	  --mode $(strip $(QR_MODE)) \
 	  --csv  "$(HDR_CSV)" \
 	  --out  "$(QR_OUT)" \
@@ -178,7 +180,7 @@ qr-make-bundles:
 
 post-qr-bundles:
 	@echo "📮 Posting QR bundles → $(FHIR_BASE)…"
-	@$(PY) $(CLI) fhir post-bundles \
+	$(POF) fhir post-bundles \
 	  --pattern "$(QR_OUT)/*_bundle_*.json" \
 	  --base "$(FHIR_BASE)" \
 	  --timeout 600 \

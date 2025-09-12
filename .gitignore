@@ -16,7 +16,6 @@ logs/
 
 # Data
 01-data-generation/questionnaire_responses/input/
-output/
 
 # Python
 __pycache__/

@@ -70,10 +70,10 @@ make elt             # dbt stg+core -> NLP -> dbt marts
 ```
 
 
-## Prerequisites
-Docker ≥ 24 with Compose v2
-make
-Python 3.11 if you run the local scripts manually
+- Docker ≥ 24 with Compose v2
+- make
+- Python 3.11 if you run the local scripts manually
+- Airbytes local local instances `abctl local install --disable-auth`
 
 ```bash
 cp .env.example .env
@@ -95,6 +95,22 @@ This starts:
 - synthea-files (nginx web server serves NDJSON from 00-setup/synthea-files for convenient bulk import)
 
 Then you need t oexecute direclty in the db `./00-setup/oltp-db/post-init/20-airbyte-views.sql` to prepare the views for airbytes ETL
+
+
+
+## End to End (Make TargetCHeat sheet)=
+```bash
+make up            # infra up
+make seed-all      # Synthea + Questionnaire + QR uploads
+make dbt-stg-core  # build stg/core
+make nlp           # run NLP one-shot
+make dbt-mart      # build marts
+make elt           # stg/core -> NLP -> mart
+make logs          # follow docker compose logs
+make down          # stop containers
+make nuke          # stop + remove volumes (⚠ wipes data)
+```
+
 
 
 ### 2. Generate & upload sample data
@@ -168,45 +184,54 @@ Config knobs:
 `Q_BUNDLE`=…
 
 #### 2.3 QuestionnaireResponses (scaffolded from header CSV)
+
 | Target                   | Description                                                                                      |
 | ------------------------ | ------------------------------------------------------------------------------------------------ |
 | `make qr-export-headers` | Run SQL against HAPI DB and export header CSV (`HDR_CSV`).                                       |
 | `make qr-make-bundles`   | Generate QuestionnaireResponse bundles (`QR_OUT`) from the header CSV. Supports NREQ/PPNQ modes. |
 | `make post-qr-bundles`   | POST generated bundles to `$FHIR_BASE`.                                                          |
 
+Config knobs (env or `.env`)
+`QR_MODE` = nreq | ppnq (default nreq)  
+`QR_CHUNK` (default 250)  
+`QR_SEED` (default 42)  
+`QR_LIKERT_DIST` (NREQ weighting, e.g. `0.2,0.5,0.3`)  
 
-config knobs
-`Q_BUNDLE`QR_MODE=nreq or ppnq
-`QR_CHUNK` (default 250 resources per bundle)
-`QR_SEED` (random seed, default 42)
-`QR_LIKERT_DIST` (e.g. 0.2,0.5,0.3 for NREQ weighting)
-`QR_DRY_RUN`=1 (simulate PPNQ answers without LLM, default 1)
-`QR_USE_LLM`=1 (enable LLM-based PPNQ generation, default 0)
-`LLM_MODEL`=gpt-4o-mini
-`LLM_TEMPERATURE`=0.6
-`LLM_MAX_RETRIE`S=3
+PPNQ text generation:
+`QR_DRY_RUN`=1 (placeholders, default 1)  
+`QR_USE_LLM`=1 (enable LLM; requires `OPENAI_API_KEY`)  
+`LLM_MODEL`=gpt-4o-mini  
+`LLM_TEMPERATURE`=0.6  
+`LLM_MAX_RETRIES`=3  
+Advanced (PPNQ):  
+`NPS_DIST` (e.g. `0:0.02,1:0.03,...,10:0.15`)  - Custom NPS score distribution (0–10).
+`KEYWORD_RATE` (default 0.35) - Probability per item to inject up to 1–2 optional keywords (from a small domain list or themes.yml) into the prompt as gentle guidance.
+`STYLE_VARIANCE` (default 0.7) - Scales the randomness used to pick a subtle style hint (e.g., “grateful”, “concerned”) consistent with the NPS bucket. Higher → more style variability.
+`QR_VERBOSE`=1 (extra logs)
 
+> Output files: `$(QR_OUT)/{mode}_batch_bundle_###.json`
 
 ##### 2.3.1 Questionnaire Header
-`make qr-export-headers` : run the SQL against your HAPI DB and write QuestionnaireResponse-Header.csv → $(HDR_CSV)
-(DB envs respected: DB_HOST/PORT/NAME/USER/PASS or their OLTP_DB_* aliases).
+`make qr-export-headers` : run the SQL against your HAPI DB and write `QuestionnaireResponse-Header.csv` → `$(HDR_CSV)`  
+(DB envs respected: `DB_HOST/PORT/NAME/USER/PASS` or `OLTP_DB_*`.)
 
 ##### 2.3.2 Questionnaire Response bundle maker
+`make qr-make-bundles` : generate QR batch bundles from the header CSV → `$(QR_OUT)`.
 
-`make qr-make-bundles` : generate QR batch bundles from the header CSV → $(QR_OUT).
 Controls (set as env before the command):
-- QR_MODE=nreq|ppnq (default nreq)
-- QR_SEED=42 (deterministic)
-- QR_CHUNK=250 (max QRs per bundle file)
+- `QR_MODE=nreq|ppnq` (default nreq)
+- `QR_SEED=42`
+- `QR_CHUNK=250`
 
-NREQ weighting: 
-- QR_LIKERT_DIST=0.2,0.5,0.3
+NREQ weighting:
+- `QR_LIKERT_DIST=0.2,0.5,0.3`
 
-PPNQ text: 
-dry run (placeholders): QR_DRY_RUN=1 (default)
-LLM mode: QR_USE_LLM=1 (needs OPENAI_API_KEY; optional LLM_MODEL, LLM_TEMPERATURE, LLM_MAX_RETRIES)
+PPNQ text:
+- Dry run: `QR_DRY_RUN=1` (default)
+- LLM mode: `QR_USE_LLM=1` (needs `OPENAI_API_KEY`; optional `LLM_MODEL`, `LLM_TEMPERATURE`, `LLM_MAX_RETRIES`)
+- Advanced: `NPS_DIST`, `KEYWORD_RATE`, `STYLE_VARIANCE`
 
-examples:
+Examples:
 ```bash
 # NREQ with weighted Likert distribution and fixed seed
 QR_MODE=nreq QR_LIKERT_DIST=0.2,0.5,0.3 QR_SEED=7 make -e qr-make-bundles
@@ -214,8 +239,9 @@ QR_MODE=nreq QR_LIKERT_DIST=0.2,0.5,0.3 QR_SEED=7 make -e qr-make-bundles
 # PPNQ dry-run placeholders
 QR_MODE=ppnq QR_DRY_RUN=1 make -e qr-make-bundles
 
-# PPNQ via LLM
+# PPNQ via LLM (verbose)
 QR_MODE=ppnq QR_USE_LLM=1 LLM_MODEL=gpt-4o-mini QR_VERBOSE=1 make -e qr-make-bundles
+
 ```
 
 
@@ -317,16 +343,11 @@ docker run --rm \
 ```
 
 
-# Build mart
-```bash
-docker compose run --rm dbt-run dbt build -s mart+
-```
-
-
 #### 4.2 Subsequent
 
-docker run --rm --env-file .env -e PG_HOST=host.docker.internal pof-nlp:latest score --since 10y --limit 10000 --verbose
 __override defaults if you want:__
+`docker run --rm --env-file .env -e PG_HOST=host.docker.internal pof-nlp:latest score --since 10y --limit 10000 --verbose`
+
 `docker run --rm --env-file .env -e PG_HOST=host.docker.internal prem-nlp:latest score --since 30d --limit 100`
 
 `python -m pipeline.cli score --since 10y --limit 200 --verbose`
@@ -336,19 +357,11 @@ __or a dry run to avoid writing:__
 
 
 
-## End to End (Make Target)
-```bash
-make up            # infra up
-make seed-all      # Synthea + Questionnaire + QR uploads
-make dbt-stg-core  # build stg/core
-make nlp           # run NLP one-shot
-make dbt-mart      # build marts
-make elt           # stg/core -> NLP -> mart
-make logs          # follow docker compose logs
-make down          # stop containers
-make nuke          # stop + remove volumes (⚠ wipes data)
-```
 
+# Build mart
+```bash
+docker compose run --rm dbt-run dbt build -s mart+
+```
 
 ## Troubleshooting
 - **NLP says “No pending rows.”**
@@ -374,22 +387,3 @@ The NLP container pulls free-text from `stg.nlp_prem_text`, scores sentiment & t
 The dbt marts assemble:
 - mart.mart_prem_text_sentiment
 - mart.mart_prem_theme_summary
-
-#### 4.1 Image building and first run
-```bash
-DOCKER_BUILDKIT=1 docker build -t pof-prem-nlp:latest .
-```
-
-first run will download the models into a *volume* (not the image)
-```bash
-docker run --rm \
-  --env-file .env \
-  -e PG_HOST=host.docker.internal \
-  -v pof-prem_hfcache:/app/.hf_cache \
-  prem-nlp:latest \
-  score --since 10y --limit 100 --verbose
-```
-
-#### 4.2 Subsequent
-__override defaults if you want:__
-`docker run --rm --env-file .env -e PG_HOST=host.docker.internal pof-nlp:latest score --since 30d --limit 100`

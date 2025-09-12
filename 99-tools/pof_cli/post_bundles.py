@@ -7,9 +7,9 @@ from pathlib import Path
 from typing import Optional
 
 import requests
-from http import make_session
-from utils import die, env_bool
-from constants import DEFAULT_BASE
+from .http import make_session
+from .utils import die, env_bool
+from .constants import DEFAULT_BASE
 
 # ---------------------------
 # Command: fhir post-bundle / post-bundles

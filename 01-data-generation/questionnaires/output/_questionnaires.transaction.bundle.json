@@ -1,0 +1,1835 @@
+{
+  "resourceType": "Bundle",
+  "type": "transaction",
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:88a6e746-ad8d-4483-8b7c-2cce281d6835",
+      "resource": {
+        "resourceType": "CodeSystem",
+        "url": "http://example.org/fhir/CodeSystem/nps-scale",
+        "version": "1.0",
+        "name": "NetPromoterScoreScale",
+        "title": "Net Promoter Score 0\u201310 Scale",
+        "status": "active",
+        "content": "complete",
+        "caseSensitive": true,
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Net Promoter Score (NPS) scale</p></div>"
+        },
+        "concept": [
+          {
+            "code": "0",
+            "display": "0 \u2013 Not at all likely",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 0
+              }
+            ]
+          },
+          {
+            "code": "1",
+            "display": "1",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 1
+              }
+            ]
+          },
+          {
+            "code": "2",
+            "display": "2",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 2
+              }
+            ]
+          },
+          {
+            "code": "3",
+            "display": "3",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 3
+              }
+            ]
+          },
+          {
+            "code": "4",
+            "display": "4",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 4
+              }
+            ]
+          },
+          {
+            "code": "5",
+            "display": "5 \u2013 Neutral",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 5
+              }
+            ]
+          },
+          {
+            "code": "6",
+            "display": "6",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 6
+              }
+            ]
+          },
+          {
+            "code": "7",
+            "display": "7",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 7
+              }
+            ]
+          },
+          {
+            "code": "8",
+            "display": "8",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 8
+              }
+            ]
+          },
+          {
+            "code": "9",
+            "display": "9",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 9
+              }
+            ]
+          },
+          {
+            "code": "10",
+            "display": "10 \u2013 Extremely likely",
+            "extension": [
+              {
+                "url": "http://hl7.org/fhir/StructureDefinition/ordinalValue",
+                "valueDecimal": 10
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "CodeSystem"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:7cf2f1fb-0038-4fd4-aaaa-6063352494c1",
+      "resource": {
+        "resourceType": "CodeSystem",
+        "url": "http://example.org/fhir/CodeSystem/nreq-items",
+        "version": "1.0",
+        "name": "NreqQuestions",
+        "title": "Neurorehabilitation Experience Questionnaire (NREQ) Items",
+        "status": "active",
+        "content": "complete",
+        "caseSensitive": false,
+        "publisher": "University of Surrey / Surrey Community Health",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>NREQ item codes (Q01\u2013Q17) with linkId, type, required, binding, domain, and order.</p></div>"
+        },
+        "property": [
+          {
+            "code": "linkId",
+            "type": "string",
+            "description": "Questionnaire.item.linkId"
+          },
+          {
+            "code": "qtype",
+            "type": "code",
+            "description": "Questionnaire.item.type (choice|string)"
+          },
+          {
+            "code": "required",
+            "type": "boolean",
+            "description": "Questionnaire.item.required"
+          },
+          {
+            "code": "answerValueSet",
+            "type": "string",
+            "description": "Questionnaire.item.answerValueSet"
+          },
+          {
+            "code": "domain",
+            "type": "code",
+            "description": "PaRIS/NREQ domain code"
+          },
+          {
+            "code": "order",
+            "type": "integer",
+            "description": "Display order (1..n)"
+          }
+        ],
+        "concept": [
+          {
+            "code": "NREQ-Q01",
+            "display": "Information on arrival",
+            "definition": "When I arrived I was given information about the unit and what would happen during my stay",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q1"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "access"
+              },
+              {
+                "code": "order",
+                "valueInteger": 1
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q02",
+            "display": "Facilities",
+            "definition": "The facilities on the unit were good (e.g., washing facilities, toilets)",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q2"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "comprehensiveness"
+              },
+              {
+                "code": "order",
+                "valueInteger": 2
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q03",
+            "display": "Secure belongings",
+            "definition": "There was somewhere secure to keep my belongings",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q3"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "patient-safety"
+              },
+              {
+                "code": "order",
+                "valueInteger": 3
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q04",
+            "display": "Privacy for personal matters",
+            "definition": "I was able to discuss personal matters in private",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q4"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "patient-safety"
+              },
+              {
+                "code": "order",
+                "valueInteger": 4
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q05",
+            "display": "Activities in free time",
+            "definition": "There were enough things to do in my free time (e.g., watch TV, join a group)",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q5"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "comprehensiveness"
+              },
+              {
+                "code": "order",
+                "valueInteger": 5
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q06",
+            "display": "Friendly atmosphere",
+            "definition": "There was a friendly atmosphere on the unit",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q6"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "person-centredness"
+              },
+              {
+                "code": "order",
+                "valueInteger": 6
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q07",
+            "display": "Staff cared about me",
+            "definition": "I felt the staff really cared about me",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q7"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "trust"
+              },
+              {
+                "code": "order",
+                "valueInteger": 7
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q08",
+            "display": "Teamwork",
+            "definition": "The staff worked well as a team",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q8"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "coordination"
+              },
+              {
+                "code": "order",
+                "valueInteger": 8
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q09",
+            "display": "Able to talk to staff",
+            "definition": "I felt able to talk to the staff about any problems I had",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q9"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "person-centredness"
+              },
+              {
+                "code": "order",
+                "valueInteger": 9
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q10",
+            "display": "Asked about my goals",
+            "definition": "I was asked what I wanted to achieve during my stay",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q10"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "person-centredness"
+              },
+              {
+                "code": "order",
+                "valueInteger": 10
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q11",
+            "display": "Partners in care",
+            "definition": "I felt as though the staff and I were partners in the whole process of care",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q11"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "person-centredness"
+              },
+              {
+                "code": "order",
+                "valueInteger": 11
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q12",
+            "display": "Kept informed",
+            "definition": "The staff kept me informed every step of the way",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q12"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "continuity"
+              },
+              {
+                "code": "order",
+                "valueInteger": 12
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q13",
+            "display": "Family/carer involvement",
+            "definition": "My family or carer was involved in discussions about my treatment if I wanted them to be",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q13"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "coordination"
+              },
+              {
+                "code": "order",
+                "valueInteger": 13
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q14",
+            "display": "Amount of therapy/treatment",
+            "definition": "I am happy with the amount of therapy or treatment I received for...",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q14"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "comprehensiveness"
+              },
+              {
+                "code": "order",
+                "valueInteger": 14
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q15",
+            "display": "Emotional support",
+            "definition": "I received enough emotional support",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q15"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "self-management-support"
+              },
+              {
+                "code": "order",
+                "valueInteger": 15
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q16",
+            "display": "Prepared for discharge",
+            "definition": "I am feeling well supported and prepared for my discharge",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q16"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "continuity"
+              },
+              {
+                "code": "order",
+                "valueInteger": 16
+              }
+            ]
+          },
+          {
+            "code": "NREQ-Q17",
+            "display": "Satisfied with progress",
+            "definition": "I am satisfied with the progress I have made during my stay",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "nreq-q17"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nreq-likert-3"
+              },
+              {
+                "code": "domain",
+                "valueCode": "overall-perceived-quality"
+              },
+              {
+                "code": "order",
+                "valueInteger": 17
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "CodeSystem"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:071302c3-59e7-40e4-a4b9-b5c40fa25fcb",
+      "resource": {
+        "resourceType": "CodeSystem",
+        "url": "http://example.org/fhir/CodeSystem/nreq-likert-3",
+        "version": "1.0",
+        "name": "NreqLikert3",
+        "status": "active",
+        "caseSensitive": false,
+        "content": "complete",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Nreq Likert 3 \u2013 3-point Likert with ordinal scoring</p></div>"
+        },
+        "property": [
+          {
+            "code": "ordinalValue",
+            "description": "0\u2013100 score",
+            "type": "decimal"
+          }
+        ],
+        "concept": [
+          {
+            "code": "agree",
+            "display": "Mostly agree",
+            "property": [
+              {
+                "code": "ordinalValue",
+                "valueDecimal": 100
+              }
+            ]
+          },
+          {
+            "code": "neutral",
+            "display": "Not sure",
+            "property": [
+              {
+                "code": "ordinalValue",
+                "valueDecimal": 50
+              }
+            ]
+          },
+          {
+            "code": "disagree",
+            "display": "Mostly disagree",
+            "property": [
+              {
+                "code": "ordinalValue",
+                "valueDecimal": 0
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "CodeSystem"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:285aea1a-e35f-472b-b193-b3b3c3898d60",
+      "resource": {
+        "resourceType": "CodeSystem",
+        "url": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+        "version": "1.1",
+        "name": "PremParisNeuroRehabItems",
+        "title": "PREM PaRIS Neurorehabilitation Questionnaire Items",
+        "status": "active",
+        "content": "complete",
+        "caseSensitive": true,
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>PREM PaRIS Neurorehabilitation Questionnaire Items \u2013 CodeSystem</p></div>"
+        },
+        "property": [
+          {
+            "code": "linkId",
+            "type": "string",
+            "description": "Questionnaire.item.linkId"
+          },
+          {
+            "code": "qtype",
+            "type": "code",
+            "description": "Questionnaire.item.type (string|choice)"
+          },
+          {
+            "code": "required",
+            "type": "boolean",
+            "description": "Questionnaire.item.required"
+          },
+          {
+            "code": "answerValueSet",
+            "type": "string",
+            "description": "Questionnaire.item.answerValueSet (if choice)"
+          },
+          {
+            "code": "domain",
+            "type": "code",
+            "description": "PaRIS domain code"
+          },
+          {
+            "code": "order",
+            "type": "integer",
+            "description": "Display order (1..n)"
+          }
+        ],
+        "concept": [
+          {
+            "code": "PPNQ-Q01",
+            "display": "Access",
+            "definition": "Please describe your experience accessing neurorehabilitation services or contacting your care team when you needed support.",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q1"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "string"
+              },
+              {
+                "code": "required",
+                "valueBoolean": false
+              },
+              {
+                "code": "domain",
+                "valueCode": "access"
+              },
+              {
+                "code": "order",
+                "valueInteger": 1
+              }
+            ]
+          },
+          {
+            "code": "PPNQ-Q02",
+            "display": "Comprehensiveness",
+            "definition": "In what ways did the rehabilitation program address (or not address) all of your needs (physical, cognitive, emotional, social)?",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q2"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "string"
+              },
+              {
+                "code": "required",
+                "valueBoolean": false
+              },
+              {
+                "code": "domain",
+                "valueCode": "comprehensiveness"
+              },
+              {
+                "code": "order",
+                "valueInteger": 2
+              }
+            ]
+          },
+          {
+            "code": "PPNQ-Q03a",
+            "display": "Continuity \u2013 Same professionals",
+            "definition": "How did the consistency of working with the same rehabilitation professionals impact your experience?",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q3a"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "string"
+              },
+              {
+                "code": "required",
+                "valueBoolean": false
+              },
+              {
+                "code": "domain",
+                "valueCode": "continuity"
+              },
+              {
+                "code": "order",
+                "valueInteger": 3
+              }
+            ]
+          },
+          {
+            "code": "PPNQ-Q03b",
+            "display": "Continuity \u2013 Information sharing across professionals",
+            "definition": "Can you describe how well your different rehabilitation professionals (therapists, doctors, nurses, psychologists) shared information and worked together over time to support your recovery?",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q3b"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "string"
+              },
+              {
+                "code": "required",
+                "valueBoolean": false
+              },
+              {
+                "code": "domain",
+                "valueCode": "continuity"
+              },
+              {
+                "code": "order",
+                "valueInteger": 4
+              }
+            ]
+          },
+          {
+            "code": "PPNQ-Q04",
+            "display": "Coordination",
+            "definition": "Can you describe how well your different specialists (therapists, doctors, nurses, psychologists) worked together in your rehabilitation?",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q4"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "string"
+              },
+              {
+                "code": "required",
+                "valueBoolean": false
+              },
+              {
+                "code": "domain",
+                "valueCode": "coordination"
+              },
+              {
+                "code": "order",
+                "valueInteger": 5
+              }
+            ]
+          },
+          {
+            "code": "PPNQ-Q05",
+            "display": "Patient Safety",
+            "definition": "Please share any experiences where you felt safe or unsafe during your rehabilitation (e.g., exercises, therapies, medication).",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q5"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "string"
+              },
+              {
+                "code": "required",
+                "valueBoolean": false
+              },
+              {
+                "code": "domain",
+                "valueCode": "patient-safety"
+              },
+              {
+                "code": "order",
+                "valueInteger": 6
+              }
+            ]
+          },
+          {
+            "code": "PPNQ-Q06",
+            "display": "Person-centredness",
+            "definition": "How well did the rehabilitation team listen to your personal goals, preferences, and values?",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q6"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "string"
+              },
+              {
+                "code": "required",
+                "valueBoolean": false
+              },
+              {
+                "code": "domain",
+                "valueCode": "person-centredness"
+              },
+              {
+                "code": "order",
+                "valueInteger": 7
+              }
+            ]
+          },
+          {
+            "code": "PPNQ-Q07",
+            "display": "Self-management Support",
+            "definition": "How did the rehabilitation team help (or not help) you develop skills and strategies to manage your condition in daily life?",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q7"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "string"
+              },
+              {
+                "code": "required",
+                "valueBoolean": false
+              },
+              {
+                "code": "domain",
+                "valueCode": "self-management-support"
+              },
+              {
+                "code": "order",
+                "valueInteger": 8
+              }
+            ]
+          },
+          {
+            "code": "PPNQ-Q08",
+            "display": "Trust",
+            "definition": "What made you trust (or not trust) your rehabilitation team?",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q8"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "string"
+              },
+              {
+                "code": "required",
+                "valueBoolean": false
+              },
+              {
+                "code": "domain",
+                "valueCode": "trust"
+              },
+              {
+                "code": "order",
+                "valueInteger": 9
+              }
+            ]
+          },
+          {
+            "code": "PPNQ-Q09",
+            "display": "Net Promoter Score (0\u201310)",
+            "definition": "On a scale from 0 to 10, how likely are you to recommend this rehabilitation program to a friend or family member in need of similar care?",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q9"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "choice"
+              },
+              {
+                "code": "required",
+                "valueBoolean": true
+              },
+              {
+                "code": "answerValueSet",
+                "valueString": "http://example.org/fhir/ValueSet/nps-0-10"
+              },
+              {
+                "code": "domain",
+                "valueCode": "overall-perceived-quality"
+              },
+              {
+                "code": "order",
+                "valueInteger": 10
+              }
+            ]
+          },
+          {
+            "code": "PPNQ-Q09-TEXT",
+            "display": "Reason for NPS score",
+            "definition": "What is the main reason for your score?",
+            "property": [
+              {
+                "code": "linkId",
+                "valueString": "ppnq-q9-text"
+              },
+              {
+                "code": "qtype",
+                "valueCode": "string"
+              },
+              {
+                "code": "required",
+                "valueBoolean": false
+              },
+              {
+                "code": "domain",
+                "valueCode": "overall-perceived-quality"
+              },
+              {
+                "code": "order",
+                "valueInteger": 11
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "CodeSystem"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:9a55c20a-96ac-4d74-a5fb-025eb8ec4c0a",
+      "resource": {
+        "resourceType": "ValueSet",
+        "url": "http://example.org/fhir/ValueSet/nps-0-10",
+        "version": "1.0",
+        "name": "NPS0to10",
+        "title": "Net Promoter Score 0\u201310 ValueSet",
+        "status": "active",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>Net Promoter Score (NPS) scale value set</p></div>"
+        },
+        "compose": {
+          "include": [
+            {
+              "system": "http://example.org/fhir/CodeSystem/nps-scale",
+              "concept": [
+                {
+                  "code": "0"
+                },
+                {
+                  "code": "1"
+                },
+                {
+                  "code": "2"
+                },
+                {
+                  "code": "3"
+                },
+                {
+                  "code": "4"
+                },
+                {
+                  "code": "5"
+                },
+                {
+                  "code": "6"
+                },
+                {
+                  "code": "7"
+                },
+                {
+                  "code": "8"
+                },
+                {
+                  "code": "9"
+                },
+                {
+                  "code": "10"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "ValueSet"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:4ce96cd2-4cb8-4db8-ab8d-b4ebfab3f34e",
+      "resource": {
+        "resourceType": "ValueSet",
+        "url": "http://example.org/fhir/ValueSet/nreq-likert-3",
+        "version": "1.0",
+        "name": "NreqLikert3ValueSet",
+        "status": "active",
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns=\"http://www.w3.org/1999/xhtml\"><p>NREQ Likert 3 answers</p></div>"
+        },
+        "compose": {
+          "include": [
+            {
+              "system": "http://example.org/fhir/CodeSystem/nreq-likert-3",
+              "concept": [
+                {
+                  "code": "agree"
+                },
+                {
+                  "code": "neutral"
+                },
+                {
+                  "code": "disagree"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "request": {
+        "method": "POST",
+        "url": "ValueSet"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:ac72c8ed-8a3a-4d78-ac32-df1e2d417594",
+      "resource": {
+        "resourceType": "Questionnaire",
+        "url": "http://example.org/fhir/Questionnaire/NREQ",
+        "version": "1.0",
+        "identifier": [
+          {
+            "system": "http://example.org/nreq",
+            "value": "NREQ-17-v1"
+          }
+        ],
+        "name": "NREQ",
+        "title": "Neurorehabilitation Experience Questionnaire (NREQ)",
+        "status": "active",
+        "date": "2025-08-16",
+        "publisher": "University of Surrey / Surrey Community Health",
+        "description": "Validated 17-item Neurorehabilitation Experience Questionnaire (NREQ) assessing patient-reported experience of inpatient neurorehabilitation.",
+        "purpose": "To capture patient experience of neurorehabilitation care in inpatient settings.",
+        "copyright": "\u00a9 University of Surrey, 2010. Developed as part of neurorehabilitation research and validation studies.",
+        "approvalDate": "2010-01-01",
+        "effectivePeriod": {
+          "start": "2025-08-16"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns='http://www.w3.org/1999/xhtml'><p><b>NREQ Questionnaire</b> \u2013 Neurorehabilitation Experience Questionnaire</p></div>"
+        },
+        "subjectType": [
+          "Patient"
+        ],
+        "useContext": [
+          {
+            "code": {
+              "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+              "code": "focus"
+            },
+            "valueCodeableConcept": {
+              "text": "Inpatient Neurorehabilitation"
+            }
+          }
+        ],
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Questionnaire"
+          ],
+          "tag": [
+            {
+              "system": "http://example.org/fhir/tags",
+              "code": "prem",
+              "display": "PREM"
+            }
+          ]
+        },
+        "code": [
+          {
+            "system": "http://example.org/fhir/codesystem/prem",
+            "code": "NREQ-17",
+            "display": "Neurorehabilitation Experience Questionnaire (17-item)"
+          }
+        ],
+        "item": [
+          {
+            "linkId": "nreq-q1",
+            "text": "When I arrived I was given information about the unit and what would happen during my stay",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q01"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "access"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q2",
+            "text": "The facilities on the unit were good (e.g., washing facilities, toilets)",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q02"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "comprehensiveness"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q3",
+            "text": "There was somewhere secure to keep my belongings",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q03"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "patient-safety"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q4",
+            "text": "I was able to discuss personal matters in private",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q04"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "patient-safety"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q5",
+            "text": "There were enough things to do in my free time (e.g., watch TV, join a group)",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q05"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "comprehensiveness"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q6",
+            "text": "There was a friendly atmosphere on the unit",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q06"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "person-centredness"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q7",
+            "text": "I felt the staff really cared about me",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q07"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "trust"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q8",
+            "text": "The staff worked well as a team",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q08"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "coordination"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q9",
+            "text": "I felt able to talk to the staff about any problems I had",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q09"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "person-centredness"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q10",
+            "text": "I was asked what I wanted to achieve during my stay",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q10"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "person-centredness"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q11",
+            "text": "I felt as though the staff and I were partners in the whole process of care",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q11"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "person-centredness"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q12",
+            "text": "The staff kept me informed every step of the way",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q12"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "continuity"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q13",
+            "text": "My family or carer was involved in discussions about my treatment if I wanted them to be",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q13"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "coordination"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q14",
+            "text": "I am happy with the amount of therapy or treatment I received for...",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q14"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "comprehensiveness"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q15",
+            "text": "I received enough emotional support",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q15"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "self-management-support"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q16",
+            "text": "I am feeling well supported and prepared for my discharge",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q16"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "continuity"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          },
+          {
+            "linkId": "nreq-q17",
+            "text": "I am satisfied with the progress I have made during my stay",
+            "type": "choice",
+            "required": true,
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/nreq-items",
+                "code": "NREQ-Q17"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "overall-perceived-quality"
+              }
+            ],
+            "answerValueSet": "http://example.org/fhir/ValueSet/nreq-likert-3"
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "Questionnaire"
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:4b34f6f2-f7da-43ba-a96a-23b5f90c6f38",
+      "resource": {
+        "resourceType": "Questionnaire",
+        "url": "http://example.org/fhir/Questionnaire/NeuroRehabPREM",
+        "version": "1.0",
+        "identifier": [
+          {
+            "system": "http://example.org/prem",
+            "value": "NeuroRehabPREM-v1"
+          }
+        ],
+        "name": "NeuroRehabPREM",
+        "title": "Patient Reported Experience Measure \u2013 Neurorehabilitation",
+        "status": "active",
+        "date": "2025-08-19",
+        "publisher": "NeuroRehab Research Unit",
+        "description": "Open-ended PREM questionnaire for neurorehabilitation, structured along PaRIS framework domains.",
+        "purpose": "To capture patient-reported experiences in neurorehabilitation for NLP-based sentiment and topic analysis.",
+        "copyright": "\u00a9 Victor H\u00fcni, 2025",
+        "approvalDate": "2025-08-01",
+        "effectivePeriod": {
+          "start": "2025-08-19"
+        },
+        "text": {
+          "status": "generated",
+          "div": "<div xmlns='http://www.w3.org/1999/xhtml'><p><b>Neurorehabilitation PREM Questionnaire</b> \u2013 Open-ended questions aligned with PaRIS domains plus Net Promoter Score</p></div>"
+        },
+        "subjectType": [
+          "Patient"
+        ],
+        "useContext": [
+          {
+            "code": {
+              "system": "http://terminology.hl7.org/CodeSystem/usage-context-type",
+              "code": "focus"
+            },
+            "valueCodeableConcept": {
+              "text": "Neurorehabilitation"
+            }
+          }
+        ],
+        "meta": {
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Questionnaire"
+          ],
+          "tag": [
+            {
+              "system": "http://example.org/fhir/tags",
+              "code": "prem",
+              "display": "PREM"
+            }
+          ]
+        },
+        "code": [
+          {
+            "system": "http://example.org/fhir/codesystem/prem",
+            "code": "NeuroRehabPREM",
+            "display": "Neurorehabilitation PREM Questionnaire"
+          }
+        ],
+        "item": [
+          {
+            "linkId": "ppnq-q1",
+            "text": "Please describe your experience accessing neurorehabilitation services or contacting your care team when you needed support.",
+            "type": "string",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q01"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "access"
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q2",
+            "text": "In what ways did the rehabilitation program address (or not address) all of your needs (physical, cognitive, emotional, social)?",
+            "type": "string",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q02"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "comprehensiveness"
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3a",
+            "text": "How did the consistency of working with the same rehabilitation professionals impact your experience?",
+            "type": "string",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q03a"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "continuity"
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q3b",
+            "text": "Can you describe how well your different rehabilitation professionals (therapists, doctors, nurses, psychologists) shared information and worked together over time to support your recovery?",
+            "type": "string",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q03b"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "continuity"
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q4",
+            "text": "Can you describe how well your different specialists (therapists, doctors, nurses, psychologists) worked together in your rehabilitation?",
+            "type": "string",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q04"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "coordination"
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q5",
+            "text": "Please share any experiences where you felt safe or unsafe during your rehabilitation (e.g., exercises, therapies, medication).",
+            "type": "string",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q05"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "patient-safety"
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q6",
+            "text": "How well did the rehabilitation team listen to your personal goals, preferences, and values?",
+            "type": "string",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q06"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "person-centredness"
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q7",
+            "text": "How did the rehabilitation team help (or not help) you develop skills and strategies to manage your condition in daily life?",
+            "type": "string",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q07"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "self-management-support"
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q8",
+            "text": "What made you trust (or not trust) your rehabilitation team?",
+            "type": "string",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q08"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "trust"
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9",
+            "text": "On a scale from 0 to 10, how likely are you to recommend this rehabilitation program to a friend or family member in need of similar care?",
+            "type": "choice",
+            "required": true,
+            "answerValueSet": "http://example.org/fhir/ValueSet/nps-0-10",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q09"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "overall-perceived-quality"
+              }
+            ]
+          },
+          {
+            "linkId": "ppnq-q9-text",
+            "text": "What is the main reason for your score?",
+            "type": "string",
+            "code": [
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-neurorehab-items",
+                "code": "PPNQ-Q09-TEXT"
+              },
+              {
+                "system": "http://example.org/fhir/CodeSystem/prem-paris-domain",
+                "code": "overall-perceived-quality"
+              }
+            ],
+            "enableWhen": [
+              {
+                "question": "ppnq-q9",
+                "operator": "exists",
+                "answerBoolean": true
+              }
+            ]
+          }
+        ]
+      },
+      "request": {
+        "method": "POST",
+        "url": "Questionnaire"
+      }
+    }
+  ]
+}
