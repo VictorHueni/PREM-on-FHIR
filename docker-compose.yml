@@ -135,6 +135,8 @@ services:
       - ./02-elt/fhir_prem_to_decision:/usr/app
     depends_on:
       analytics-db: { condition: service_healthy }
+    ports:
+      - "8081:8081"
 
   # -------- NLP one-shot container --------
   nlp:

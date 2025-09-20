@@ -1,8 +1,43 @@
 # PREM-on-FHIR
 
+- [PREM-on-FHIR](#prem-on-fhir)
+  - [Introduction](#introduction)
+  - [ToDo's](#todos)
+  - [Quickstart](#quickstart)
+  - [Repo structure](#repo-structure)
+  - [Steps by Step Guide (except airbytes)](#steps-by-step-guide-except-airbytes)
+  - [End to End (Make TargetCHeat sheet)=](#end-to-end-make-targetcheat-sheet)
+    - [2. Generate \& upload sample data](#2-generate--upload-sample-data)
+      - [2.1 Setup](#21-setup)
+      - [2.2 FHIR Server](#22-fhir-server)
+      - [2.1 Synthea](#21-synthea)
+        - [Generate ndjson](#generate-ndjson)
+        - [Modify params files](#modify-params-files)
+        - [Import ressources](#import-ressources)
+      - [2.2 Questionnaire](#22-questionnaire)
+      - [2.3 QuestionnaireResponses (scaffolded from header CSV)](#23-questionnaireresponses-scaffolded-from-header-csv)
+        - [2.3.1 Questionnaire Header](#231-questionnaire-header)
+        - [2.3.2 Questionnaire Response bundle maker](#232-questionnaire-response-bundle-maker)
+      - [2.4 End to End](#24-end-to-end)
+      - [2.5 Clean up](#25-clean-up)
+    - [3. ELT](#3-elt)
+      - [3.1  Airbyte (Extract/Load)](#31--airbyte-extractload)
+      - [3.2 DBT (Transform)](#32-dbt-transform)
+        - [3.2.1 Containerized DBT](#321-containerized-dbt)
+        - [3.2.2 Common dbt manual workflows](#322-common-dbt-manual-workflows)
+    - [4. NLP scoring (one-shot job)](#4-nlp-scoring-one-shot-job)
+      - [4.1 Image building and first run](#41-image-building-and-first-run)
+      - [4.2 Subsequent](#42-subsequent)
+    - [Build mart](#build-mart)
+  - [Troubleshooting](#troubleshooting)
+  - [Security \& data hygiene (PoC-friendly)](#security--data-hygiene-poc-friendly)
+  - [Analytics Db Snapshot](#analytics-db-snapshot)
+
+
 
 ## Introduction
 End-to-end pipeline to generate synthetic PREM data, load it into a FHIR server, land it in an analytics DB, transform with dbt, and enrich free-text with an NLP job. Dockerized where it matters for a smooth dev experience.
+
 
 ## ToDo's
 - [ ] add general arch diagram + c4 diagram if possible
@@ -300,8 +335,11 @@ docker compose run --rm dbt-run dbt compile --select stg.*
 # Only tests
 docker compose run --rm dbt-run dbt test
 
-# Full refresh
-docker compose run --rm dbt-run dbt build --full-refresh
+# Full pipeline refresh
+docker compose run --rm dbt-run dbt build --full-refresh --exclude 'tag:nlp'
+
+# Full model refresh
+docker compose run --rm dbt-run dbt run --full-refresh --exclude 'tag:nlp'
 
 # Only changed models (after one prior run produced a manifest)
 docker compose run --rm dbt-run dbt build --select state:modified+ --state target/
@@ -342,7 +380,6 @@ docker run --rm \
   score --since 10y --limit 100 --verbose
 ```
 
-
 #### 4.2 Subsequent
 
 __override defaults if you want:__
@@ -356,9 +393,7 @@ __or a dry run to avoid writing:__
 `python -m pipeline.cli score --since 10y --limit 50 --verbose --dry-run`
 
 
-
-
-# Build mart
+### Build mart
 ```bash
 docker compose run --rm dbt-run dbt build -s mart+
 ```
@@ -382,8 +417,23 @@ Use `PG_HOST=host.docker.internal` (macOS/Windows). On Linux, expose the DB in c
 - The NLP job flags potential PII (regex-based). If you display sample verbatims, mask or filter rows with pii_flag=true (add a column if you want to persist it).
 - Keep your Hugging Face cache in a named volume so images don’t bloat.
 
-### 4. NLP scoring (one-shot job)
-The NLP container pulls free-text from `stg.nlp_prem_text`, scores sentiment & themes, and upserts into `stg.nlp_predictions_inbox`. 
-The dbt marts assemble:
-- mart.mart_prem_text_sentiment
-- mart.mart_prem_theme_summary
+
+## Analytics Db Snapshot
+
+Source DB snapshot
+```bash
+docker exec -t pof-analytics-db pg_dumpall -U analytics_admin --globals-only > globals.sql
+docker exec -t pof-analytics-db pg_dump -U analytics_admin -d analytics -Fc -C -Z 9 > analytics.dump
+docker exec -t pof-analytics-db pg_dump -U analytics_admin -d metabase  -Fc -C -Z 9 > metabase.dump
+```
+
+In the directory you are the three file are generated, you can use them in the next steps
+
+Target DB
+```bash
+cat ./00-setup/analytics-db/snapshots/20250920/globals.sql | docker exec -i pof-analytics-db psql -U analytics_admin -d postgres -v ON_ERROR_STOP=1
+docker exec pof-analytics-db dropdb -U analytics_admin --if-exists analytics
+docker exec pof-analytics-db dropdb -U analytics_admin --if-exists metabase
+cat ./00-setup/analytics-db/snapshots/20250920/analytics.dump | docker exec -i pof-analytics-db pg_restore -U analytics_admin -C -d postgres
+cat ./00-setup/analytics-db/snapshots/20250920/metabase.dump | docker exec -i pof-analytics-db pg_restore -U analytics_admin -C -d postgres
+```

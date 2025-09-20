@@ -448,14 +448,20 @@ exposures:
     url: "http://localhost:3000/dashboard/prem"
     description: "PREM quality & improvement dashboard for neurorehab."
     depends_on:
-      - ref('mart_prem_kpi_daily')
-      - ref('mart_prem_item_heatmap')
-      - ref('mart_prem_equity_slice')
-      - ref('mart_prem_outliers')
-      - ref('mart_home_kpis')
-      - ref('mart_home_trend_daily')
       - ref('mart_home_by_questionnaire')
+      - ref('mart_home_kpis')
       - ref('mart_home_staleness')
+      - ref('mart_home_trend_daily')
+      - ref('mart_prem_equity_slice')
+      - ref('mart_prem_item_heatmap')
+      - ref('mart_prem_kpi_daily')
+      - ref('mart_prem_kpi_domains')
+      - ref('mart_prem_kpi_monthly')
+      - ref('mart_prem_nps')
+      - ref('mart_prem_outliers')
+      - ref('mart_prem_text_sentiment')
+      - ref('mart_prem_theme_sentiment_matrix')
+      - ref('mart_prem_theme_summary')
     owner:
       name: "Quality Analytics"
       email: "quality@example.com"

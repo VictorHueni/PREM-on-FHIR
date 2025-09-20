@@ -197,3 +197,16 @@ seed-all: init synthea-build synthea-run fhir-wait  fhir-import-many \
 clean:
 	@echo "🧹 Cleaning generated files…"
 	@rm -rf "$(SYN_OUT)" "$(QR_OUT)" "$(HDR_OUT)" ./curl-logs
+
+# ------- dbt tasks -------
+dbt-docs:           ## Generate dbt docs site
+	docker compose run --rm dbt-run dbt docs generate
+
+dbt-docs-serve:     ## Serve dbt docs site locally
+	docker compose run --service-ports --rm dbt-run dbt docs serve --port 8081 --no-browser
+
+dbt-freshness:      ## Run source freshness and include it in docs
+	docker compose run --rm dbt-run sh -lc '\
+	  dbt source freshness --output json --target-path target && \
+	  dbt docs generate \
+	'
