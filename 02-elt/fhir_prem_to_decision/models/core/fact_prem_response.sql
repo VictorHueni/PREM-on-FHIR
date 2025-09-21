@@ -15,7 +15,10 @@ with resp as (
     (authored_ts at time zone '{{ var("report_tz","UTC") }}')::date  as qr_date,
     date_trunc('week',  authored_ts at time zone '{{ var("report_tz","UTC") }}')::date as qr_week_start,
     date_trunc('month', authored_ts at time zone '{{ var("report_tz","UTC") }}')::date as qr_month_start,
-    patient_id, encounter_id, clinician_id, org_id
+    patient_id, 
+    encounter_id, 
+    clinician_id, 
+    org_id
   from {{ ref('stg_responses') }}
 ),
 
@@ -27,7 +30,7 @@ ans as (
     case when is_scored and has_ordinal then score_pct end                      as score_pct_for_overall,
     case when is_scored and has_ordinal then answer_is_top_box::int end         as top_box_int,
     case when is_scored and has_ordinal then answer_is_top2_box::int end        as top2_box_int,
-    case when is_scored and has_ordinal then 1 end                               as is_scored_answered_int,
+    case when is_scored and has_ordinal then 1 end                              as is_scored_answered_int,
     item_linkid,
     -- any answer present for the item (for total answered)
     1 as any_answer_int
@@ -48,11 +51,11 @@ overalls as (
   select
     qr_id,
     questionnaire_id,
-    avg(score_pct_for_overall)                                   as overall_score_pct,
-    avg(top_box_int)                                             as overall_top_box_pct,
-    avg(top2_box_int)                                            as overall_top2_box_pct,
-    count(distinct case when any_answer_int=1 then item_linkid end)           as items_answered_total,
-    count(distinct case when is_scored_answered_int=1 then item_linkid end)   as items_scored_answered
+    avg(score_pct_for_overall)                                              as overall_score_pct,
+    avg(top_box_int)                                                        as overall_top_box_pct,
+    avg(top2_box_int)                                                       as overall_top2_box_pct,
+    count(distinct case when any_answer_int=1 then item_linkid end)         as items_answered_total,
+    count(distinct case when is_scored_answered_int=1 then item_linkid end) as items_scored_answered
   from ans
   group by 1,2
 ),
@@ -86,15 +89,27 @@ domain_json as (
 )
 
 select
+  -- core response identifiers
   r.qr_id,
   r.questionnaire_id,
-  r.authored_ts, r.qr_date, r.qr_week_start, r.qr_month_start,
-  r.patient_id, r.encounter_id, r.clinician_id, r.org_id,
+
+  -- foreign keys
+  r.patient_id, 
+  r.encounter_id, 
+  r.clinician_id, 
+  r.org_id,
+
+  r.authored_ts, 
+  r.qr_date, 
+  r.qr_week_start, 
+  r.qr_month_start,
 
   -- coverage counts
   o.items_answered_total,
   o.items_scored_answered,
   e.items_scored_expected,
+
+  -- completeness
   case
     when e.items_scored_expected is null or e.items_scored_expected=0 then null
     else o.items_scored_answered::numeric / e.items_scored_expected

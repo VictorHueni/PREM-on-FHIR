@@ -174,3 +174,19 @@ models:
     columns:
       - name: org_id
         tests: [not_null, unique]
+  
+  - name: dim_items
+    description: "Dictionary of questionnaire items (one row per questionnaire_id + linkId)."
+    columns:
+      - name: item_id
+        tests: [not_null, unique]
+
+      - name: questionnaire_id
+        tests: [not_null]
+
+      - name: linkid
+        tests: [not_null]
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: ["questionnaire_id", "linkid"]

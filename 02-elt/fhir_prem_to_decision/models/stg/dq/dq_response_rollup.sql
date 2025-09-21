@@ -23,7 +23,7 @@ expected as (
     count(*) filter (where i.is_leaf and i.is_scored)          as expected_items_scored
   from {{ ref('stg_responses') }} r
   left join {{ ref('stg_items') }} i
-    on i.questionnaire_id = r.questionnaire_id
+    on i.questionnaire_key = r.questionnaire_id
   group by 1,2
 ),
 joined as (

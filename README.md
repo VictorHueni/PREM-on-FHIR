@@ -32,6 +32,7 @@
   - [Troubleshooting](#troubleshooting)
   - [Security \& data hygiene (PoC-friendly)](#security--data-hygiene-poc-friendly)
   - [Analytics Db Snapshot](#analytics-db-snapshot)
+- [run this from your host](#run-this-from-your-host)
 
 
 
@@ -422,9 +423,9 @@ Use `PG_HOST=host.docker.internal` (macOS/Windows). On Linux, expose the DB in c
 
 Source DB snapshot
 ```bash
-docker exec -t pof-analytics-db pg_dumpall -U analytics_admin --globals-only > globals.sql
-docker exec -t pof-analytics-db pg_dump -U analytics_admin -d analytics -Fc -C -Z 9 > analytics.dump
-docker exec -t pof-analytics-db pg_dump -U analytics_admin -d metabase  -Fc -C -Z 9 > metabase.dump
+docker exec pof-analytics-db pg_dumpall -U analytics_admin --globals-only -f /tmp/globals.sql
+docker exec pof-analytics-db pg_dump -U analytics_admin -d analytics -Fc -C -Z 9 -f /tmp/analytics.dump
+docker exec pof-analytics-db pg_dump -U analytics_admin -d metabase  -Fc -C -Z 9 -f /tmp/metabase.dump
 ```
 
 In the directory you are the three file are generated, you can use them in the next steps
@@ -437,3 +438,20 @@ docker exec pof-analytics-db dropdb -U analytics_admin --if-exists metabase
 cat ./00-setup/analytics-db/snapshots/20250920/analytics.dump | docker exec -i pof-analytics-db pg_restore -U analytics_admin -C -d postgres
 cat ./00-setup/analytics-db/snapshots/20250920/metabase.dump | docker exec -i pof-analytics-db pg_restore -U analytics_admin -C -d postgres
 ```
+
+# run this from your host
+MSYS_NO_PATHCONV=1 docker exec \
+  -e POSTGRES_USER=analytics_admin \
+  -e POSTGRES_DB=postgres \
+  -e PGPASSWORD=analytics_admin \
+  -e MB_DB_NAME=metabase \
+  -e MB_DB_USER=metabase_app \
+  -e MB_DB_PASS=change_me_strong \
+  -it pof-analytics-db bash -lc "
+    sed -i 's/\r$//' /docker-entrypoint-initdb.d/10_metabase_app.sh &&
+    chmod +x /docker-entrypoint-initdb.d/10_metabase_app.sh &&
+    /docker-entrypoint-initdb.d/10_metabase_app.sh
+  "
+
+executed in PS
+docker exec -it pof-metabase java -jar /app/metabase.jar reset-password admin@example.com 

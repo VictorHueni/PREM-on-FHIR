@@ -203,7 +203,7 @@ dbt-docs:           ## Generate dbt docs site
 	docker compose run --rm dbt-run dbt docs generate
 
 dbt-docs-serve:     ## Serve dbt docs site locally
-	docker compose run --service-ports --rm dbt-run dbt docs serve --port 8081 --no-browser
+	docker compose run --service-ports --rm dbt-run dbt docs serve --host 0.0.0.0 --port 8081 --no-browser
 
 dbt-freshness:      ## Run source freshness and include it in docs
 	docker compose run --rm dbt-run sh -lc '\

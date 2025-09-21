@@ -84,8 +84,8 @@ base AS (
     e.org_ref,
 
     -- clean ids (strip prefixes)
-    NULLIF(split_part(COALESCE(k.patient_ref, ''), '/', 2), '')                          AS patient_id,
-    NULLIF(split_part(COALESCE(k.encounter_ref, ''), '/', 2), '')                        AS encounter_id,
+    NULLIF(split_part(COALESCE(k.patient_ref, ''), '/', 2), '')                              AS patient_id,
+    NULLIF(split_part(COALESCE(k.encounter_ref, ''), '/', 2), '')                            AS encounter_id,
     NULLIF(split_part(COALESCE(COALESCE(k.author_ref, e.practitioner_ref), ''), '/', 2), '') AS clinician_id,
     NULLIF(split_part(COALESCE(e.org_ref, ''), '/', 2), '')                              AS org_id,
 

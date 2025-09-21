@@ -18,6 +18,7 @@ select
     b.qr_id,
     b.item_linkid,
     b.questionnaire_id,
+    md5(coalesce(questionnaire_id,'') || '|' || coalesce(item_linkid,'')) as item_id,
     b.org_id,
     b.clinician_id,
     b.encounter_id,

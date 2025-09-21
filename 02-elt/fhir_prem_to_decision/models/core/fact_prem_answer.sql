@@ -14,6 +14,7 @@ with a as (
     -- grain
     qr_id,
     item_linkid,
+    md5(coalesce(questionnaire_id, '') || '|' || coalesce(item_linkid, '')) as item_id,
     answer_ordinal,
     answer_id,
 
@@ -88,6 +89,7 @@ select
   -- PK columns
   a.qr_id,
   a.item_linkid,
+  a.item_id,
   a.answer_ordinal,
 
   -- stable answer id (handy for joins to NLP)

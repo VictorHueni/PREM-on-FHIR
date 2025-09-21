@@ -9,7 +9,6 @@ with base as (
     fr.questionnaire_id,
     fr.authored_ts::date as qr_date
   from {{ ref('fact_prem_response') }} fr
-  -- (Metabase filter mapping will trim by date/org/clinician/questionnaire)
 ),
 dq as (
   select
