@@ -423,9 +423,14 @@ Use `PG_HOST=host.docker.internal` (macOS/Windows). On Linux, expose the DB in c
 
 Source DB snapshot
 ```bash
-docker exec pof-analytics-db pg_dumpall -U analytics_admin --globals-only -f /tmp/globals.sql
-docker exec pof-analytics-db pg_dump -U analytics_admin -d analytics -Fc -C -Z 9 -f /tmp/analytics.dump
-docker exec pof-analytics-db pg_dump -U analytics_admin -d metabase  -Fc -C -Z 9 -f /tmp/metabase.dump
+MSYS_NO_PATHCONV=1 docker exec pof-analytics-db pg_dump -U analytics_admin -d analytics -Fc -C -Z 9 -f /tmp/analytics.dump
+docker cp pof-analytics-db:/tmp/analytics.dump ./analytics.dump
+
+MSYS_NO_PATHCONV=1 docker exec pof-analytics-db pg_dump -U analytics_admin -d metabase -Fc -C -Z 9 -f /tmp/metabase.dump
+docker cp pof-analytics-db:/tmp/metabase.dump ./metabase.dump
+
+MSYS_NO_PATHCONV=1 docker exec pof-analytics-db pg_dumpall -U analytics_admin --globals-only -f /tmp/globals.sql
+docker cp pof-analytics-db:/tmp/globals.sql ./globals.sql
 ```
 
 In the directory you are the three file are generated, you can use them in the next steps

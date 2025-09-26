@@ -215,8 +215,70 @@ models:
               expression: "between -100 and 100"
               config: {severity: warn}
 
+  - name: mart_home_response_base
+    description: >
+      Response-grain base table for Home KPIs and charts. One row per completed
+      questionnaire response (qr_id), including org, questionnaire, patient,
+      date, and lightweight DQ flags/metrics so Metabase can aggregate with filters.
+    meta:
+      owner: analytics
+      tags: ["home", "kpi", "response-grain"]
 
-                # ----------------------------
+    columns:
+      - name: period_date
+        description: "Date the response was authored (UTC), truncated to day."
+        tests:
+          - not_null
+
+      - name: org_id
+        description: "Organization identifier associated with the response."
+        tests:
+          - not_null
+
+      - name: questionnaire_id
+        description: "Questionnaire identifier the response belongs to."
+        tests:
+          - not_null
+
+      - name: qr_id
+        description: "Primary key for the response."
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('fact_prem_response')
+              field: qr_id
+
+      - name: patient_id
+        description: "Patient identifier who submitted the response."
+        tests:
+          - not_null
+
+      - name: completion_ratio_total
+        description: "Completeness score in [0,1]; higher is more complete."
+        tests:
+          - not_null
+          # If you use dbt-utils, keep this range test; otherwise remove it.
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1
+              inclusive: true
+
+      - name: has_nps_int
+        description: "Flag (0/1) indicating NPS question was present/answered."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+      - name: has_freetext_int
+        description: "Flag (0/1) indicating at least one free-text answer."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+
+  # ----------------------------
   # Home KPIs (single-row view)
   # ----------------------------
   - name: mart_home_kpis
