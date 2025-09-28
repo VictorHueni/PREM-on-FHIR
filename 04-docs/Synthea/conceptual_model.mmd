@@ -1,0 +1,89 @@
+erDiagram
+  direction LR
+  %% Core actors
+  PATIENT { string id }
+  ORGANIZATION { string id }
+  LOCATION { string id }
+  PRACTITIONER { string id }
+  PRACTITIONERROLE { string id }
+  CARETEAM { string id }
+  PAYER { string id }
+
+  ENCOUNTER {
+    string idP
+    string patient_id
+    string organization_id
+    string location_id
+    string practitionerrole_id
+  }
+
+  %% Clinical content (subject+encounter oriented)
+  CONDITION { string id }
+  OBSERVATION { string id }
+  PROCEDURE { string id }
+  IMMUNIZATION { string id }
+  DEVICE { string id }
+  MEDICATION { string id }
+  MEDICATIONREQUEST { string id }
+  MEDICATIONADMINISTRATION { string id }
+  IMAGINGSTUDY { string id }
+  DIAGNOSTICREPORT { string id }
+  CAREPLAN { string id }
+  DOCUMENTREFERENCE { string id }
+  PROVENANCE { string id }
+  CLAIM { string id }
+  EXPLANATIONOFBENEFIT { string id }
+  SUPPLYDELIVERY { string id }
+
+  %% Hub relationships
+  ENCOUNTER }o--|| PATIENT : "subject"
+  ENCOUNTER }o--|| ORGANIZATION : "serviceProvider"
+  ENCOUNTER }o--|| LOCATION : "location"
+  ENCOUNTER }o--|| PRACTITIONERROLE : "participant"
+  PRACTITIONERROLE }o--|| PRACTITIONER : "practitioner"
+  PRACTITIONERROLE }o--|| ORGANIZATION : "organization"
+  CARETEAM }o--o| PRACTITIONER : "participant"
+  CARETEAM }o--o| ORGANIZATION : "participant"
+
+  %% Most resources link to patient (+ often encounter)
+  CONDITION }o--|| PATIENT : "subject"
+  CONDITION }o--o| ENCOUNTER : "encounter"
+  OBSERVATION }o--|| PATIENT : "subject"
+  OBSERVATION }o--o| ENCOUNTER : "encounter"
+  PROCEDURE }o--|| PATIENT : "subject"
+  PROCEDURE }o--o| ENCOUNTER : "encounter"
+  IMMUNIZATION }o--|| PATIENT : "patient"
+  IMMUNIZATION }o--o| ENCOUNTER : "encounter"
+  DEVICE }o--|| PATIENT : "patient"
+  MEDICATIONREQUEST }o--|| PATIENT : "subject"
+  MEDICATIONREQUEST }o--o| ENCOUNTER : "encounter"
+  MEDICATIONADMINISTRATION }o--|| PATIENT : "subject"
+  MEDICATIONADMINISTRATION }o--o| ENCOUNTER : "encounter"
+  IMAGINGSTUDY }o--|| PATIENT : "subject"
+  IMAGINGSTUDY }o--o| ENCOUNTER : "encounter"
+
+  %% Reports & documents
+  DIAGNOSTICREPORT }o--|| PATIENT : "subject"
+  DIAGNOSTICREPORT }o--o| ENCOUNTER : "encounter"
+  DIAGNOSTICREPORT }o--o| OBSERVATION : "result"
+  DIAGNOSTICREPORT }o--o| IMAGINGSTUDY : "basedOn / media"
+  DOCUMENTREFERENCE }o--|| PATIENT : "subject"
+
+  %% Care planning
+  CAREPLAN }o--|| PATIENT : "subject"
+  CAREPLAN }o--o| CONDITION : "addresses"
+  CAREPLAN }o--o| CARETEAM : "managingOrganization/participants"
+
+  %% Financials
+  CLAIM }o--|| PATIENT : "patient"
+  CLAIM }o--o| ENCOUNTER : "encounter"
+  CLAIM }o--o| ORGANIZATION : "provider"
+  EXPLANATIONOFBENEFIT }o--|| PATIENT : "patient"
+  EXPLANATIONOFBENEFIT }o--o| ENCOUNTER : "encounter"
+  EXPLANATIONOFBENEFIT }o--o| ORGANIZATION : "provider"
+
+  %% Supply & provenance
+  SUPPLYDELIVERY }o--|| PATIENT : "patient"
+  PROVENANCE }o--o| PATIENT : "targets may include many resources"
+  PROVENANCE }o--o| ENCOUNTER : ""
+  PROVENANCE }o--o| OBSERVATION : ""
