@@ -1,0 +1,146 @@
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{geometry} % optional, for page width tuning
+\usepackage{amsmath,amssymb} % for equations
+
+% Define column types for better wrapping
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\begin{longtable}{|P{1.5cm}|P{3.5cm}|P{3.5cm}|P{7cm}|P{6cm}|}
+\hline
+\textbf{Page} & \textbf{Indicator} & \textbf{Mart} & \textbf{Concept} & \textbf{Formulae / Comments} \\
+\hline
+home & Responses per questionnaire & mart\_home\_response\_base & Number of QuestionnaireResponses (QRs) collected for each distinct questionnaire (instrument). Useful to compare usage and response volumes across PREM or PROM instruments. & 
+\[
+\text{ResponsesByQuestionnaire}(q) = \sum_{r \in \mathcal{R}} \mathbf{1}\{ Q(r) = q \}
+\] \\
+\hline
+home & Total responses & mart\_home\_response\_base & Total number of QuestionnaireResponses (QRs) returned by the current filters (period, org, questionnaire, etc.). One row in mart\_home\_response\_base = one QR. &
+\[
+\text{Responses} = \sum_{r \in \mathcal{R}} 1
+\] \\
+\hline
+home & Distinct patients & mart\_home\_response\_base & Number of unique patients who appear in the selected responses—i.e., individuals contributing at least one QR in the filtered window. &
+\[
+\text{Patients} = \left| \{ r.\text{patient\_id} : r \in \mathcal{R} \} \right|
+\] \\
+\hline
+home & Completeness & mart\_home\_response\_base & For a given QR, the share of all expected leaf items that received any answer (whether scored or not). &
+\[
+\text{completion\_ratio\_total} = \frac{\#\text{answers to leaf items}}{\#\text{expected leaf items}}
+\] \\
+\hline
+home & Has free text & mart\_home\_response\_base & Proportion of responses that contain at least one open-ended answer. &
+\[
+\text{FreeTextRate} = \tfrac{1}{|\mathcal{R}|} \sum_{r \in \mathcal{R}} r.\text{has\_freetext\_int}
+\] \\
+\hline
+home & Trends (responses over time) & mart\_home\_trend\_daily & Tracks evolution over time of how many QRs are authored, optionally per questionnaire. &
+\[
+\text{Responses}(d,q) = \sum_{r \in \mathcal{R}} \mathbf{1}\{ r.\text{qr\_date}=d \wedge r.\text{questionnaire\_id}=q \}
+\] \\
+\hline
+home & Response volume & mart\_home\_staleness & Total number of QRs collected for a given org × questionnaire. &
+\[
+\text{responses\_n}(o,q) = \sum_{r \in \mathcal{R}_{o,q}} 1
+\] \\
+\hline
+home & Last seen answer & mart\_home\_staleness & Timestamp of the most recent answered item for a questionnaire in an organization. &
+\[
+\text{last\_seen\_answer}(o,q) = \max\{ a.\text{authored\_ts} : a \in A_{o,q} \}
+\] \\
+\hline
+home & Days since last answer & mart\_home\_staleness & Number of days since the most recent answered item for a questionnaire in an organization. &
+\[
+\text{days\_since\_last\_answer}(o,q) = \text{today} - \max\{ a.\text{authored\_ts} : a \in A_{o,q} \}
+\] \\
+\hline
+home & Questionnaire last updated & mart\_home\_staleness & Metadata timestamp of when the questionnaire resource itself was last updated. &
+\[
+\text{last\_updated}(q) = \text{questionnaire\_last\_updated}(q)
+\] \\
+\hline
+home & Questionnaire staleness per org & mart\_home\_staleness & Number of days since the questionnaire definition was updated in the source system, reported per org. &
+\[
+\text{days\_since\_last\_update}(q) = \text{today} - \text{questionnaire\_last\_updated}(q)
+\] \\
+\hline
+nreq & Overall Score (nreq) & mart\_prem\_kpi\_daily & Daily mean of the response-level overall score across all NREQ responses in scope. &
+\[
+\text{overall\_score\_pct\_mean}(d) = \frac{1}{|\mathcal{R}_d|}\sum_{r \in \mathcal{R}_d} \text{overall\_score\_pct}(r)
+\] \\
+\hline
+nreq & Top Box \% (nreq) & mart\_prem\_kpi\_daily & Daily mean of the response-level top-box percentage across all NREQ responses in scope. &
+\[
+\text{overall\_top\_box\_pct\_mean}(d) = \frac{1}{|\mathcal{R}_d|}\sum_{r \in \mathcal{R}_d} \text{overall\_top\_box\_pct}(r)
+\] \\
+\hline
+stg & score\_pct (answer level) & stg\_answers & Normalized score for a single answer on a Likert/ordinal item, scaled to [0,1]. &
+\[
+\text{score\_pct}(a) = \frac{\text{numeric\_value}(a)}{\text{likert\_max\_for\_item}}
+\] \\
+\hline
+stg & overall\_score (response level) & stg\_responses & Mean of score\_pct over all scored answers in a response. &
+\[
+\text{overall\_score\_pct}(r) = \frac{1}{N_r}\sum_{a \in A_r} \text{score\_pct}(a)
+\] \\
+\hline
+stg & answer\_is\_top\_box (answer flag) & stg\_answers & Indicator that a single answer selected the maximum Likert option. &
+\[
+\text{answer\_is\_top\_box}(a) = \mathbf{1}\{\text{numeric\_value}(a)=\text{likert\_max\_for\_item}\}
+\] \\
+\hline
+stg & overall\_top\_box\_pct (response) & stg\_responses & Share of scored answers in a response that are top-box (maximum option). &
+\[
+\text{overall\_top\_box\_pct}(r) = \frac{1}{N_r}\sum_{a \in A_r}\mathbf{1}\{\text{answer\_is\_top\_box}(a)\}
+\] \\
+\hline
+nreq & overall score trend over time & mart\_prem\_kpi\_monthly & Normalized measure (0–100\%) of how positively patients answer scored, ordinal PREM questions. Over time, compute daily/monthly averages to track trends. &
+\[
+\text{overall\_score\_pct\_mean}(p) = \frac{1}{|\mathcal{R}_p|} \sum_{r \in \mathcal{R}_p} \text{overall\_score\_pct}(r)
+\] \\
+\hline
+nreq & overall score per age band & mart\_prem\_equity\_slice & Mean overall PREM score per month, stratified by age band and optionally gender. &
+\[
+\text{overall\_score\_pct\_mean}(a) = \frac{1}{|\mathcal{R}_a|}\sum_{r \in \mathcal{R}_a} \text{overall\_score\_pct}(r)
+\] \\
+\hline
+nreq & domains score (score vs top box) & mart\_prem\_equity\_slice & Domain-level averages per month, stratified by age/gender. Both normalized mean scores and top-box percentages tracked. &
+\[
+\text{domain\_score\_pct\_mean}(d) = \frac{1}{|\mathcal{R}_d|}\sum_{r \in \mathcal{R}_d} \text{domain\_score\_pct}(r)
+\] \\
+\hline
+nreq & How do patients respond to each question? & mart\_prem\_item\_heatmap & Item-level summary: counts of responses in bottom, middle, and top categories; mean score and top-box rate. &
+\[
+\text{mean\_score\_pct}(i) = \tfrac{1}{N_i}\sum_{a \in A_i}\text{score\_pct}(a) \quad ; \quad 
+\text{top\_box\_pct}(i) = \tfrac{1}{N_i}\sum \mathbf{1}\{a \text{ is top box}\}
+\] \\
+\hline
+nreq & What problems matter most? & mart\_prem\_item\_heatmap & Item-level problem rate (bottom-box proportion), i.e. how often patients select the most negative option. &
+\[
+\text{problem\_rate\_pct}(i) = \tfrac{1}{N_i}\sum \mathbf{1}\{a \text{ is bottom box}\}
+\] \\
+\hline
+nreq & Who is way off the norm? & mart\_prem\_outliers & Detects org units or clinicians whose mean PREM scores deviate significantly (z-score) from the network mean. &
+\[
+z = \frac{\bar{x}_{entity} - \mu_{network}}{\sigma_{network}} \quad ; \quad |z| > 2 \Rightarrow \text{outlier}
+\] \\
+\hline
+ppnq & nps & mart\_prem\_nps & Net Promoter Score: proportion of promoters minus detractors. &
+\[
+\text{NPS} = 100 \cdot \frac{n_{\text{promoters}} - n_{\text{detractors}}}{n_{\text{total}}}
+\] \\
+\hline
+ppnq & sentiment distribution & mart\_prem\_text\_sentiment & Distribution of free-text comments across sentiment labels (positive, neutral, negative, unscored). &
+\[
+P(\text{sentiment}=s) = \tfrac{1}{N}\sum \mathbf{1}\{\text{label}(c)=s\}
+\] \\
+\hline
+ppnq & Theme $\times$ Sentiment & mart\_prem\_theme\_sentiment\_matrix & Cross-tabulation of themes with sentiment categories, per period/org, with within-theme rates. &
+\[
+\text{pct\_within\_theme}(t,s) = \tfrac{n_{t,s}}{\sum_{s'}n_{t,s'}}
+\] \\
+\hline
+ppnq & recent patient comments & mart\_prem\_text\_sentiment & Most recent free-text comments left by patients, with sentiment and theme tags. & Direct text output, no formula. \\
+\hline
+\end{longtable}

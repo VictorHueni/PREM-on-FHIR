@@ -1,0 +1,177 @@
+erDiagram
+  %% Dimensions
+  DIM_ITEMS {
+    string item_id PK
+    string questionnaire_id
+    string linkid
+    int    questionnaire_version
+    string questionnaire_url
+    string parent_linkid
+    int    depth
+    string path
+    int    item_order
+    string question_text
+    string question_type
+    string answer_valueset
+    string valueset_key
+    int    likert_min
+    int    likert_max
+    string domain_key
+    string domain_code_system
+    string domain_code_value
+    string domain_code_display
+    boolean is_leaf
+    boolean is_required
+    boolean repeats
+    boolean is_free_text
+    boolean is_scored
+  }
+
+  DIM_ORGANIZATION {
+    string org_id PK
+    string name
+    string org_slug
+    string org_kind_norm
+    boolean is_active
+  }
+
+  DIM_PATIENT {
+    string patient_id PK
+    string gender_norm
+    date   birth_date
+    int    age_current
+    string age_band_current
+    string language_code
+    string language_display
+    string patient_pseudonym
+    boolean has_phone
+    boolean has_address
+  }
+
+  DIM_PRACTITIONER {
+    string practitioner_id PK
+    string gender_norm
+    string full_name
+    string clinician_slug
+    string clinician_pseudonym
+    string npi
+    string email_primary
+    string phone_primary
+    boolean has_phone
+    boolean has_email
+  }
+
+  DIM_ENCOUNTER {
+    string encounter_id PK
+    string patient_id
+    string org_id
+    string practitioner_id
+    string encounter_class
+    string encounter_type_norm
+    string class_group
+    boolean is_inpatient
+    timestamp start_ts
+    timestamp end_ts
+    date   start_date
+    date   start_week_start
+    date   start_month_start
+  }
+
+  %% Facts
+  FACT_PREM_ANSWER {
+    string qr_id
+    string item_linkid
+    string item_id
+    int    answer_ordinal
+    string answer_id
+    timestamp authored_ts
+    date   qr_date
+    date   qr_week_start
+    date   qr_month_start
+    string questionnaire_id
+    boolean is_leaf
+    boolean is_scored
+    string domain_key
+    string domain_code_value
+    string domain_code_system
+    boolean repeats
+    string answer_kind
+    string value_display
+    string value_code
+    string value_coding_system
+    string value_string
+    string value_string_clean
+    numeric numeric_value
+    boolean has_ordinal
+    int     likert_max_for_item
+    numeric score_pct
+    boolean answer_is_top_box
+    boolean answer_is_top2_box
+    boolean answer_is_bottom_box
+    boolean is_free_text
+    boolean is_nps
+    string  nps_bucket
+    string  patient_id
+    string  encounter_id
+    string  clinician_id
+    string  org_id
+    string  encounter_type_norm
+    string  class_group
+    boolean is_inpatient
+    string  org_kind_norm
+    string  org_slug
+    string  clinician_slug
+    string  clinician_pseudonym
+    string  gender_norm
+    int     age_at_authored
+    string  age_band_at_authored
+  }
+
+  FACT_PREM_RESPONSE_DOMAIN {
+    string qr_id
+    string questionnaire_id
+    string domain_key
+    numeric domain_score_pct
+    numeric domain_top_box_pct
+    numeric domain_top2_box_pct
+    int     items_answered_in_domain
+    int     items_expected_in_domain
+    numeric domain_completeness_pct
+  }
+
+  FACT_PREM_RESPONSE {
+    string qr_id PK
+    string questionnaire_id
+    string patient_id
+    string encounter_id
+    string clinician_id
+    string org_id
+    timestamp authored_ts
+    date   qr_date
+    date   qr_week_start
+    date   qr_month_start
+    int    items_answered_total
+    int    items_scored_answered
+    int    items_scored_expected
+    numeric response_completeness_pct
+    numeric overall_score_pct
+    numeric overall_top_box_pct
+    numeric overall_top2_box_pct
+    int     free_text_count
+    boolean has_comment_bool
+    json    domain_metrics_json
+  }
+
+  %% Relationships
+  FACT_PREM_ANSWER }o--|| DIM_ITEMS : "item_id →"
+  FACT_PREM_ANSWER }o--|| DIM_PATIENT : "patient_id →"
+  FACT_PREM_ANSWER }o--|| DIM_ENCOUNTER : "encounter_id →"
+  FACT_PREM_ANSWER }o--|| DIM_PRACTITIONER : "clinician_id →"
+  FACT_PREM_ANSWER }o--|| DIM_ORGANIZATION : "org_id →"
+
+  FACT_PREM_RESPONSE }o--|| DIM_PATIENT : "patient_id →"
+  FACT_PREM_RESPONSE }o--|| DIM_ENCOUNTER : "encounter_id →"
+  FACT_PREM_RESPONSE }o--|| DIM_PRACTITIONER : "clinician_id →"
+  FACT_PREM_RESPONSE }o--|| DIM_ORGANIZATION : "org_id →"
+
+  %% (FACT_PREM_RESPONSE_DOMAIN links to QR and domains coming from DIM_ITEMS metadata)

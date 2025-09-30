@@ -25,7 +25,7 @@ def load_zero_shot(model_name: str):
         model=model_name,
         multi_label=True,           
         truncation=True,
-        hypothesis_template="This patient comment is about {} in primary care."
+        hypothesis_template="This patient comment is about {} in neurorehabilitation."
     )
 
 
@@ -36,8 +36,8 @@ def pick_themes(
     labels: List[str],
     zsc_pipe=None,
     keywords: dict | None = None,
-    conf_min: float = 0.35,          # a tad lower for recall
-    conf_hi: float = 0.65,           # “confident” band
+    conf_min: float = 0.40,          # a tad lower for recall
+    conf_hi: float = 0.70,           # “confident” band
     max_labels: int = 3,
 ) -> Tuple[List[str], List[Tuple[str,float]]]:
     """
