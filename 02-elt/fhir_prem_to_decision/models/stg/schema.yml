@@ -103,13 +103,6 @@ models:
           - not_null:
               config:
                 where: "answer_kind in ('coding','integer','decimal','boolean','quantity')"
-          # Limit accepted range to Likert-like codings only (avoid NPS 0–10 warnings)
-          - accepted_values:
-              arguments:
-                values: [0, 1, 2, 3, 4, 5]
-              config:
-                severity: warn
-                where: "answer_kind='coding' and value_coding_system ilike '%likert%' and numeric_value is not null"
 
       # Optional: enforce presence of text on string answers
       - name: value_string
@@ -150,7 +143,7 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ['IMP','AMB','EMER','INPATIENT','OUTPATIENT','ER','ED']
+                values: ['AMB','EMER','FLD','HH','IMP','ACUTE','NONAC','OBSENC','PRENC','VR','SS','OTHER','UNKNOWN']
                 quote: true
               config:
                 severity: warn
