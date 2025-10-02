@@ -11,7 +11,7 @@
 | home | Days since last answer          | mart_home_staleness      | Number of days since the most recent answered item for a questionnaire in an organization.                                                                                  | $$ \text{days\_since\_last\_answer}(o,q) = \text{today} - \max\{ a.\text{authored\_ts} : a \in A_{o,q} \} $$ |
 | home | Questionnaire last updated      | mart_home_staleness      | Metadata timestamp of when the questionnaire resource itself was last updated.                                                                                              | $$ \text{last\_updated}(q) = \text{questionnaire\_last\_updated}(q) $$ |
 | home | Questionnaire staleness per org | mart_home_staleness      | Number of days since the questionnaire definition was updated in the source system, reported per org.                                                                       | $$ \text{days\_since\_last\_update}(q) = \text{today} - \text{questionnaire\_last\_updated}(q) $$ |
-| nreq | Overall Score (nreq)            | mart_prem_kpi_daily      | Daily mean of the response-level overall score across all NREQ responses in scope.                                                                                          | $$ \text{overall\_score\_pct\_mean}(d) = \frac{1}{|\mathcal{R}_d|}\sum_{r \in \mathcal{R}_d} \text{overall\_score\_pct}(r) $$ |
+| nreq | Overall Score (nreq)            | mart_prem_kpi_daily      | Daily mean of the response-level overall score across all NREQ responses in scope.                                                                                          | $\text{overall\_score\_pct\_mean}(d) = \frac{1}{|\mathcal{R}_d|}\sum_{r \in \mathcal{R}_d} \text{overall\_score\_pct}(r)$ |
 | nreq | Top Box % (nreq)                | mart_prem_kpi_daily      | Daily mean of the response-level top-box percentage across all NREQ responses in scope.                                                                                     | $$ \text{overall\_top\_box\_pct\_mean}(d) = \frac{1}{|\mathcal{R}_d|}\sum_{r \in \mathcal{R}_d} \text{overall\_top\_box\_pct}(r) $$ |
 | stg  | score_pct (answer level)        | stg_answers             | Normalized score for a single answer on a Likert/ordinal item, scaled to [0,1].                                                                                            | $$ \text{score\_pct}(a) = \frac{\text{numeric\_value}(a)}{\text{likert\_max\_for\_item}} $$ |
 | stg  | overall_score (response level)  | stg_responses           | Mean of `score_pct` over all scored answers in a response.                                                                                                                 | $$ \text{overall\_score\_pct}(r) = \frac{1}{N_r}\sum_{a \in A_r} \text{score\_pct}(a) $$ |
@@ -30,3 +30,95 @@
 | ppnq | sentiment distribution                   | mart_prem_text_sentiment    | Distribution of free-text comments across sentiment labels (positive, neutral, negative, unscored).                                                                | $$ P(\text{sentiment}=s) = \tfrac{1}{N}\sum \mathbf{1}\{\text{label}(c)=s\} $$ |
 | ppnq | Theme × Sentiment                        | mart_prem_theme_sentiment_matrix | Cross-tabulation of themes (topics) with sentiment categories, per period/org, with rates within each theme.                                                    | $$ \text{pct\_within\_theme}(t,s) = \tfrac{n_{t,s}}{\sum_{s'}n_{t,s'}} $$ |
 | ppnq | recent patient comments                  | mart_prem_text_sentiment    | Most recent free-text comments left by patients, with their NLP-derived sentiment and theme tags.                                                                  | No formula (direct text output + metadata). |
+
+
+
+
+Disctinct PAtient : $$ \text{Patients} = \left| \{ r.\text{patient\_id} : r \in \mathcal{R} \} \right| $$
+
+Has Free text : $$ \text{FreeTextRate} = \tfrac{1} {|\mathcal{R}|} \sum_{r \in \mathcal{R}} r.\text{has\_freetext\_int} = \tfrac{\#\{ r \in \mathcal{R} \mid r.\text{has\_freetext\_int}=1 \}}{|\mathcal{R}|} $$
+
+Overall Score (nreq) :$$ \text{overall\_score\_pct\_mean}(d) = \frac{1}{|\mathcal{R}_d|}\sum_{r \in \mathcal{R}_d} \text{overall\_score\_pct}(r) $$
+
+Overall top box pct : $$ \text{overall\_top\_box\_pct}(r) = \frac{1}{N_r}\sum_{a \in A_r}\mathbf{1}\{\text{answer\_is\_top\_box}(a)\} $$
+
+
+
+### Responses per questionnaire
+$$ \text{ResponsesByQuestionnaire}(q) = \sum_{r \in \mathcal{R}} \mathbf{1}\{ Q(r) = q \} $$
+
+### Total responses
+$$ \text{Responses} = \sum_{r \in \mathcal{R}} 1 $$
+
+### Distinct patients
+$$ \text{Patients} = \left| \{ r.\text{patient\_id} : r \in \mathcal{R} \} \right| $$
+
+### Completeness
+$$ \text{completion\_ratio\_total} = \tfrac{\#\text{answers to leaf items}}{\#\text{expected leaf items}} $$
+
+### Has free text
+$$ \text{FreeTextRate} = \tfrac{1} {|\mathcal{R}|} \sum_{r \in \mathcal{R}} r.\text{has\_freetext\_int} = \tfrac{\#\{ r \in \mathcal{R} \mid r.\text{has\_freetext\_int}=1 \}}{|\mathcal{R}|} $$
+
+### Trends (responses over time)
+$$ \text{Responses}(d,q) = \sum_{r \in \mathcal{R}} \mathbf{1}\{ r.\text{qr\_date}=d \wedge r.\text{questionnaire\_id}=q \} $$
+
+### Response volume
+$$ \text{responses\_n}(o,q) = \sum_{r \in \mathcal{R}_{o,q}} 1 $$
+
+### Last seen answer
+$$ \text{last\_seen\_answer}(o,q) = \max\{ a.\text{authored\_ts} : a \in A_{o,q} \} $$
+
+### Days since last answer
+$$ \text{days\_since\_last\_answer}(o,q) = \text{today} - \max\{ a.\text{authored\_ts} : a \in A_{o,q} \} $$
+
+### Questionnaire last updated
+$$ \text{last\_updated}(q) = \text{questionnaire\_last\_updated}(q) $$
+
+### Questionnaire staleness per org
+$$ \text{days\_since\_last\_update}(q) = \text{today} - \text{questionnaire\_last\_updated}(q) $$
+
+### Overall Score (nreq)
+$$ \text{overall\_score\_pct\_mean}(d) = \frac{1}{|\mathcal{R}_d|}\sum_{r \in \mathcal{R}_d} \text{overall\_score\_pct}(r) $$
+
+### Top Box % (nreq)
+$$ \text{overall\_top\_box\_pct\_mean}(d) = \frac{1}{|\mathcal{R}_d|}\sum_{r \in \mathcal{R}_d} \text{overall\_top\_box\_pct}(r) $$
+
+### score_pct (answer level)
+$$ \text{score\_pct}(a) = \frac{\text{numeric\_value}(a)}{\text{likert\_max\_for\_item}} $$
+
+### overall_score (response level)
+$$ \text{overall\_score\_pct}(r) = \frac{1}{N_r}\sum_{a \in A_r} \text{score\_pct}(a) $$
+
+### answer_is_top_box (answer flag)
+$$ \text{answer\_is\_top\_box}(a) = \mathbf{1}\{\text{numeric\_value}(a)=\text{likert\_max\_for\_item}\} $$
+
+### overall_top_box_pct (response)
+$$ \text{overall\_top\_box\_pct}(r) = \frac{1}{N_r}\sum_{a \in A_r}\mathbf{1}\{\text{answer\_is\_top\_box}(a)\} $$
+
+### overall score trend over time
+$$ \text{overall\_score\_pct\_mean}(p) = \frac{1}{|\mathcal{R}_p|} \sum_{r \in \mathcal{R}_p} \text{overall\_score\_pct}(r) $$
+
+### overall score per age band
+$$ \text{overall\_score\_pct\_mean}(a) = \frac{1}{|\mathcal{R}_a|}\sum_{r \in \mathcal{R}_a} \text{overall\_score\_pct}(r) $$
+
+### domains score (score vs top box)
+$$ \text{domain\_score\_pct\_mean}(d) = \frac{1}{|\mathcal{R}_d|}\sum_{r \in \mathcal{R}_d} \text{domain\_score\_pct}(r) $$
+
+### How do patients respond to each question?
+$$ \text{mean\_score\_pct}(i) = \tfrac{1}{N_i}\sum_{a \in A_i}\text{score\_pct}(a) \quad $$
+$$ \quad \text{top\_box\_pct}(i) = \tfrac{1}{N_i}\sum \mathbf{1}\{a \text{ is top box}\} $$
+
+### What problems matter most?
+$$ \text{problem\_rate\_pct}(i) = \tfrac{1}{N_i}\sum \mathbf{1}\{a \text{ is bottom box}\} $$
+
+### Who is way off the norm?
+$$ z = \frac{\bar{x}_{entity} - \mu_{network}}{\sigma_{network}} $$
+
+### NPS
+$$ \text{NPS} = 100 \cdot \frac{n_{\text{promoters}} - n_{\text{detractors}}}{n_{\text{total}}} $$
+
+### sentiment distribution
+$$ P(\text{sentiment}=s) = \tfrac{1}{N}\sum \mathbf{1}\{\text{label}(c)=s\} $$
+
+### Theme × Sentiment
+$$ \text{pct\_within\_theme}(t,s) = \tfrac{n_{t,s}}{\sum_{s'}n_{t,s'}} $$
