@@ -10,7 +10,8 @@ from .io import PgIO
 from .preprocess import clean_text
 from .pii import contains_pii
 from .lang import detect_language
-from .sentiment import load_sentiment, score as score_sent
+# from .sentiment import load_sentiment, score as score_sent
+from .sentiment import load_sentiment, score_batch
 from .themes import load_theme_config, load_zero_shot, pick_themes
 from .toxicity import load_toxicity, score as score_tox
 
@@ -113,41 +114,62 @@ def main():
 
         authored = [r[2] for r in rows]
         log.info("Fetched %d rows | authored_ts range: %s .. %s", n, min(authored), max(authored))
-
-        # ── score loop ────────────────────────────────────────────────────────
+        
+        # ── score (batched) ───────────────────────────────────────────────────────────
         run_id = str(uuid.uuid4())
         to_upsert = []
         err = 0
         sent_counts = Counter()
         theme_counts = Counter()
 
-        for (qr_id, item_linkid, authored_ts, text_raw, org_id, clinician_id) in tqdm(
-            rows, desc="Scoring", unit="text"
-        ):
+        # 1) Pre-clean & collect
+        texts = []
+        metas = []   # (qr_id, item_linkid, authored_ts, cleaned)
+        for (qr_id, item_linkid, authored_ts, text_raw, org_id, clinician_id) in rows:
+            cleaned = clean_text(text_raw)
+            if cleaned and len(cleaned) >= 3:
+                metas.append((qr_id, item_linkid, authored_ts, cleaned))
+                texts.append(cleaned)
+
+        if not texts:
+            log.info("Nothing to score after cleaning.")
+            return
+
+        # 2) Sentiment in one go (batch)
+        sent_results = score_batch(sent_pipe, texts)  # list[(label, score)]
+
+        # 3) Themes – fast rule-first (no zero-shot), or enable selective ZSC later
+        #    If you want full ZSC batching, you can add it here with batch_size=8–16.
+        override = float(scoring_cfg.get("rule_override_max_zsc", 0.80))
+
+        for i, (qr_id, item_linkid, authored_ts, cleaned) in enumerate(tqdm(metas, desc="Scoring", unit="text")):
             try:
-                cleaned = clean_text(text_raw)
-                if not cleaned or len(cleaned) < 3:
-                    continue
+                s_label, s_score = sent_results[i]
 
-                # optional diagnostics (not stored yet)
-                _lang = detect_language(cleaned)
-                _pii = contains_pii(cleaned)
-
-                s_label, s_score = score_sent(sent_pipe, cleaned)
-
+                # rules-first pass
                 themes, scored = pick_themes(
-                                    text=cleaned,
-                                    labels=labels,
-                                    zsc_pipe=zsc_pipe,
-                                    keywords=keywords,
-                                    conf_min=scoring_cfg.get("theme_confidence_min", 0.40),
-                                )
+                    text=cleaned,
+                    labels=labels,
+                    zsc_pipe=None,                 # rules only
+                    keywords=keywords,
+                    conf_min=scoring_cfg.get("theme_confidence_min", 0.40),
+                )
 
-                # If ZSC top-1 is very confident, force it to the front
-                override = scoring_cfg.get("rule_override_max_zsc", 0.80)
-                if override is not None and scored:
+                # selective ZSC only when rules found nothing (or keep a low-confidence heuristic)
+                if not themes and zsc_pipe:
+                    themes, scored = pick_themes(
+                        text=cleaned,
+                        labels=labels,
+                        zsc_pipe=zsc_pipe,         # enable ZSC just for this text
+                        keywords=keywords,
+                        conf_min=scoring_cfg.get("theme_confidence_min", 0.40),
+                    )
+
+                # optional: override if ZSC top-1 is very confident
+                override = float(scoring_cfg.get("rule_override_max_zsc", 0.80))
+                if scored:
                     top_lab, top_score = scored[0]
-                if float(top_score) >= float(override):
+                    if top_lab and float(top_score) >= override:
                         if top_lab in themes:
                             try:
                                 themes.remove(top_lab)
@@ -157,7 +179,9 @@ def main():
 
                 t_primary = themes[0] if themes else None
                 t_secondary = themes[1] if len(themes) > 1 else None
-                _tox = score_tox(tox_pipe, cleaned)
+
+                # Toxicity (per-row; tiny cost). 
+                #_tox = score_tox(tox_pipe, cleaned)
 
                 sent_counts[s_label] += 1
                 if t_primary:

@@ -18,7 +18,7 @@ def rule_hit(text_lower: str, compiled_keywords: dict) -> set[str]:
         if any(p.search(text_lower) for p in pats):
             hits.add(theme)
     return hits
-
+"""
 def load_zero_shot(model_name: str):
     return pipeline(
         "zero-shot-classification",
@@ -28,6 +28,17 @@ def load_zero_shot(model_name: str):
         hypothesis_template="This patient comment is about {} in neurorehabilitation."
     )
 
+""" 
+
+def load_zero_shot(model_name: str, device: int | None = None):
+    return pipeline(
+        "zero-shot-classification",
+        model=model_name,
+        multi_label=True,
+        truncation=True,
+        hypothesis_template="This patient comment is about {} in neurorehabilitation.",
+        device=device if device is not None else -1,
+    )
 
 SENTIMENT_HINTS = re.compile(r"\b(excellent|great|good|amazing|poor|bad|terrible|awful|satisfied|unsatisfied|recommend)\b", re.I)
 
